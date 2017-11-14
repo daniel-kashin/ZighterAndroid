@@ -1,12 +1,16 @@
 apply plugin: 'com.android.application'
 
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.3'
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
     defaultConfig {
         applicationId "com.zighter.zighterandroid"
         minSdkVersion versions.minSdk
-        targetSdkVersion 26
+        targetSdkVersion versions.targetSdk
         versionCode versions.appVersionCode
         versionName versions.appVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -25,6 +29,9 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+    buildTypes.each {
+        it.buildConfigField 'String', 'MAPBOX_API_KEY', keystoreProperties['MapboxApiKey'];
     }
 }
 
@@ -52,6 +59,9 @@ dependencies {
     compile libraries.moxy
     compile libraries.moxyAppCompat
     annotationProcessor libraries.moxyCompiler
+
+    compile 'com.google.android.gms:play-services-auth:11.6.0'
+    compile 'com.google.android.gms:play-services-maps:11.6.0'
 
     compile(libraries.mapbox) {
         transitive=true

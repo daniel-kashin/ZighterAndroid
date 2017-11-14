@@ -5,7 +5,6 @@ import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.FrameLayout;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.presentation.account.AccountFragment;
@@ -28,7 +27,6 @@ public class BottomNavigationActivity extends AppCompatActivity {
 
         if (getSupportFragmentManager().findFragmentById(R.id.fragment_container) == null) {
             bottomNavigationView.setSelectedItemId(R.id.action_my_routes);
-            openFragment(R.id.action_my_routes);
         }
     }
 

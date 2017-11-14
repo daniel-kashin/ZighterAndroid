@@ -71,3 +71,5 @@ local.properties
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+keystore.properties
