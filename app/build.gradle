@@ -10,6 +10,9 @@ android {
         versionCode versions.appVersionCode
         versionName versions.appVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        jackOptions {
+            enabled true
+        }
     }
 
     buildTypes {
@@ -27,21 +30,32 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+
     debugCompile libraries.leakCanaryDebug
     releaseCompile libraries.leakCanaryRelease
     compile libraries.firebaseCrash
+
     compile libraries.supportAnnotations
     compile libraries.supportLibs
     compile libraries.supportDesign
     compile libraries.supportRecyclerView
     compile libraries.constraintLayout
+    compile libraries.butterKnife
+    annotationProcessor libraries.butterKnifeCompiler
+
     compile libraries.dagger
     annotationProcessor libraries.daggerCompiler
+
     compile libraries.rxJava
     compile libraries.rxAndroid
+
     compile libraries.moxy
     compile libraries.moxyAppCompat
     annotationProcessor libraries.moxyCompiler
+
+    compile(libraries.mapbox) {
+        transitive=true
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'

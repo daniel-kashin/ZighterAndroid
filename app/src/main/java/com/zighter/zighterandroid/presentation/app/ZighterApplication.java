@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid;
+package com.zighter.zighterandroid.presentation.app;
 
 import android.app.Application;
 

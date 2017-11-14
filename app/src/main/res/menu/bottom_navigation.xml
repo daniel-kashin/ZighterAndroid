@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_interesting"
+        android:icon="@drawable/ic_search_black"
+        android:title="@string/btn_interesting" />
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search_black"
+        android:title="@string/btn_search" />
+    <item
+        android:id="@+id/action_my_routes"
+        android:icon="@drawable/ic_search_black"
+        android:title="@string/btn_my_routes" />
+    <item
+        android:id="@+id/action_account"
+        android:icon="@drawable/ic_search_black"
+        android:title="@string/btn_account" />
+</menu>

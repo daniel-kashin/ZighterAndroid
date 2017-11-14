@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">ZighterAndroid</string>
+    <string name="app_name" translatable="false">Zighter</string>
+    
+    <string name="btn_interesting">Interesting</string>
+    <string name="btn_search">Search</string>
+    <string name="btn_my_routes">My routes</string>
+    <string name="btn_account">Account</string>
 </resources>
