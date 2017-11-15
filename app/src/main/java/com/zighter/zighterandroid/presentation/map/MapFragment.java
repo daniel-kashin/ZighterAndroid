@@ -9,20 +9,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdate;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.SupportMapFragment;
 import com.zighter.zighterandroid.R;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MapFragment extends Fragment implements OnMapReadyCallback {
+public class MapFragment extends Fragment {
 
     @BindView(R.id.map_view)
     MapView map;
-
 
     public static MapFragment newInstance() {
         return new MapFragment();
@@ -40,10 +42,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        map.onCreate(savedInstanceState);
-        map.getMapAsync(mapboxMap -> {
-            int i = 0;
-        });
+        initializeViews(savedInstanceState);
     }
 
     @Override
@@ -83,7 +82,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -91,8 +89,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
-    @Override
-    public void onMapReady(MapboxMap mapboxMap) {
-        Toast.makeText(getContext(), "OnMapReady", Toast.LENGTH_SHORT).show();
+    private void initializeViews(Bundle savedInstanceState) {
+        map.setVisibility(View.INVISIBLE);
+        map.onCreate(savedInstanceState);
+        map.getMapAsync(mapboxMap -> {
+            map.setVisibility(View.VISIBLE);
+            mapboxMap.animateCamera(mapboxMapInner -> new CameraPosition.Builder()
+                            .target(new LatLng(51.50550, -0.07520)) // Sets the new camera position
+                            .zoom(13)
+                            .build()
+                    , 1000);
+            mapboxMap.setMaxZoomPreference(18);
+            mapboxMap.setMinZoomPreference(10);
+        });
     }
 }
