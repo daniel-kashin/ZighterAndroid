@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.presentation.map;
+package com.zighter.zighterandroid.presentation.navigation;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;

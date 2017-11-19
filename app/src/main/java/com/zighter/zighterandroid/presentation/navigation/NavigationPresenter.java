@@ -1,8 +1,10 @@
-package com.zighter.zighterandroid.presentation.map;
+package com.zighter.zighterandroid.presentation.navigation;
+
+import android.support.annotation.NonNull;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.zighter.zighterandroid.R;
+import com.zighter.zighterandroid.data.paths.PathsRepository;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,6 +15,12 @@ import io.reactivex.schedulers.Schedulers;
 @InjectViewState
 public class NavigationPresenter extends MvpPresenter<NavigationView> {
 
+    @NonNull
+    private final PathsRepository pathsRepository;
+
+    public NavigationPresenter(PathsRepository pathsRepository) {
+        this.pathsRepository = pathsRepository;
+    }
 
     @Override
     protected void onFirstViewAttach() {

@@ -8,7 +8,7 @@ import android.support.annotation.UiThread;
 import com.zighter.zighterandroid.dagger.component.AppComponent;
 import com.zighter.zighterandroid.dagger.component.DaggerAppComponent;
 import com.zighter.zighterandroid.dagger.component.NavigationComponent;
-import com.zighter.zighterandroid.dagger.module.AppModule;
+import com.zighter.zighterandroid.dagger.module.singleton.AppModule;
 
 import java.lang.ref.WeakReference;
 

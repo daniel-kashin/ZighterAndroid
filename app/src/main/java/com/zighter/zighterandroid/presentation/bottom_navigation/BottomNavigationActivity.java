@@ -8,7 +8,7 @@ import android.os.Bundle;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.presentation.account.AccountFragment;
-import com.zighter.zighterandroid.presentation.map.NavigationFragment;
+import com.zighter.zighterandroid.presentation.navigation.NavigationFragment;
 
 import java.util.concurrent.TimeUnit;
 

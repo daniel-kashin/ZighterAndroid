@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.dagger.module;
+package com.zighter.zighterandroid.dagger.module.singleton;
 
 import android.content.Context;
 import android.support.annotation.NonNull;

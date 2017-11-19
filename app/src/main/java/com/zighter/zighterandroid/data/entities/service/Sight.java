@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.dagger.entities.service;
+package com.zighter.zighterandroid.data.entities.service;
 
 public class Sight {
 
