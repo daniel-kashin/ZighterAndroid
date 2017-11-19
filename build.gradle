@@ -20,35 +20,6 @@ allprojects {
         google()
         jcenter()
     }
-
-    apply plugin: 'findbugs'
-    apply plugin: 'pmd'
-
-    task findbugs(type: FindBugs) {
-        description 'Run findbugs'
-        group 'verification'
-        classes = fileTree("$project.buildDir/intermediates/classes")
-        source = fileTree('src/main/java')
-        classpath = files()
-        effort = 'max'
-        excludeFilter = file("$project.rootDir/tools/rules-findbugs.xml")
-        reports {
-            xml.enabled = false
-            html.enabled = true
-        }
-    }
-
-    task pmd(type: Pmd) {
-        description 'Run pmd'
-        group 'verification'
-        ruleSets = []
-        ruleSetFiles = files("$project.rootDir/tools/rules-pmd.xml")
-        source = fileTree('src/main/java')
-        reports {
-            xml.enabled = false
-            html.enabled = true
-        }
-    }
 }
 
 task clean(type: Delete) {

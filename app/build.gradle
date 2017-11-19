@@ -14,9 +14,6 @@ android {
         versionCode versions.appVersionCode
         versionName versions.appVersionName
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        jackOptions {
-            enabled true
-        }
     }
 
     buildTypes {
@@ -30,8 +27,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     buildTypes.each {
-        it.buildConfigField 'String', 'MAPBOX_API_KEY', keystoreProperties['MapboxApiKey'];
+        it.buildConfigField 'String', 'MAPBOX_API_KEY', keystoreProperties['MapboxApiKey']
     }
 }
 
@@ -55,6 +58,10 @@ dependencies {
 
     compile libraries.rxJava
     compile libraries.rxAndroid
+
+    compile libraries.retrofit
+    compile libraries.retrofitRxAdapter
+    compile libraries.retrofitGsonConverter
 
     compile libraries.moxy
     compile libraries.moxyAppCompat

@@ -8,10 +8,15 @@ import android.os.Bundle;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.presentation.account.AccountFragment;
-import com.zighter.zighterandroid.presentation.map.MapFragment;
+import com.zighter.zighterandroid.presentation.map.NavigationFragment;
+
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.Completable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 
 public class BottomNavigationActivity extends AppCompatActivity {
 
@@ -51,8 +56,8 @@ public class BottomNavigationActivity extends AppCompatActivity {
 
         switch (navigationItemId) {
             case R.id.action_my_routes:
-                if (!(topFragment instanceof MapFragment)) {
-                    fragmentToOpen = MapFragment.newInstance();
+                if (!(topFragment instanceof NavigationFragment)) {
+                    fragmentToOpen = NavigationFragment.newInstance();
                     break;
                 } else {
                     return;
@@ -70,14 +75,15 @@ public class BottomNavigationActivity extends AppCompatActivity {
                 throw new IllegalStateException("Unknown navigation item id");
         }
 
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragmentToOpen)
-                .commit();
+        Completable.timer(200, TimeUnit.MILLISECONDS)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(() -> getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragment_container, fragmentToOpen)
+                        .commit()
+                );
     }
-
-
-
-
 
 
 }
