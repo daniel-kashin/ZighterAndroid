@@ -8,7 +8,9 @@ import android.os.Bundle;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.presentation.account.AccountFragment;
-import com.zighter.zighterandroid.presentation.navigation.NavigationFragment;
+import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
+import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment;
+import com.zighter.zighterandroid.presentation.my_excursions.MyExcursionsFragment;
 
 import java.util.concurrent.TimeUnit;
 
@@ -16,29 +18,47 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-public class BottomNavigationActivity extends AppCompatActivity {
+public class BottomNavigationActivity extends BaseSupportActivity {
 
     @BindView(R.id.bottom_navigation)
     BottomNavigationView bottomNavigationView;
 
+    private Disposable showTabDisposable;
+
+    @Override
+    protected void onInjectDependencies() {
+        // do nothing
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_bottom_navigation;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bottom_navigation);
         ButterKnife.bind(this);
         setOnNavigationClickListener();
 
         if (getSupportFragmentManager().findFragmentById(R.id.fragment_container) == null) {
-            bottomNavigationView.setSelectedItemId(R.id.action_my_routes);
+            bottomNavigationView.setSelectedItemId(R.id.action_my_excursions);
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (showTabDisposable != null) showTabDisposable.dispose();
     }
 
     private void setOnNavigationClickListener() {
         bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
             switch (item.getItemId()) {
-                case R.id.action_my_routes:
+                case R.id.action_my_excursions:
                 case R.id.action_account:
                 case R.id.action_interesting:
                 case R.id.action_search:
@@ -55,9 +75,9 @@ public class BottomNavigationActivity extends AppCompatActivity {
         Fragment fragmentToOpen;
 
         switch (navigationItemId) {
-            case R.id.action_my_routes:
-                if (!(topFragment instanceof NavigationFragment)) {
-                    fragmentToOpen = NavigationFragment.newInstance();
+            case R.id.action_my_excursions:
+                if (!(topFragment instanceof ExcursionMapFragment)) {
+                    fragmentToOpen = MyExcursionsFragment.newInstance();
                     break;
                 } else {
                     return;
@@ -75,7 +95,8 @@ public class BottomNavigationActivity extends AppCompatActivity {
                 throw new IllegalStateException("Unknown navigation item id");
         }
 
-        Completable.timer(200, TimeUnit.MILLISECONDS)
+        if (showTabDisposable != null) showTabDisposable.dispose();
+        showTabDisposable = Completable.timer(200, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> getSupportFragmentManager()

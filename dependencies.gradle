@@ -24,7 +24,7 @@ ext.versions = [
         retrofit                           : '2.3.0',
         moxy                               : '1.5.3',
 
-        mapbox                             : '5.2.0-beta.4@aar'
+        mapbox                             : '5.2.0@aar'
 ]
 
 ext.gradlePlugins = [

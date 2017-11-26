@@ -1,8 +1,8 @@
-<resources>
-    <string name="app_name" translatable="false">Zighter</string>
-    
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <string name="app_name" translatable="false" tools:override="true">Zighter</string>
+
     <string name="btn_interesting">Interesting</string>
     <string name="btn_search">Search</string>
-    <string name="btn_my_routes">My routes</string>
+    <string name="btn_my_excursions">My excursions</string>
     <string name="btn_account">Account</string>
 </resources>

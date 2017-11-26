@@ -1,8 +1,8 @@
 package com.zighter.zighterandroid.dagger.module.singleton;
 
-import com.zighter.zighterandroid.data.paths.PathsRepository;
-import com.zighter.zighterandroid.data.paths.PathsService;
-import com.zighter.zighterandroid.data.paths.PathsStorage;
+import com.zighter.zighterandroid.data.repositories.paths.PathsRepository;
+import com.zighter.zighterandroid.data.repositories.paths.PathsService;
+import com.zighter.zighterandroid.data.repositories.paths.PathsStorage;
 
 import javax.inject.Singleton;
 
