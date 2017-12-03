@@ -3,6 +3,7 @@ package com.zighter.zighterandroid.presentation.excursion.sight;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.view.View;
 import android.widget.TextView;
 
@@ -54,7 +55,7 @@ public class SightFragment extends BaseSupportFragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // TODO
-        sightName.setText("С сервера не пришло имя");
+        sightName.setText(sight.getName() == null ? "С сервера не пришло имя" : sight.getName());
     }
+
 }

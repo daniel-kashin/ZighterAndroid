@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
@@ -40,6 +41,7 @@ import butterknife.BindView;
 
 import static com.zighter.zighterandroid.util.IconHelper.Type.CHECKED_SIGHT;
 
+@SuppressWarnings("CodeBlock2Expr")
 public class ExcursionMapFragment extends BaseSupportFragment implements ExcursionMapView {
 
     public static ExcursionMapFragment newInstance() {
@@ -143,7 +145,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
 
     @Override
-    public void handleLoadingShowing() {
+    public void showLoading() {
         map.getMapAsync(mapboxMap -> {
             mapboxMap.setOnMarkerClickListener(null);
             progressBar.setVisibility(View.VISIBLE);
@@ -155,7 +157,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     }
 
     @Override
-    public void handleExcursionShowing(@NonNull final Excursion excursion) {
+    public void showExcursion(@NonNull final Excursion excursion) {
         map.getMapAsync(mapboxMap -> {
             // add sights
             markersToSights.clear();
@@ -205,8 +207,17 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
             mapboxMap.setOnMarkerClickListener(marker -> {
                 if (marker != selectedMarker && markersToSights.containsKey(marker)) {
+                    Marker previous = selectedMarker;
                     selectedMarker = marker;
-                    excursionMapPresenter.onSightClicked(markersToSights.get(marker), marker);
+
+                    if (previous != null) {
+                        previous.setIcon(IconFactory.getInstance(getContext()).defaultMarker());
+                        mapboxMap.updateMarker(previous);
+                    }
+                    selectedMarker.setIcon(IconHelper.getIcon(getContext(), CHECKED_SIGHT));
+                    mapboxMap.updateMarker(selectedMarker);
+
+                    excursionMapPresenter.onSightClicked(markersToSights.get(selectedMarker), selectedMarker);
                     return true;
                 } else {
                     return false;
@@ -219,15 +230,20 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     }
 
     @Override
-    public void handleSightSelection(@NonNull Sight sight, @NonNull Marker marker) {
-        map.getMapAsync(mapboxMap -> {
-            for (Marker sightMarker : markersToSights.keySet()) {
-                sightMarker.setIcon(IconFactory.getInstance(getContext()).defaultMarker());
-                mapboxMap.updateMarker(sightMarker);
-            }
-            marker.setIcon(IconHelper.getIcon(getContext(), CHECKED_SIGHT));
-            mapboxMap.updateMarker(marker);
+    public void showNetworkUnavailable() {
+        hideLoading();
+        Toast.makeText(getContext(), "Network unavailable", Toast.LENGTH_SHORT).show();
+    }
 
+    @Override
+    public void showServerException() {
+        hideLoading();
+        Toast.makeText(getContext(), "Api exception", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSightSelection(@NonNull Sight sight, @NonNull Marker marker) {
+        map.getMapAsync(mapboxMap -> {
             getCastedActivity().onSightSelected(sight);
         });
     }

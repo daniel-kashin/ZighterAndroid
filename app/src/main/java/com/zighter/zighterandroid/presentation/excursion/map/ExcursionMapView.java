@@ -13,11 +13,17 @@ import com.zighter.zighterandroid.data.entities.service.Sight;
 interface ExcursionMapView extends MvpView {
 
     @StateStrategyType(SingleStateStrategy.class)
-    void handleLoadingShowing();
+    void showLoading();
 
     @StateStrategyType(SingleStateStrategy.class)
-    void handleExcursionShowing(@NonNull Excursion excursion);
+    void showExcursion(@NonNull Excursion excursion);
+
+    @StateStrategyType(SingleStateStrategy.class)
+    void showNetworkUnavailable();
+
+    @StateStrategyType(SingleStateStrategy.class)
+    void showServerException();
 
     @StateStrategyType(AddToEndSingleStrategy.class)
-    void handleSightSelection(@NonNull Sight sight, @NonNull Marker marker);
+    void showSightSelection(@NonNull Sight sight, @NonNull Marker marker);
 }

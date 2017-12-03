@@ -46,10 +46,10 @@ public class PathsRepository {
 
     private SingleSource<? extends Excursion> convertRetrofitThrowable(Throwable error) {
         if (error instanceof HttpException) {
-            return Single.error(new ServerException());
+            return Single.error(new ServerException(error));
         }
         if (error instanceof IOException) {
-            return Single.error(new NetworkUnavailableException());
+            return Single.error(new NetworkUnavailableException(error));
         }
         return Single.error(error);
     }
