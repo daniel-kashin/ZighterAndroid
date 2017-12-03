@@ -7,7 +7,8 @@ import android.support.annotation.UiThread;
 
 import com.zighter.zighterandroid.dagger.component.AppComponent;
 import com.zighter.zighterandroid.dagger.component.DaggerAppComponent;
-import com.zighter.zighterandroid.dagger.component.NavigationComponent;
+import com.zighter.zighterandroid.dagger.component.ExcursionMapComponent;
+import com.zighter.zighterandroid.dagger.component.SightComponent;
 import com.zighter.zighterandroid.dagger.module.singleton.AppModule;
 
 import java.lang.ref.WeakReference;
@@ -35,21 +36,36 @@ public class Injector {
     @NonNull
     private final AppComponent appComponent;
     @NonNull
-    private WeakReference<NavigationComponent> navigationComponentWeakReference;
+    private WeakReference<ExcursionMapComponent> navigationComponentWeakReference;
+    @NonNull
+    private WeakReference<SightComponent> sightComponentWeakReference;
 
+
+    @UiThread
     private Injector(@NonNull Context context) {
         appComponent = DaggerAppComponent.builder()
                 .appModule(new AppModule(context))
                 .build();
         navigationComponentWeakReference = new WeakReference<>(null);
+        sightComponentWeakReference = new WeakReference<>(null);
     }
 
     @NonNull
-    public NavigationComponent getNavigationComponent() {
+    @UiThread
+    public ExcursionMapComponent getNavigationComponent() {
         if (navigationComponentWeakReference.get() == null) {
             navigationComponentWeakReference = new WeakReference<>(appComponent.plusNavigationComponent());
         }
         return navigationComponentWeakReference.get();
+    }
+
+    @NonNull
+    @UiThread
+    public SightComponent getSightComponent() {
+        if (sightComponentWeakReference.get() == null) {
+            sightComponentWeakReference = new WeakReference<>(appComponent.plusSightComponent());
+        }
+        return sightComponentWeakReference.get();
     }
 
 

@@ -14,7 +14,7 @@ import static com.zighter.zighterandroid.dagger.module.singleton.SchedulerModule
 import static com.zighter.zighterandroid.dagger.module.singleton.SchedulerModule.TAG_UI;
 
 @Module
-public class NavigationModule {
+public class ExcursionMapModule {
 
     @NavigationScope
     @Provides

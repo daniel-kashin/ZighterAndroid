@@ -5,4 +5,7 @@
     <string name="btn_search">Search</string>
     <string name="btn_my_excursions">My excursions</string>
     <string name="btn_account">Account</string>
+
+    <string name="kilometers">km</string>
+    <string name="meters">m</string>
 </resources>

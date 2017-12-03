@@ -1,6 +1,7 @@
 package com.zighter.zighterandroid.presentation.excursion.map;
 
 import android.app.Activity;
+import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,7 +13,6 @@ import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
-import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -20,6 +20,7 @@ import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.service.Excursion;
@@ -47,6 +48,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     public static ExcursionMapFragment newInstance() {
         return new ExcursionMapFragment();
     }
+
 
     @InjectPresenter
     ExcursionMapPresenter excursionMapPresenter;
@@ -76,9 +78,10 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Nullable
     private Marker selectedMarker;
 
+
     @Override
     protected int getLayoutId() {
-        return R.layout.fragment_navigation;
+        return R.layout.fragment_excursion_map;
     }
 
     @Override
@@ -140,9 +143,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        map.onSaveInstanceState(outState);
+        //map.onSaveInstanceState(outState);
     }
-
 
     @Override
     public void showLoading() {
@@ -159,6 +161,9 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void showExcursion(@NonNull final Excursion excursion) {
         map.getMapAsync(mapboxMap -> {
+            mapboxMap.getUiSettings().setLogoEnabled(false);
+            mapboxMap.setMyLocationEnabled(true);
+
             // add sights
             markersToSights.clear();
             for (int i = 0; i < excursion.getSightSize(); ++i) {
@@ -202,7 +207,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                     .zoom(13)
                     .build()
             );
-            mapboxMap.setMaxZoomPreference(18);
+            mapboxMap.setMaxZoomPreference(25);
             mapboxMap.setMinZoomPreference(10);
 
             mapboxMap.setOnMarkerClickListener(marker -> {
@@ -244,12 +249,9 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void showSightSelection(@NonNull Sight sight, @NonNull Marker marker) {
         map.getMapAsync(mapboxMap -> {
-            getCastedActivity().onSightSelected(sight);
+            ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
+            if (activity != null) activity.onSightSelected(sight);
         });
     }
 
-    public ExcursionHolderActivity getCastedActivity() {
-        Activity activity = getActivity();
-        return activity == null ? null : (ExcursionHolderActivity) getActivity();
-    }
 }

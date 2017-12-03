@@ -1,17 +1,19 @@
 package com.zighter.zighterandroid.presentation.excursion.holder;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.data.entities.service.Sight;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.excursion.sight.SightFragment;
+import com.zighter.zighterandroid.presentation.excursion.sight.SightPresenter;
 import com.zighter.zighterandroid.util.CustomBottomSheetBehavior;
 
 import butterknife.BindView;
@@ -24,6 +26,8 @@ import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_HI
 import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_SETTLING;
 
 public class ExcursionHolderActivity extends BaseSupportActivity {
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1223;
 
     @BindView(R.id.bottom_sheet)
     NestedScrollView bottomSheet;
@@ -53,12 +57,12 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
     }
 
     public void onSightSelected(@NonNull Sight sight) {
+        showBottomSheet();
+
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.bottom_sheet_content, SightFragment.newInstance(sight))
                 .commit();
-
-        showBottomSheet();
     }
 
     private void showBottomSheet() {
@@ -103,6 +107,30 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
             public void onSlide(@NonNull View bottomSheet, float slideOffset) {
             }
         });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Fragment sightFragment = getSupportFragmentManager().findFragmentById(R.id.bottom_sheet_content);
+                    if (sightFragment != null) {
+                        ((SightFragment) sightFragment).onLocationPermissionEnabled();
+                    }
+                }
+            }
+        }
+    }
+
+    public void requestLocationPermission() {
+        ActivityCompat.requestPermissions(
+                this,
+                new String[]{SightPresenter.LOCATION_PERMISSION},
+                LOCATION_PERMISSION_REQUEST_CODE
+        );
     }
 
 }

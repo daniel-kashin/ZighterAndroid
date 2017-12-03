@@ -51,6 +51,8 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
                 });
     }
 
+
+
     void onSightClicked(@NonNull Sight sight, @NonNull Marker marker) {
         getViewState().showSightSelection(sight, marker);
     }

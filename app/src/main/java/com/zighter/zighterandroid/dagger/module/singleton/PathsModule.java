@@ -15,19 +15,19 @@ public class PathsModule {
 
     @Singleton
     @Provides
-    public PathsService providePathsService(OkHttpClient okHttpClient) {
+    PathsService providePathsService(OkHttpClient okHttpClient) {
         return new PathsService(okHttpClient);
     }
 
     @Singleton
     @Provides
-    public PathsStorage providePathsStorage() {
+    PathsStorage providePathsStorage() {
         return new PathsStorage();
     }
 
     @Singleton
     @Provides
-    public PathsRepository providePathsRepository(PathsService pathsService, PathsStorage pathsStorage) {
+    PathsRepository providePathsRepository(PathsService pathsService, PathsStorage pathsStorage) {
         return new PathsRepository(pathsService, pathsStorage);
     }
 

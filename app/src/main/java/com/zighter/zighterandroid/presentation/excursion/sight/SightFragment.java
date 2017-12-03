@@ -1,19 +1,25 @@
 package com.zighter.zighterandroid.presentation.excursion.sight;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
-import android.view.View;
+import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.zighter.zighterandroid.R;
+import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.service.Sight;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
+import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
 
 import butterknife.BindView;
 
-public class SightFragment extends BaseSupportFragment {
+public class SightFragment extends BaseSupportFragment implements SightView {
 
     private static final String KEY_SIGHT = "SIGHT";
 
@@ -27,21 +33,41 @@ public class SightFragment extends BaseSupportFragment {
         return sightFragment;
     }
 
-    @BindView(R.id.sight_name)
-    TextView sightName;
 
-    private Sight sight;
+    @InjectPresenter
+    SightPresenter sightPresenter;
+
+    @ProvidePresenter
+    public SightPresenter providePresenter() {
+        return sightPresenterBuilderProvider.get()
+                .setSight(sight)
+                .build();
+    }
+
+    @Inject
+    Provider<SightPresenter.Builder> sightPresenterBuilderProvider;
 
     @Override
     protected void onInjectDependencies() {
-        // do nothing
+        Injector.getInstance()
+                .getSightComponent()
+                .inject(this);
     }
+
+
+    @BindView(R.id.sight_name)
+    TextView sightName;
+    @BindView(R.id.sight_distance)
+    TextView sightDistance;
+
+    private Sight sight;
 
     @Override
     protected int getLayoutId() {
         return R.layout.fragment_sight;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (!getArguments().containsKey(KEY_SIGHT) || getArguments().getSerializable(KEY_SIGHT) == null) {
@@ -52,10 +78,36 @@ public class SightFragment extends BaseSupportFragment {
         super.onCreate(savedInstanceState);
     }
 
+
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        sightName.setText(sight.getName() == null ? "С сервера не пришло имя" : sight.getName());
+    public void showSight(@NonNull Sight sight) {
+        sightName.setText(sight.getName() != null ? sight.getName() : "Колизей");
+    }
+
+    @Override
+    public void showCurrentDistance(int distanceInMeters) {
+        String distance = distanceInMeters > 1000
+                ? (distanceInMeters / 1000 + " " + getString(R.string.kilometers))
+                : (distanceInMeters + " " + getString(R.string.meters));
+        sightDistance.setText(distance);
+    }
+
+    @Override
+    public void ensureLocationEnabled() {
+        int currentLocationPermission = ContextCompat.checkSelfPermission(getContext().getApplicationContext(), SightPresenter.LOCATION_PERMISSION);
+        if (currentLocationPermission != PackageManager.PERMISSION_GRANTED) {
+            ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
+            if (activity != null) activity.requestLocationPermission();
+        } else {
+            sightPresenter.onLocationPermissionEnabled();
+        }
+    }
+
+
+    public void onLocationPermissionEnabled() {
+        if (sightPresenter != null) {
+            sightPresenter.onLocationPermissionEnabled();
+        }
     }
 
 }
