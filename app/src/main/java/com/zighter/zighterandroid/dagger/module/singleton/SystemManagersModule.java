@@ -3,9 +3,6 @@ package com.zighter.zighterandroid.dagger.module.singleton;
 import android.content.Context;
 import android.location.LocationManager;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-
-import com.zighter.zighterandroid.dagger.scope.SightScope;
 
 import javax.inject.Singleton;
 

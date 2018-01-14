@@ -3,6 +3,7 @@ package com.zighter.zighterandroid.presentation.excursion.sight;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
 
@@ -20,7 +21,6 @@ import javax.inject.Provider;
 import butterknife.BindView;
 
 public class SightFragment extends BaseSupportFragment implements SightView {
-
     private static final String KEY_SIGHT = "SIGHT";
 
     public static SightFragment newInstance(@NonNull Sight sight) {
@@ -39,6 +39,10 @@ public class SightFragment extends BaseSupportFragment implements SightView {
 
     @ProvidePresenter
     public SightPresenter providePresenter() {
+        if (sight == null) {
+            throw new IllegalStateException("Sight must be non null when calling providePresenter");
+        }
+
         return sightPresenterBuilderProvider.get()
                 .setSight(sight)
                 .build();
@@ -60,6 +64,7 @@ public class SightFragment extends BaseSupportFragment implements SightView {
     @BindView(R.id.sight_distance)
     TextView sightDistance;
 
+    @Nullable
     private Sight sight;
 
     @Override
@@ -82,6 +87,10 @@ public class SightFragment extends BaseSupportFragment implements SightView {
     @Override
     public void showSight(@NonNull Sight sight) {
         sightName.setText(sight.getName() != null ? sight.getName() : "Колизей");
+        ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
+        if (activity != null) {
+            activity.onSightShown();
+        }
     }
 
     @Override
@@ -93,21 +102,21 @@ public class SightFragment extends BaseSupportFragment implements SightView {
     }
 
     @Override
-    public void ensureLocationEnabled() {
+    public void ensureLocationPermissionGranted() {
         int currentLocationPermission = ContextCompat.checkSelfPermission(getContext().getApplicationContext(), SightPresenter.LOCATION_PERMISSION);
         if (currentLocationPermission != PackageManager.PERMISSION_GRANTED) {
             ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
-            if (activity != null) activity.requestLocationPermission();
+            if (activity != null) {
+                activity.requestLocationPermission();
+            }
         } else {
-            sightPresenter.onLocationPermissionEnabled();
+            onLocationPermissionEnabled();
         }
     }
-
 
     public void onLocationPermissionEnabled() {
         if (sightPresenter != null) {
             sightPresenter.onLocationPermissionEnabled();
         }
     }
-
 }

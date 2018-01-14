@@ -2,7 +2,9 @@ package com.zighter.zighterandroid.presentation.excursion.holder;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -12,6 +14,7 @@ import android.view.View;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.data.entities.service.Sight;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
+import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment;
 import com.zighter.zighterandroid.presentation.excursion.sight.SightFragment;
 import com.zighter.zighterandroid.presentation.excursion.sight.SightPresenter;
 import com.zighter.zighterandroid.util.CustomBottomSheetBehavior;
@@ -26,13 +29,13 @@ import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_HI
 import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_SETTLING;
 
 public class ExcursionHolderActivity extends BaseSupportActivity {
+    private static final int SIGHT_FRAGMENT_LOCATION_PERMISSION_REQUEST_CODE = 1223;
 
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1223;
+    private boolean bottomSheetNeedsRedrawing = false;
+    private CustomBottomSheetBehavior<NestedScrollView> bottomSheetBehavior;
 
     @BindView(R.id.bottom_sheet)
     NestedScrollView bottomSheet;
-
-    private CustomBottomSheetBehavior<NestedScrollView> bottomSheetBehavior;
 
     @Override
     protected void onInjectDependencies() {
@@ -51,27 +54,30 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
         initializeBottomSheet();
         if (getSupportFragmentManager().findFragmentById(R.id.bottom_sheet_content) == null) {
             hideBottomSheet();
-        } else {
-            showBottomSheet();
         }
     }
 
     public void onSightSelected(@NonNull Sight sight) {
-        showBottomSheet();
-
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.bottom_sheet_content, SightFragment.newInstance(sight))
                 .commit();
     }
 
+    public void onSightShown() {
+        showBottomSheet();
+    }
+
+
     private void showBottomSheet() {
-        bottomSheet.setVisibility(View.VISIBLE);
-        bottomSheetBehavior.setState(STATE_COLLAPSED);
+        if (bottomSheet.getVisibility() != View.VISIBLE) {
+            bottomSheetNeedsRedrawing = true;
+            bottomSheetBehavior.setState(STATE_COLLAPSED);
+        }
     }
 
     private void hideBottomSheet() {
-        bottomSheet.setVisibility(View.GONE);
+        bottomSheet.setVisibility(View.INVISIBLE);
         bottomSheetBehavior.setState(STATE_HIDDEN);
     }
 
@@ -81,24 +87,29 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
                 switch (newState) {
-                    case STATE_DRAGGING:
-                        //Toast.makeText(ExcursionHolderActivity.this, "DRAGGING", Toast.LENGTH_SHORT).show();
+                    case STATE_HIDDEN:
+                        bottomSheet.setVisibility(View.INVISIBLE);
+
+                        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.excursion_map_fragment);
+                        if (fragment == null || !(fragment instanceof ExcursionMapFragment)) {
+                            throw new IllegalStateException("Excursion map fragment must be an instance of ExcursionMapFragment");
+                        }
+                        ((ExcursionMapFragment) fragment).removeSightSelection();
+
+                        SightFragment sightFragment = getSightFragment();
+                        if (sightFragment != null) {
+                            getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .remove(getSightFragment())
+                                    .commit();
+                        }
                         break;
                     case STATE_COLLAPSED:
-                        //Toast.makeText(ExcursionHolderActivity.this, "COLLAPSED", Toast.LENGTH_SHORT).show();
-                        break;
-                    case STATE_EXPANDED:
-                        //Toast.makeText(ExcursionHolderActivity.this, "EXPANDED", Toast.LENGTH_SHORT).show();
-                        break;
-                    case STATE_HIDDEN:
-                        bottomSheetBehavior.setState(STATE_COLLAPSED);
-                        //Toast.makeText(ExcursionHolderActivity.this, "HIDDEN", Toast.LENGTH_SHORT).show();
-                        break;
-                    case STATE_ANCHOR_POINT:
-                        //Toast.makeText(ExcursionHolderActivity.this, "ANCHOR", Toast.LENGTH_SHORT).show();
-                        break;
-                    case STATE_SETTLING:
-                        //Toast.makeText(ExcursionHolderActivity.this, "SETTLING", Toast.LENGTH_SHORT).show();
+                        if (bottomSheetNeedsRedrawing) {
+                            bottomSheetNeedsRedrawing = false;
+                            bottomSheet.requestLayout();
+                            bottomSheet.setVisibility(View.VISIBLE);
+                        }
                         break;
                 }
             }
@@ -109,16 +120,17 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
         });
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case LOCATION_PERMISSION_REQUEST_CODE: {
+            case SIGHT_FRAGMENT_LOCATION_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Fragment sightFragment = getSupportFragmentManager().findFragmentById(R.id.bottom_sheet_content);
+                    SightFragment sightFragment = getSightFragment();
                     if (sightFragment != null) {
-                        ((SightFragment) sightFragment).onLocationPermissionEnabled();
+                        sightFragment.onLocationPermissionEnabled();
                     }
                 }
             }
@@ -126,11 +138,22 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
     }
 
     public void requestLocationPermission() {
-        ActivityCompat.requestPermissions(
-                this,
-                new String[]{SightPresenter.LOCATION_PERMISSION},
-                LOCATION_PERMISSION_REQUEST_CODE
-        );
+        ActivityCompat.requestPermissions(this,
+                                          new String[]{SightPresenter.LOCATION_PERMISSION},
+                                          SIGHT_FRAGMENT_LOCATION_PERMISSION_REQUEST_CODE);
+    }
+
+    @Nullable
+    private SightFragment getSightFragment() {
+        Fragment sightFragment = getSupportFragmentManager().findFragmentById(R.id.bottom_sheet_content);
+        if (sightFragment != null) {
+            if (!(sightFragment instanceof SightFragment)) {
+                throw new IllegalStateException("Fragment containing in bottom sheet must be instance of SightFragment");
+            } else {
+                return (SightFragment) sightFragment;
+            }
+        }
+        return null;
     }
 
 }

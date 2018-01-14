@@ -1,8 +1,8 @@
 package com.zighter.zighterandroid.dagger.module.singleton;
 
-import com.zighter.zighterandroid.data.repositories.paths.PathsRepository;
-import com.zighter.zighterandroid.data.repositories.paths.PathsService;
-import com.zighter.zighterandroid.data.repositories.paths.PathsStorage;
+import com.zighter.zighterandroid.data.repositories.excursions.ExcursionsRepository;
+import com.zighter.zighterandroid.data.repositories.excursions.ExcursionsService;
+import com.zighter.zighterandroid.data.repositories.excursions.ExcursionsStorage;
 
 import javax.inject.Singleton;
 
@@ -15,20 +15,20 @@ public class PathsModule {
 
     @Singleton
     @Provides
-    PathsService providePathsService(OkHttpClient okHttpClient) {
-        return new PathsService(okHttpClient);
+    ExcursionsService providePathsService(OkHttpClient okHttpClient) {
+        return new ExcursionsService(okHttpClient);
     }
 
     @Singleton
     @Provides
-    PathsStorage providePathsStorage() {
-        return new PathsStorage();
+    ExcursionsStorage providePathsStorage() {
+        return new ExcursionsStorage();
     }
 
     @Singleton
     @Provides
-    PathsRepository providePathsRepository(PathsService pathsService, PathsStorage pathsStorage) {
-        return new PathsRepository(pathsService, pathsStorage);
+    ExcursionsRepository providePathsRepository(ExcursionsService excursionsService, ExcursionsStorage excursionsStorage) {
+        return new ExcursionsRepository(excursionsService, excursionsStorage);
     }
 
 }

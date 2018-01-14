@@ -1,16 +1,15 @@
 package com.zighter.zighterandroid.presentation.excursion.sight;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -20,9 +19,12 @@ import com.zighter.zighterandroid.util.LocationHelper;
 
 import java.util.concurrent.TimeUnit;
 
+import static android.location.LocationManager.GPS_PROVIDER;
+import static android.location.LocationManager.NETWORK_PROVIDER;
+import static android.location.LocationManager.PASSIVE_PROVIDER;
+
 @InjectViewState
 public class SightPresenter extends MvpPresenter<SightView> {
-
     public static final String LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final long MIN_LOCATION_REQUEST_TIME = TimeUnit.SECONDS.toMillis(1);
     private static final long MIN_LOCATION_REQUEST_DISTANCE_IN_METERS = 1;
@@ -46,51 +48,73 @@ public class SightPresenter extends MvpPresenter<SightView> {
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
         getViewState().showSight(sight);
-        getViewState().ensureLocationEnabled();
+        getViewState().ensureLocationPermissionGranted();
     }
 
+    @SuppressLint("MissingPermission")
     void onLocationPermissionEnabled() {
-        int currentLocationPermission = ContextCompat.checkSelfPermission(applicationContext, LOCATION_PERMISSION);
-        if (currentLocationPermission != PackageManager.PERMISSION_GRANTED) return;
-
-        Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location location = locationManager.getLastKnownLocation(GPS_PROVIDER);
+        if (location == null) {
+            location = locationManager.getLastKnownLocation(NETWORK_PROVIDER);
+        } else {
+            location = locationManager.getLastKnownLocation(PASSIVE_PROVIDER);
+        }
         handleLocationChange(location);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                MIN_LOCATION_REQUEST_TIME,
-                MIN_LOCATION_REQUEST_DISTANCE_IN_METERS,
-                new LocationListener() {
-                    @Override
-                    public void onLocationChanged(Location location) {
-                        handleLocationChange(location);
-                    }
 
-                    @Override
-                    public void onStatusChanged(String provider, int status, Bundle extras) {
-                    }
+        requestLocationUpdates(locationManager, GPS_PROVIDER);
+        requestLocationUpdates(locationManager, NETWORK_PROVIDER);
+    }
 
-                    @Override
-                    public void onProviderEnabled(String provider) {
-                    }
+    @SuppressLint("MissingPermission")
+    private void requestLocationUpdates(@NonNull LocationManager locationManager, @NonNull String provider) {
+        locationManager.requestLocationUpdates(provider,
+                                               MIN_LOCATION_REQUEST_TIME,
+                                               MIN_LOCATION_REQUEST_DISTANCE_IN_METERS,
+                                               new LocationListener() {
+                                                   @Override
+                                                   public void onLocationChanged(Location location) {
+                                                       boolean handle = false;
+                                                       switch (provider) {
+                                                           case GPS_PROVIDER:
+                                                               handle = true;
+                                                               break;
+                                                           case NETWORK_PROVIDER:
+                                                               if (!locationManager.isProviderEnabled(GPS_PROVIDER)) {
+                                                                   handle = true;
+                                                               }
+                                                               break;
+                                                       }
 
-                    @Override
-                    public void onProviderDisabled(String provider) {
-                    }
-                });
+                                                       if (handle) {
+                                                           handleLocationChange(location);
+                                                       }
+                                                   }
+
+                                                   @Override
+                                                   public void onStatusChanged(String provider, int status, Bundle extras) {
+                                                   }
+
+                                                   @Override
+                                                   public void onProviderEnabled(String provider) {
+                                                   }
+
+                                                   @Override
+                                                   public void onProviderDisabled(String provider) {
+                                                   }
+                                               });
     }
 
     private void handleLocationChange(@Nullable Location location) {
         if (location != null) {
-            int distanceInMeters = (int) LocationHelper.distanceInMeters(
-                    location.getLatitude(),
-                    sight.getLatitude(),
-                    location.getLongitude(),
-                    sight.getLongitude());
+            int distanceInMeters = (int) LocationHelper.distanceInMeters(location.getLatitude(),
+                                                                         sight.getLatitude(),
+                                                                         location.getLongitude(),
+                                                                         sight.getLongitude());
             getViewState().showCurrentDistance(distanceInMeters);
         }
     }
 
     public static class Builder {
-
         @NonNull
         private final LocationManager locationManager;
         @NonNull
@@ -109,10 +133,10 @@ public class SightPresenter extends MvpPresenter<SightView> {
         }
 
         public SightPresenter build() {
-            if (sight == null)
+            if (sight == null) {
                 throw new IllegalStateException("Sight must be defined for creating SightPresenter");
+            }
             return new SightPresenter(sight, locationManager, applicationContext);
         }
-
     }
 }

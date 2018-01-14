@@ -10,7 +10,6 @@ import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.zighter.zighterandroid.data.entities.service.Sight;
 
 public interface SightView extends MvpView {
-
     @StateStrategyType(SingleStateStrategy.class)
     void showSight(@NonNull Sight sight);
 
@@ -18,6 +17,5 @@ public interface SightView extends MvpView {
     void showCurrentDistance(int distanceInMeters);
 
     @StateStrategyType(SkipStrategy.class)
-    void ensureLocationEnabled();
-
+    void ensureLocationPermissionGranted();
 }

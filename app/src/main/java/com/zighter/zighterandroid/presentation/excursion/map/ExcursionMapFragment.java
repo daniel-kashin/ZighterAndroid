@@ -161,7 +161,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void showExcursion(@NonNull final Excursion excursion) {
         map.getMapAsync(mapboxMap -> {
-            mapboxMap.getUiSettings().setLogoEnabled(false);
             mapboxMap.setMyLocationEnabled(true);
 
             // add sights
@@ -169,8 +168,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             for (int i = 0; i < excursion.getSightSize(); ++i) {
                 Sight sight = excursion.getSightAt(i);
                 Marker marker = mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(sight.getLatitude(), sight.getLongitude()))
-                        .title(sight.getName()));
+                                                            .position(new LatLng(sight.getLatitude(), sight.getLongitude()))
+                                                            .title(sight.getName()));
                 markersToSights.put(marker, sight);
             }
 
@@ -179,13 +178,11 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 Path path = excursion.getPathAt(i);
 
                 Point firstEndpoint = path.getFirstEndpoint();
-                mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(firstEndpoint.getLatitude(), firstEndpoint.getLongitude()))
-                );
+                mapboxMap.addMarker(new MarkerOptions().position(new LatLng(firstEndpoint.getLatitude(),
+                                                                            firstEndpoint.getLongitude())));
                 Point secondEndpoint = path.getSecondEndpoint();
-                mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(secondEndpoint.getLatitude(), secondEndpoint.getLongitude()))
-                );
+                mapboxMap.addMarker(new MarkerOptions().position(new LatLng(secondEndpoint.getLatitude(),
+                                                                            secondEndpoint.getLongitude())));
 
                 List<LatLng> points = new ArrayList<>();
                 for (int j = 0; j < path.getPointSize(); ++j) {
@@ -194,16 +191,15 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 }
 
                 mapboxMap.addPolyline(new PolylineOptions()
-                        .addAll(points)
-                        .color(Color.parseColor("#222222"))
-                        .alpha(0.9f)
-                        .width(3f)
-                );
+                                              .addAll(points)
+                                              .color(Color.parseColor("#222222"))
+                                              .alpha(0.9f)
+                                              .width(3f));
             }
 
             mapboxMap.moveCamera(mapboxMapInner -> new CameraPosition.Builder()
                     .target(new LatLng(excursion.getSightAt(0).getLatitude(),
-                            excursion.getSightAt(0).getLongitude()))
+                                       excursion.getSightAt(0).getLongitude()))
                     .zoom(13)
                     .build()
             );
@@ -250,7 +246,20 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     public void showSightSelection(@NonNull Sight sight, @NonNull Marker marker) {
         map.getMapAsync(mapboxMap -> {
             ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
-            if (activity != null) activity.onSightSelected(sight);
+            if (activity != null) {
+                activity.onSightSelected(sight);
+            }
+        });
+    }
+
+    public void removeSightSelection() {
+        map.getMapAsync(mapboxMap -> {
+            Marker previous = selectedMarker;
+            if (previous != null) {
+                selectedMarker = null;
+                previous.setIcon(IconFactory.getInstance(getContext()).defaultMarker());
+                mapboxMap.updateMarker(previous);
+            }
         });
     }
 

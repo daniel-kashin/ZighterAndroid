@@ -7,7 +7,7 @@ public interface Validable<T extends Validable> {
     boolean isValid();
 
     /**
-        @return null if unable to validate
+     @return null if unable to validate
      */
     T tryGetValidCopy();
 

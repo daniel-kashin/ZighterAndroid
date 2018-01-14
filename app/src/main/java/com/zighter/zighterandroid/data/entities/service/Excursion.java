@@ -49,34 +49,9 @@ public class Excursion implements Validable<Excursion> {
         this.route = route;
     }
 
-    @Override
-    public boolean isValid() {
-        return userUuid != 0
-                && uuid != null && !uuid.equals("")
-                && route != null && route.isValid();
-    }
-
-    @Override
-    public Excursion tryGetValidCopy() {
-        if (route == null || userUuid == 0 || uuid == null || uuid.equals("")) return null;
-
-        Route routeCopy = route.tryGetValidCopy();
-        if (routeCopy != null) {
-            return new Excursion(uuid, name, lastUpdateDatetime, createDatetime, pubStatus,
-                    price, currency, userUuid, routeCopy);
-        } else {
-            return null;
-        }
-    }
-
     public Excursion replaceRoute(Route route) {
         return new Excursion(uuid, name, lastUpdateDatetime, createDatetime, pubStatus,
                 price, currency, userUuid, route);
-    }
-
-    boolean isRouteValid() {
-        Validable.assertValid(this);
-        return route != null && route.isValid();
     }
 
     public String getUuid() {
@@ -141,4 +116,23 @@ public class Excursion implements Validable<Excursion> {
         return route.getSightAt(index);
     }
 
+    @Override
+    public boolean isValid() {
+        return userUuid != 0 && uuid != null && !uuid.equals("") && route != null && route.isValid();
+    }
+
+    @Override
+    public Excursion tryGetValidCopy() {
+        if (route == null || userUuid == 0 || uuid == null || uuid.equals("")) {
+            return null;
+        }
+
+        Route routeCopy = route.tryGetValidCopy();
+        if (routeCopy != null) {
+            return new Excursion(uuid, name, lastUpdateDatetime, createDatetime, pubStatus,
+                                 price, currency, userUuid, routeCopy);
+        } else {
+            return null;
+        }
+    }
 }

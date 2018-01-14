@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
+import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.zighter.zighterandroid.data.entities.service.Excursion;
@@ -24,6 +25,6 @@ interface ExcursionMapView extends MvpView {
     @StateStrategyType(SingleStateStrategy.class)
     void showServerException();
 
-    @StateStrategyType(AddToEndSingleStrategy.class)
+    @StateStrategyType(SkipStrategy.class)
     void showSightSelection(@NonNull Sight sight, @NonNull Marker marker);
 }

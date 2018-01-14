@@ -8,7 +8,7 @@ import com.zighter.zighterandroid.data.entities.service.Sight;
 import com.zighter.zighterandroid.data.exception.BaseException;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
 import com.zighter.zighterandroid.data.exception.ServerException;
-import com.zighter.zighterandroid.data.repositories.paths.PathsRepository;
+import com.zighter.zighterandroid.data.repositories.excursions.ExcursionsRepository;
 import com.zighter.zighterandroid.presentation.common.BasePresenter;
 
 import io.reactivex.Scheduler;
@@ -20,13 +20,13 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
     private static final String TAG = "[ExcursionMapPresenter]";
 
     @NonNull
-    private final PathsRepository pathsRepository;
+    private final ExcursionsRepository excursionsRepository;
 
-    public ExcursionMapPresenter(@NonNull PathsRepository pathsRepository,
+    public ExcursionMapPresenter(@NonNull ExcursionsRepository excursionsRepository,
                                  @NonNull Scheduler worker,
                                  @NonNull Scheduler ui) {
         super(worker, ui);
-        this.pathsRepository = pathsRepository;
+        this.excursionsRepository = excursionsRepository;
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
         super.onFirstViewAttach();
         getViewState().showLoading();
 
-        pathsRepository.getExcursion()
+        excursionsRepository.getExcursion()
                 .compose(applySchedulersSingle())
                 .subscribe(excursion -> {
                     getViewState().showExcursion(excursion);

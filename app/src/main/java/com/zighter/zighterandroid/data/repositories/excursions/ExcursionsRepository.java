@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.repositories.paths;
+package com.zighter.zighterandroid.data.repositories.excursions;
 
 import android.support.annotation.NonNull;
 
@@ -13,20 +13,20 @@ import io.reactivex.Single;
 import io.reactivex.SingleSource;
 import retrofit2.HttpException;
 
-public class PathsRepository {
+public class ExcursionsRepository {
 
     @NonNull
-    private final PathsStorage pathsStorage;
+    private final ExcursionsStorage excursionsStorage;
     @NonNull
-    private final PathsService pathsService;
+    private final ExcursionsService excursionsService;
 
-    public PathsRepository(@NonNull PathsService pathsService, @NonNull PathsStorage pathsStorage) {
-        this.pathsService = pathsService;
-        this.pathsStorage = pathsStorage;
+    public ExcursionsRepository(@NonNull ExcursionsService excursionsService, @NonNull ExcursionsStorage excursionsStorage) {
+        this.excursionsService = excursionsService;
+        this.excursionsStorage = excursionsStorage;
     }
 
     public Single<Excursion> getExcursion() {
-        return pathsService.getExcursion()
+        return excursionsService.getExcursion()
                 .map(this::tryGetValidCopyOrThrowException)
                 .onErrorResumeNext(this::convertRetrofitThrowable);
     }
