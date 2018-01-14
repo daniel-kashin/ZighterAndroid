@@ -1,10 +1,8 @@
 package com.zighter.zighterandroid.presentation.excursion.sight;
 
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -14,6 +12,7 @@ import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.service.Sight;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
+import com.zighter.zighterandroid.util.LocationSettingsHelper;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -102,14 +101,8 @@ public class SightFragment extends BaseSupportFragment implements SightView {
     }
 
     @Override
-    public void ensureLocationPermissionGranted() {
-        int currentLocationPermission = ContextCompat.checkSelfPermission(getContext().getApplicationContext(), SightPresenter.LOCATION_PERMISSION);
-        if (currentLocationPermission != PackageManager.PERMISSION_GRANTED) {
-            ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
-            if (activity != null) {
-                activity.requestLocationPermission();
-            }
-        } else {
+    public void ensureLocationPermissionEnabled() {
+        if (LocationSettingsHelper.isLocationPermissionEnabled(getContext())) {
             onLocationPermissionEnabled();
         }
     }

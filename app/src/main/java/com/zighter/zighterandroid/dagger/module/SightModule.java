@@ -15,9 +15,8 @@ public class SightModule {
 
     @Provides
     @SightScope
-    SightPresenter.Builder provideSightPresenterBuilder(@NonNull LocationManager locationManager,
-                                                        @NonNull Context applicationContext) {
-        return new SightPresenter.Builder(locationManager, applicationContext);
+    SightPresenter.Builder provideSightPresenterBuilder(@NonNull LocationManager locationManager) {
+        return new SightPresenter.Builder(locationManager);
     }
 
 }

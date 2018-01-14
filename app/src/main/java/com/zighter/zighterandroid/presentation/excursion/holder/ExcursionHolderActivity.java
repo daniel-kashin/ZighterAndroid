@@ -1,8 +1,10 @@
 package com.zighter.zighterandroid.presentation.excursion.holder;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
@@ -16,21 +18,16 @@ import com.zighter.zighterandroid.data.entities.service.Sight;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment;
 import com.zighter.zighterandroid.presentation.excursion.sight.SightFragment;
-import com.zighter.zighterandroid.presentation.excursion.sight.SightPresenter;
 import com.zighter.zighterandroid.util.CustomBottomSheetBehavior;
+import com.zighter.zighterandroid.util.LocationSettingsHelper;
 
 import butterknife.BindView;
 
-import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_ANCHOR_POINT;
 import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_COLLAPSED;
-import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_DRAGGING;
-import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_EXPANDED;
 import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_HIDDEN;
-import static com.zighter.zighterandroid.util.CustomBottomSheetBehavior.STATE_SETTLING;
+import static com.zighter.zighterandroid.util.LocationSettingsHelper.LOCATION_PERMISSION;
 
 public class ExcursionHolderActivity extends BaseSupportActivity {
-    private static final int SIGHT_FRAGMENT_LOCATION_PERMISSION_REQUEST_CODE = 1223;
-
     private boolean bottomSheetNeedsRedrawing = false;
     private CustomBottomSheetBehavior<NestedScrollView> bottomSheetBehavior;
 
@@ -54,6 +51,31 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
         initializeBottomSheet();
         if (getSupportFragmentManager().findFragmentById(R.id.bottom_sheet_content) == null) {
             hideBottomSheet();
+        }
+
+        if (!LocationSettingsHelper.isLocationPermissionEnabled(this)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, LOCATION_PERMISSION)) {
+                LocationSettingsHelper.showLocationPermissionRationale(this);
+            } else {
+                LocationSettingsHelper.requestLocationPermission(this);
+            }
+        } else {
+            LocationSettingsHelper.ensureGpsEnabled(this);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case LocationSettingsHelper.LOCATION_PERMISSION_REQUEST_CODE:
+                if (LocationSettingsHelper.isLocationPermissionEnabled(this)) {
+                    LocationSettingsHelper.ensureGpsEnabled(this);
+                }
+                break;
+            case LocationSettingsHelper.GPS_REQUEST_CODE:
+                // TODO
+                break;
         }
     }
 
@@ -121,26 +143,22 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
     }
 
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case SIGHT_FRAGMENT_LOCATION_PERMISSION_REQUEST_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    SightFragment sightFragment = getSightFragment();
-                    if (sightFragment != null) {
-                        sightFragment.onLocationPermissionEnabled();
+            case LocationSettingsHelper.LOCATION_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        LocationSettingsHelper.ensureGpsEnabled(this);
+                    } else {
+                        LocationSettingsHelper.showLocationPermissionRationale(this);
                     }
                 }
             }
         }
-    }
-
-    public void requestLocationPermission() {
-        ActivityCompat.requestPermissions(this,
-                                          new String[]{SightPresenter.LOCATION_PERMISSION},
-                                          SIGHT_FRAGMENT_LOCATION_PERMISSION_REQUEST_CODE);
     }
 
     @Nullable
@@ -155,5 +173,4 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
         }
         return null;
     }
-
 }

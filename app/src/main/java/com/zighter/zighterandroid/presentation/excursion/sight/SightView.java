@@ -17,5 +17,5 @@ public interface SightView extends MvpView {
     void showCurrentDistance(int distanceInMeters);
 
     @StateStrategyType(SkipStrategy.class)
-    void ensureLocationPermissionGranted();
+    void ensureLocationPermissionEnabled();
 }
