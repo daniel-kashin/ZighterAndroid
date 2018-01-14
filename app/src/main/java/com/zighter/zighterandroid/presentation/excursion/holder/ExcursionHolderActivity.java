@@ -12,6 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.data.entities.service.Sight;
@@ -47,7 +48,6 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         initializeBottomSheet();
         if (getSupportFragmentManager().findFragmentById(R.id.bottom_sheet_content) == null) {
             hideBottomSheet();

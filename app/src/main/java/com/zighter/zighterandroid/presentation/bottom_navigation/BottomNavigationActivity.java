@@ -50,9 +50,19 @@ public class BottomNavigationActivity extends BaseSupportActivity {
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (showTabDisposable != null) {
+            showTabDisposable.dispose();
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (showTabDisposable != null) showTabDisposable.dispose();
+        if (showTabDisposable != null) {
+            showTabDisposable.dispose();
+        }
     }
 
     private void setOnNavigationClickListener() {
@@ -95,7 +105,9 @@ public class BottomNavigationActivity extends BaseSupportActivity {
                 throw new IllegalStateException("Unknown navigation item id");
         }
 
-        if (showTabDisposable != null) showTabDisposable.dispose();
+        if (showTabDisposable != null) {
+            showTabDisposable.dispose();
+        }
         showTabDisposable = Completable.timer(200, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
