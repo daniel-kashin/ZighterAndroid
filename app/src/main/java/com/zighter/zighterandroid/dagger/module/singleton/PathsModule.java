@@ -12,7 +12,6 @@ import okhttp3.OkHttpClient;
 
 @Module
 public class PathsModule {
-
     @Singleton
     @Provides
     ExcursionsService providePathsService(OkHttpClient okHttpClient) {
@@ -30,5 +29,4 @@ public class PathsModule {
     ExcursionsRepository providePathsRepository(ExcursionsService excursionsService, ExcursionsStorage excursionsStorage) {
         return new ExcursionsRepository(excursionsService, excursionsStorage);
     }
-
 }

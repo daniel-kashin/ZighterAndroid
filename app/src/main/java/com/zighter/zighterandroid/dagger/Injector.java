@@ -14,7 +14,6 @@ import com.zighter.zighterandroid.dagger.module.singleton.AppModule;
 import java.lang.ref.WeakReference;
 
 public class Injector {
-
     @Nullable
     private static Injector instance;
 
@@ -67,7 +66,4 @@ public class Injector {
         }
         return sightComponentWeakReference.get();
     }
-
-
-
 }

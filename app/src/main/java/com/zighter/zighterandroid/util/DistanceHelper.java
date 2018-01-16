@@ -1,6 +1,6 @@
 package com.zighter.zighterandroid.util;
 
-public class LocationHelper {
+public class DistanceHelper {
     private static final int EARTH_RADIUS_IN_KM = 6371;
 
     public static double distanceInMeters(double latitude1,
@@ -19,5 +19,4 @@ public class LocationHelper {
 
         return Math.sqrt(distance);
     }
-
 }

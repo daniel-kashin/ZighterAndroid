@@ -13,12 +13,9 @@ import static android.content.Context.LOCATION_SERVICE;
 
 @Module
 public class SystemManagersModule {
-
     @Singleton
     @Provides
     LocationManager provideLocationManager(@NonNull Context context) {
         return (LocationManager) context.getSystemService(LOCATION_SERVICE);
     }
-
-
 }

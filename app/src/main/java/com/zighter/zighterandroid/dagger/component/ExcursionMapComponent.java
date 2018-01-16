@@ -9,7 +9,5 @@ import dagger.Subcomponent;
 @NavigationScope
 @Subcomponent(modules = {ExcursionMapModule.class})
 public interface ExcursionMapComponent {
-
     void inject(ExcursionMapFragment excursionMapFragment);
-
 }

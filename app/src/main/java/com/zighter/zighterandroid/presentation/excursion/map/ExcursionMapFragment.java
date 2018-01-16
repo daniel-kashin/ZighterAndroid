@@ -1,13 +1,14 @@
 package com.zighter.zighterandroid.presentation.excursion.map;
 
-import android.app.Activity;
-import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -20,14 +21,15 @@ import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.service.Excursion;
 import com.zighter.zighterandroid.data.entities.service.Path;
 import com.zighter.zighterandroid.data.entities.service.Point;
 import com.zighter.zighterandroid.data.entities.service.Sight;
+import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
+import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
 import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
 import com.zighter.zighterandroid.util.IconHelper;
 
@@ -43,23 +45,22 @@ import butterknife.BindView;
 import static com.zighter.zighterandroid.util.IconHelper.Type.CHECKED_SIGHT;
 
 @SuppressWarnings("CodeBlock2Expr")
-public class ExcursionMapFragment extends BaseSupportFragment implements ExcursionMapView {
-
-    public static ExcursionMapFragment newInstance() {
-        return new ExcursionMapFragment();
-    }
-
+public class ExcursionMapFragment extends BaseSupportFragment implements ExcursionMapView,
+        LocationListenerHolder.OnLocationChangeListener, LocationPermissionListener {
+    private static final String TAG = "ExcursionMapFragment";
 
     @InjectPresenter
-    ExcursionMapPresenter excursionMapPresenter;
+    ExcursionMapPresenter presenter;
 
     @ProvidePresenter
     public ExcursionMapPresenter providePresenter() {
-        return excursionMapPresenterProvider.get();
+        return presenterProvider.get();
     }
 
     @Inject
-    Provider<ExcursionMapPresenter> excursionMapPresenterProvider;
+    Provider<ExcursionMapPresenter> presenterProvider;
+    @Inject
+    LocationListenerHolder locationListenerHolder;
 
     @Override
     protected void onInjectDependencies() {
@@ -68,10 +69,13 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 .inject(this);
     }
 
+
     @BindView(R.id.map_view)
     MapView map;
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
+    @BindView(R.id.location_image_view)
+    ImageView locationImageView;
 
     @NonNull
     private HashMap<Marker, Sight> markersToSights = new HashMap<>();
@@ -83,6 +87,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     protected int getLayoutId() {
         return R.layout.fragment_excursion_map;
     }
+
 
     @Override
     public void onAttach(Context context) {
@@ -102,6 +107,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     private void initializeViews() {
         map.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
+        locationImageView.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -126,6 +132,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     public void onStop() {
         map.onStop();
         super.onStop();
+        locationListenerHolder.unregister(this);
     }
 
     @Override
@@ -146,6 +153,57 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         //map.onSaveInstanceState(outState);
     }
 
+
+    @Override
+    public void onLocationPermissionGranted(boolean granted) {
+        Log.d(TAG, "onLocationPermissionGranted");
+        if (granted) {
+            locationListenerHolder.register(this);
+        } else {
+            locationListenerHolder.unregister(this);
+        }
+        presenter.onLocationPermissionGranted(granted);
+    }
+
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        Log.d(TAG, "onLocationChanged");
+        presenter.onLocationChanged(location);
+    }
+
+    @Override
+    public void onLocationProvidersAvailabilityChanged(boolean networkProviderEnabled, boolean gpsProviderEnabled) {
+        Log.d(TAG, "onLocationProvidersAvailabilityChanged");
+        presenter.onLocationProvidersAvailabilityChanged(networkProviderEnabled, gpsProviderEnabled);
+    }
+
+
+    @Override
+    public void showCurrentLocation(@NonNull Location location) {
+        Toast.makeText(getContext(), "showCurrentLocation", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void updateLocationAvailability(boolean isPermissionAvailable, boolean isLocationProviderEnabled) {
+        locationImageView.setVisibility(View.VISIBLE);
+        if (!isPermissionAvailable) {
+            locationImageView.setOnClickListener(view -> {
+                Toast.makeText(getContext(), "Permission not enabled", Toast.LENGTH_SHORT).show();
+            });
+        } else {
+            if (isLocationProviderEnabled) {
+                locationImageView.setOnClickListener(view -> {
+                    Toast.makeText(getContext(), "Permission and provider enabled", Toast.LENGTH_SHORT).show();
+                });
+            } else {
+                locationImageView.setOnClickListener(view -> {
+                    Toast.makeText(getContext(), "Permission enabled and provider not enabled", Toast.LENGTH_SHORT).show();
+                });
+            }
+        }
+    }
+
+
     @Override
     public void showLoading() {
         map.getMapAsync(mapboxMap -> {
@@ -161,8 +219,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void showExcursion(@NonNull final Excursion excursion) {
         map.getMapAsync(mapboxMap -> {
-            mapboxMap.setMyLocationEnabled(true);
-
             // add sights
             markersToSights.clear();
             for (int i = 0; i < excursion.getSightSize(); ++i) {
@@ -218,7 +274,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                     selectedMarker.setIcon(IconHelper.getIcon(getContext(), CHECKED_SIGHT));
                     mapboxMap.updateMarker(selectedMarker);
 
-                    excursionMapPresenter.onSightClicked(markersToSights.get(selectedMarker), selectedMarker);
+                    presenter.onSightClicked(markersToSights.get(selectedMarker), selectedMarker);
                     return true;
                 } else {
                     return false;

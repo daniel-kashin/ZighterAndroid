@@ -23,9 +23,9 @@ import static android.location.LocationManager.PASSIVE_PROVIDER;
 public class LocationSettingsHelper {
     public static final String LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION;
     public static final int LOCATION_PERMISSION_REQUEST_CODE = 1223;
-    public static final int GPS_REQUEST_CODE = 1224;
+    public static final int LOCATION_PROVIDER_REQUEST_CODE = 1224;
 
-    public static boolean isLocationPermissionEnabled(@NonNull Context context) {
+    public static boolean isLocationPermissionGranted(@NonNull Context context) {
         int locationPermission = ContextCompat.checkSelfPermission(context.getApplicationContext(),
                                                                    LOCATION_PERMISSION);
         return locationPermission == PackageManager.PERMISSION_GRANTED;
@@ -52,7 +52,7 @@ public class LocationSettingsHelper {
 
     public static void openGpsSettings(@NonNull Activity activity) {
         Intent gpsOptionsIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-        activity.startActivityForResult(gpsOptionsIntent, GPS_REQUEST_CODE);
+        activity.startActivityForResult(gpsOptionsIntent, LOCATION_PROVIDER_REQUEST_CODE);
     }
 
     @Nullable
@@ -66,8 +66,7 @@ public class LocationSettingsHelper {
         return location;
     }
 
-    public static boolean shouldHandleLocation(@NonNull LocationManager locationManager,
-                                               @NonNull String provider) {
+    public static boolean shouldHandleLocation(@NonNull LocationManager locationManager, @NonNull String provider) {
         boolean result = false;
         switch (provider) {
             case GPS_PROVIDER:
@@ -82,13 +81,17 @@ public class LocationSettingsHelper {
         return result;
     }
 
-    public static boolean isGpsEnabled(@NonNull LocationManager locationManager) {
+    public static boolean isGpsLocationEnabled(@NonNull LocationManager locationManager) {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    public static boolean isNetworkLocationEnabled(@NonNull LocationManager locationManager) {
+        return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
     @SuppressWarnings("ConstantConditions")
     public static void ensureGpsEnabled(@NonNull Activity activity) {
-        if (!LocationSettingsHelper.isGpsEnabled((LocationManager) activity.getSystemService(Context.LOCATION_SERVICE))) {
+        if (!LocationSettingsHelper.isGpsLocationEnabled((LocationManager) activity.getSystemService(Context.LOCATION_SERVICE))) {
             // TODO
             LocationSettingsHelper.openGpsSettings(activity);
         }

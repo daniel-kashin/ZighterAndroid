@@ -10,7 +10,6 @@ import dagger.Provides;
 
 @Module
 public class AppModule {
-
     @NonNull
     private final Context context;
 
@@ -23,5 +22,4 @@ public class AppModule {
     Context provideContext() {
         return context;
     }
-
 }

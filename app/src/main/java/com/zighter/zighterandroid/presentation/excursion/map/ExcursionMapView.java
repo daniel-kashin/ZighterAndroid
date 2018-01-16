@@ -1,5 +1,6 @@
 package com.zighter.zighterandroid.presentation.excursion.map;
 
+import android.location.Location;
 import android.support.annotation.NonNull;
 
 import com.arellomobile.mvp.MvpView;
@@ -12,7 +13,6 @@ import com.zighter.zighterandroid.data.entities.service.Excursion;
 import com.zighter.zighterandroid.data.entities.service.Sight;
 
 interface ExcursionMapView extends MvpView {
-
     @StateStrategyType(SingleStateStrategy.class)
     void showLoading();
 
@@ -27,4 +27,10 @@ interface ExcursionMapView extends MvpView {
 
     @StateStrategyType(SkipStrategy.class)
     void showSightSelection(@NonNull Sight sight, @NonNull Marker marker);
+
+    @StateStrategyType(SkipStrategy.class)
+    void showCurrentLocation(@NonNull Location location);
+
+    @StateStrategyType(SkipStrategy.class)
+    void updateLocationAvailability(boolean isPermissionGranted, boolean isLocationProviderEnabled);
 }

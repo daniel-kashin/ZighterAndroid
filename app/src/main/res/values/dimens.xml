@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <dimen name="excursion_bottom_sheet_min_height">80dp</dimen>
-
 </resources>

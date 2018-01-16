@@ -1,5 +1,6 @@
 package com.zighter.zighterandroid.presentation.excursion.map;
 
+import android.location.Location;
 import android.support.annotation.NonNull;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -18,6 +19,9 @@ import io.reactivex.Scheduler;
 public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
 
     private static final String TAG = "[ExcursionMapPresenter]";
+    private boolean isLocationPermissionGranted;
+    private boolean isNetworkLocationEnabled;
+    private boolean isGpsLocationEnabled;
 
     @NonNull
     private final ExcursionsRepository excursionsRepository;
@@ -52,10 +56,24 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
     }
 
 
+    void onLocationProvidersAvailabilityChanged(boolean networkProviderEnabled, boolean gpsProviderEnabled) {
+        isNetworkLocationEnabled = networkProviderEnabled;
+        isGpsLocationEnabled = gpsProviderEnabled;
+        boolean isLocationProviderEnabled = isNetworkLocationEnabled || isGpsLocationEnabled;
+        getViewState().updateLocationAvailability(isLocationPermissionGranted, isLocationProviderEnabled);
+    }
+
+    void onLocationPermissionGranted(boolean granted) {
+        isLocationPermissionGranted = granted;
+        boolean isLocationProviderEnabled = isNetworkLocationEnabled || isGpsLocationEnabled;
+        getViewState().updateLocationAvailability(isLocationPermissionGranted, isLocationProviderEnabled);
+    }
+
+    void onLocationChanged(@NonNull Location location) {
+        getViewState().showCurrentLocation(location);
+    }
 
     void onSightClicked(@NonNull Sight sight, @NonNull Marker marker) {
         getViewState().showSightSelection(sight, marker);
     }
-
-
 }

@@ -9,7 +9,5 @@ import dagger.Subcomponent;
 @SightScope
 @Subcomponent(modules = {SightModule.class})
 public interface SightComponent {
-
     void inject(SightFragment sightFragment);
-
 }

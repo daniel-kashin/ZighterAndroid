@@ -10,17 +10,12 @@ import okhttp3.OkHttpClient;
 
 @Module
 public class NetworkModule {
-
     @Provides
     @Singleton
-    public OkHttpClient provideOkHttpClient() {
+    OkHttpClient provideOkHttpClient() {
         return new OkHttpClient().newBuilder()
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)
                 .build();
     }
-
-
-
-
 }

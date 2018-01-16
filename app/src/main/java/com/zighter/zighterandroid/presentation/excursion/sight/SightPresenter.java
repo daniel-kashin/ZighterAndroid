@@ -8,61 +8,56 @@ import android.support.annotation.Nullable;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.zighter.zighterandroid.data.entities.service.Sight;
-import com.zighter.zighterandroid.util.LocationListenerHolder;
-import com.zighter.zighterandroid.util.LocationHelper;
+import com.zighter.zighterandroid.data.location.LocationListenerHolder;
+import com.zighter.zighterandroid.util.DistanceHelper;
 
-import static com.zighter.zighterandroid.util.LocationListenerHolder.OnLocationChangeListener;
+import static com.zighter.zighterandroid.data.location.LocationListenerHolder.OnLocationChangeListener;
 
 @InjectViewState
-public class SightPresenter extends MvpPresenter<SightView> implements OnLocationChangeListener {
+public class SightPresenter extends MvpPresenter<SightView> {
     @NonNull
     private final Sight sight;
-    @NonNull
-    private final LocationManager locationManager;
-    @NonNull
-    private final LocationListenerHolder locationListenerHolder;
 
-    SightPresenter(@NonNull Sight sight,
-                   @NonNull LocationManager locationManager) {
+    private boolean isLocationPermissionGranted;
+    private boolean isNetworkLocationEnabled;
+    private boolean isGpsLocationEnabled;
+
+    SightPresenter(@NonNull Sight sight) {
         this.sight = sight;
-        this.locationManager = locationManager;
-        this.locationListenerHolder = new LocationListenerHolder(this, locationManager);
     }
 
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
         getViewState().showSight(sight);
-        getViewState().ensureLocationPermissionEnabled();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        locationListenerHolder.stopLocationUpdates();
-    }
-
-    @Override
-    public void onLocationChanged(@NonNull Location location) {
-        int distanceInMeters = (int) LocationHelper.distanceInMeters(location.getLatitude(),
+    void onLocationChanged(@NonNull Location location) {
+        int distanceInMeters = (int) DistanceHelper.distanceInMeters(location.getLatitude(),
                                                                      sight.getLatitude(),
                                                                      location.getLongitude(),
                                                                      sight.getLongitude());
         getViewState().showCurrentDistance(distanceInMeters);
     }
 
-    void onLocationPermissionEnabled() {
-        locationListenerHolder.startLocationUpdates();
+    void onLocationProvidersAvailabilityChanged(boolean networkProviderEnabled, boolean gpsProviderEnabled) {
+        isNetworkLocationEnabled = networkProviderEnabled;
+        isGpsLocationEnabled = gpsProviderEnabled;
+        boolean isLocationProviderEnabled = isNetworkLocationEnabled || isGpsLocationEnabled;
+        getViewState().updateLocationAvailability(isLocationPermissionGranted, isLocationProviderEnabled);
+    }
+
+    void onLocationPermissionGranted(boolean granted) {
+        isLocationPermissionGranted = granted;
+        boolean isLocationProviderEnabled = isNetworkLocationEnabled || isGpsLocationEnabled;
+        getViewState().updateLocationAvailability(isLocationPermissionGranted, isLocationProviderEnabled);
     }
 
     public static class Builder {
-        @NonNull
-        private final LocationManager locationManager;
         @Nullable
         private Sight sight;
 
-        public Builder(@NonNull LocationManager locationManager) {
-            this.locationManager = locationManager;
+        public Builder() {
         }
 
         public Builder setSight(@NonNull Sight sight) {
@@ -74,7 +69,7 @@ public class SightPresenter extends MvpPresenter<SightView> implements OnLocatio
             if (sight == null) {
                 throw new IllegalStateException("Sight must be defined for creating SightPresenter");
             }
-            return new SightPresenter(sight, locationManager);
+            return new SightPresenter(sight);
         }
     }
 }
