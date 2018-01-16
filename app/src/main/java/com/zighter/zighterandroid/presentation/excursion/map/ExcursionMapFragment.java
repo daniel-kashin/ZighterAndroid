@@ -156,7 +156,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
     @Override
     public void onLocationPermissionGranted(boolean granted) {
-        Log.d(TAG, "onLocationPermissionGranted");
+        Toast.makeText(getContext(), "PERMISSION CHANGED", Toast.LENGTH_SHORT).show();
         if (granted) {
             locationListenerHolder.register(this);
         } else {
@@ -167,20 +167,20 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Log.d(TAG, "onLocationChanged");
+        Toast.makeText(getContext(), "LOCATION CHANGED", Toast.LENGTH_SHORT).show();
         presenter.onLocationChanged(location);
     }
 
     @Override
     public void onLocationProvidersAvailabilityChanged(boolean networkProviderEnabled, boolean gpsProviderEnabled) {
-        Log.d(TAG, "onLocationProvidersAvailabilityChanged");
+        Toast.makeText(getContext(), "GPS CHANGED", Toast.LENGTH_SHORT).show();
         presenter.onLocationProvidersAvailabilityChanged(networkProviderEnabled, gpsProviderEnabled);
     }
 
 
     @Override
     public void showCurrentLocation(@NonNull Location location) {
-        Toast.makeText(getContext(), "showCurrentLocation", Toast.LENGTH_SHORT).show();
+        // do nothing
     }
 
     @Override
