@@ -2,6 +2,7 @@ package com.zighter.zighterandroid.presentation.excursion.map;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
@@ -25,8 +26,8 @@ interface ExcursionMapView extends MvpView {
     @StateStrategyType(SingleStateStrategy.class)
     void showServerException();
 
-    @StateStrategyType(SkipStrategy.class)
-    void showSightSelection(@NonNull Sight sight, @NonNull Marker marker);
+    @StateStrategyType(AddToEndSingleStrategy.class)
+    void showSightSelection(@Nullable Sight sight, @Nullable Marker marker);
 
     @StateStrategyType(SkipStrategy.class)
     void showCurrentLocation(@NonNull Location location);

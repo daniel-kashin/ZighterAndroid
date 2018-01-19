@@ -1,12 +1,18 @@
 package com.zighter.zighterandroid.presentation.excursion.sight;
 
+import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -14,12 +20,18 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
+import com.zighter.zighterandroid.data.entities.presentation.Media;
 import com.zighter.zighterandroid.data.entities.service.Sight;
 import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
 import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
 import com.zighter.zighterandroid.util.LocationSettingsHelper;
+
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -72,6 +84,12 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     TextView sightName;
     @BindView(R.id.sight_distance)
     TextView sightDistance;
+    @BindView(R.id.recycler_view)
+    RecyclerView recyclerView;
+    @BindView(R.id.root_view)
+    ConstraintLayout rootView;
+    @BindView(R.id.main_text)
+    TextView mainText;
 
     @Nullable
     private Sight sight;
@@ -92,10 +110,19 @@ public class SightFragment extends BaseSupportFragment implements SightView,
         super.onCreate(savedInstanceState);
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+    public void onStart() {
+        super.onStart();
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
+                                                                    LinearLayoutManager.HORIZONTAL,
+                                                                    false);
+        layoutManager.setAutoMeasureEnabled(true);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setNestedScrollingEnabled(false);
+        List<Media> list = new ArrayList<>();
+        for (int i = 0; i < 50; ++i) list.add(new Media());
+        recyclerView.setAdapter(new MediaAdapter(list));
     }
 
     @Override
@@ -134,10 +161,6 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     @Override
     public void showSight(@NonNull Sight sight) {
         sightName.setText(sight.getName() != null ? sight.getName() : "Колизей");
-        ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
-        if (activity != null) {
-            activity.onSightShown();
-        }
     }
 
     @Override

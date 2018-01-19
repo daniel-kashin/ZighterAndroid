@@ -2,6 +2,7 @@ package com.zighter.zighterandroid.presentation.excursion.map;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.mapbox.mapboxsdk.annotations.Marker;
@@ -73,7 +74,7 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
         getViewState().showCurrentLocation(location);
     }
 
-    void onSightClicked(@NonNull Sight sight, @NonNull Marker marker) {
+    void onSightClicked(@Nullable Sight sight, @Nullable Marker marker) {
         getViewState().showSightSelection(sight, marker);
     }
 }

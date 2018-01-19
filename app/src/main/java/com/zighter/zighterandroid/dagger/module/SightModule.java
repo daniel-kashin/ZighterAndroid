@@ -12,11 +12,9 @@ import dagger.Provides;
 
 @Module
 public class SightModule {
-
     @Provides
     @SightScope
     SightPresenter.Builder provideSightPresenterBuilder() {
         return new SightPresenter.Builder();
     }
-
 }

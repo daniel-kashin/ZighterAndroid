@@ -264,18 +264,13 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
             mapboxMap.setOnMarkerClickListener(marker -> {
                 if (marker != selectedMarker && markersToSights.containsKey(marker)) {
-                    Marker previous = selectedMarker;
-                    selectedMarker = marker;
-
-                    if (previous != null) {
-                        previous.setIcon(IconFactory.getInstance(getContext()).defaultMarker());
-                        mapboxMap.updateMarker(previous);
+                    ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
+                    if (activity != null && activity.onSightSelected(markersToSights.get(marker))) {
+                        presenter.onSightClicked(markersToSights.get(marker), marker);
+                        return true;
+                    } else {
+                        return false;
                     }
-                    selectedMarker.setIcon(IconHelper.getIcon(getContext(), CHECKED_SIGHT));
-                    mapboxMap.updateMarker(selectedMarker);
-
-                    presenter.onSightClicked(markersToSights.get(selectedMarker), selectedMarker);
-                    return true;
                 } else {
                     return false;
                 }
@@ -299,24 +294,27 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     }
 
     @Override
-    public void showSightSelection(@NonNull Sight sight, @NonNull Marker marker) {
+    public void showSightSelection(@Nullable Sight sight, @Nullable Marker marker) {
         map.getMapAsync(mapboxMap -> {
-            ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
-            if (activity != null) {
-                activity.onSightSelected(sight);
+            Marker previous = selectedMarker;
+            if (previous != null) {
+                previous.setIcon(IconFactory.getInstance(getContext()).defaultMarker());
+                mapboxMap.updateMarker(previous);
+            }
+            if (sight == null || marker == null) {
+                // remove marker selection
+                selectedMarker = null;
+            } else {
+                // set marker selection
+                selectedMarker = marker;
+
+                selectedMarker.setIcon(IconHelper.getIcon(getContext(), CHECKED_SIGHT));
+                mapboxMap.updateMarker(selectedMarker);
             }
         });
     }
 
     public void removeSightSelection() {
-        map.getMapAsync(mapboxMap -> {
-            Marker previous = selectedMarker;
-            if (previous != null) {
-                selectedMarker = null;
-                previous.setIcon(IconFactory.getInstance(getContext()).defaultMarker());
-                mapboxMap.updateMarker(previous);
-            }
-        });
+        presenter.onSightClicked(null, selectedMarker);
     }
-
 }

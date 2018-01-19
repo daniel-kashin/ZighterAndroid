@@ -32,6 +32,11 @@ public class Sight implements Validable<Sight>, Serializable {
         this.type = type;
     }
 
+    // TODO
+    public void setName(@Nullable String name) {
+        this.name = name;
+    }
+
     @Override
     public boolean isValid() {
         return point != null && point.isValid() && uuid != null && !uuid.equals("");
