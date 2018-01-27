@@ -19,8 +19,8 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 public class LocationListenerHolder {
-    private static final long MIN_LOCATION_REQUEST_TIME = TimeUnit.SECONDS.toMillis(15);
-    private static final long MIN_LOCATION_REQUEST_DISTANCE_IN_METERS = 15;
+    private static final long MIN_LOCATION_REQUEST_TIME = TimeUnit.SECONDS.toMillis(10);
+    private static final long MIN_LOCATION_REQUEST_DISTANCE_IN_METERS = 30;
 
     @NonNull
     private final ProviderAwareLocationListener gpsLocationListener;

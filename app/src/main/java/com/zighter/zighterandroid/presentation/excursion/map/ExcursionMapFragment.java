@@ -206,11 +206,16 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         map.getMapAsync(mapboxMap -> {
             if (onDestroyViewCalled) return;
 
-            if (currentLocationMarker != null) mapboxMap.removeMarker(currentLocationMarker);
-            MarkerOptions markerOptions = new MarkerOptions()
-                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                    .icon(IconHelper.getIcon(getContext(), IconHelperType.CURRENT_LOCATION));
-            currentLocationMarker = mapboxMap.addMarker(markerOptions);
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            if (currentLocationMarker != null) {
+                currentLocationMarker.setPosition(latLng);
+                mapboxMap.updateMarker(currentLocationMarker);
+            } else {
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                        .icon(IconHelper.getIcon(getContext(), IconHelperType.CURRENT_LOCATION));
+                currentLocationMarker = mapboxMap.addMarker(markerOptions);
+            }
         });
     }
 
