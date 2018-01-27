@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CustomBottomSheetBehavior">
-        <attr name="behavior_anchorPoint" format="dimension"/>
-    </declare-styleable>
-
     <declare-styleable name="AnchorBottomSheetBehavior_Layout">
         <attr name="behavior_anchorOffset" format="dimension" />
         <attr name="behavior_defaultState" format="enum">
