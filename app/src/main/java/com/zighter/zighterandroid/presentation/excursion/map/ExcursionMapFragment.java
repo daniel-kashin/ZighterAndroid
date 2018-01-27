@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
@@ -20,8 +19,10 @@ import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.service.Excursion;
@@ -84,7 +85,10 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     private Marker selectedMarker;
     @Nullable
     private Marker currentLocationMarker;
-
+    @Nullable
+    private MapboxMap mapboxMapToSaveInstanceState;
+    @Nullable
+    private CameraPosition cameraPositionFromSavedInstanceState;
     private boolean onDestroyViewCalled = false;
 
     @Override
@@ -106,6 +110,10 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         super.onViewCreated(view, savedInstanceState);
         initializeViews();
         map.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            cameraPositionFromSavedInstanceState = savedInstanceState.getParcelable(MapboxConstants.STATE_CAMERA_POSITION);
+        }
     }
 
     private void initializeViews() {
@@ -162,7 +170,12 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.clear();
+
+        if (mapboxMapToSaveInstanceState != null) {
+            CameraPosition cameraPosition = mapboxMapToSaveInstanceState.getCameraPosition();
+            outState.putParcelable(MapboxConstants.STATE_CAMERA_POSITION, cameraPosition);
+            mapboxMapToSaveInstanceState = null;
+        }
         map.onSaveInstanceState(outState);
     }
 
@@ -216,10 +229,9 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                         map.getMapAsync(mapboxMap -> {
                             if (onDestroyViewCalled) return;
 
-                            mapboxMap.animateCamera(mapboxMapInner -> new CameraPosition.Builder()
-                                                            .target(currentLocationMarker.getPosition())
-                                                            .build(),
-                                                    300);
+                            mapboxMap.moveCamera(mapboxMapInner -> new CameraPosition.Builder()
+                                    .target(currentLocationMarker.getPosition())
+                                    .build());
                         });
                     }
                 });
@@ -251,6 +263,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     public void showExcursion(@NonNull final Excursion excursion) {
         map.getMapAsync(mapboxMap -> {
             if (onDestroyViewCalled) return;
+
+            this.mapboxMapToSaveInstanceState = mapboxMap;
 
             // add sights
             markersToSights.clear();
@@ -290,12 +304,16 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                                               .width(3f));
             }
 
-            mapboxMap.moveCamera(mapboxMapInner -> new CameraPosition.Builder()
-                    .target(new LatLng(excursion.getSightAt(0).getLatitude(),
-                                       excursion.getSightAt(0).getLongitude()))
-                    .zoom(13)
-                    .build()
-            );
+            if (cameraPositionFromSavedInstanceState == null) {
+                mapboxMap.moveCamera(mapboxMapInner -> new CameraPosition.Builder()
+                        .target(new LatLng(excursion.getSightAt(0).getLatitude(),
+                                           excursion.getSightAt(0).getLongitude()))
+                        .zoom(13)
+                        .build()
+                );
+            } else {
+                mapboxMap.setCameraPosition(cameraPositionFromSavedInstanceState);
+            }
             mapboxMap.setMaxZoomPreference(25);
             mapboxMap.setMinZoomPreference(10);
 
