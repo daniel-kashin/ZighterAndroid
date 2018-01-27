@@ -8,4 +8,13 @@
 
     <string name="kilometers">km</string>
     <string name="meters">m</string>
+
+    <string name="open_permission_settings_request_title">Open permission settings?</string>
+    <string name="open_permission_settings_request_message">Please, enable Location permission to be able to see your location on the map.</string>
+
+    <string name="open_gps_settings_request_title">Open GPS settings?</string>
+    <string name="open_gps_settings_request_message">Please, turn on GPS to be able to see your location on the map.</string>
+
+    <string name="yes">YES</string>
+    <string name="no">NO</string>
 </resources>

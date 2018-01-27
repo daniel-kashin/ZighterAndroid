@@ -6,8 +6,9 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -32,6 +33,8 @@ import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
 import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
 import com.zighter.zighterandroid.util.IconHelper;
+import com.zighter.zighterandroid.util.IconHelperType;
+import com.zighter.zighterandroid.util.LocationSettingsHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,8 +44,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import butterknife.BindView;
-
-import static com.zighter.zighterandroid.util.IconHelper.Type.CHECKED_SIGHT;
 
 @SuppressWarnings("CodeBlock2Expr")
 public class ExcursionMapFragment extends BaseSupportFragment implements ExcursionMapView,
@@ -81,7 +82,10 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     private HashMap<Marker, Sight> markersToSights = new HashMap<>();
     @Nullable
     private Marker selectedMarker;
+    @Nullable
+    private Marker currentLocationMarker;
 
+    private boolean onDestroyViewCalled = false;
 
     @Override
     protected int getLayoutId() {
@@ -135,8 +139,16 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         locationListenerHolder.unregister(this);
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        onDestroyViewCalled = false;
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
     @Override
     public void onDestroyView() {
+        onDestroyViewCalled = true;
         map.onDestroy();
         super.onDestroyView();
     }
@@ -150,13 +162,13 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        //map.onSaveInstanceState(outState);
+        outState.clear();
+        map.onSaveInstanceState(outState);
     }
 
 
     @Override
     public void onLocationPermissionGranted(boolean granted) {
-        Toast.makeText(getContext(), "PERMISSION CHANGED", Toast.LENGTH_SHORT).show();
         if (granted) {
             locationListenerHolder.register(this);
         } else {
@@ -167,20 +179,26 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        Toast.makeText(getContext(), "LOCATION CHANGED", Toast.LENGTH_SHORT).show();
         presenter.onLocationChanged(location);
     }
 
     @Override
     public void onLocationProvidersAvailabilityChanged(boolean networkProviderEnabled, boolean gpsProviderEnabled) {
-        Toast.makeText(getContext(), "GPS CHANGED", Toast.LENGTH_SHORT).show();
         presenter.onLocationProvidersAvailabilityChanged(networkProviderEnabled, gpsProviderEnabled);
     }
 
 
     @Override
     public void showCurrentLocation(@NonNull Location location) {
-        // do nothing
+        map.getMapAsync(mapboxMap -> {
+            if (onDestroyViewCalled) return;
+
+            if (currentLocationMarker != null) mapboxMap.removeMarker(currentLocationMarker);
+            MarkerOptions markerOptions = new MarkerOptions()
+                    .position(new LatLng(location.getLatitude(), location.getLongitude()))
+                    .icon(IconHelper.getIcon(getContext(), IconHelperType.CURRENT_LOCATION));
+            currentLocationMarker = mapboxMap.addMarker(markerOptions);
+        });
     }
 
     @Override
@@ -188,17 +206,28 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         locationImageView.setVisibility(View.VISIBLE);
         if (!isPermissionAvailable) {
             locationImageView.setOnClickListener(view -> {
-                Toast.makeText(getContext(), "Permission not enabled", Toast.LENGTH_SHORT).show();
+                LocationSettingsHelper.requestOpenPermissionSettings(getActivity());
             });
+            removeCurrentLocationMarker();
         } else {
             if (isLocationProviderEnabled) {
                 locationImageView.setOnClickListener(view -> {
-                    Toast.makeText(getContext(), "Permission and provider enabled", Toast.LENGTH_SHORT).show();
+                    if (currentLocationMarker != null) {
+                        map.getMapAsync(mapboxMap -> {
+                            if (onDestroyViewCalled) return;
+
+                            mapboxMap.animateCamera(mapboxMapInner -> new CameraPosition.Builder()
+                                                            .target(currentLocationMarker.getPosition())
+                                                            .build(),
+                                                    300);
+                        });
+                    }
                 });
             } else {
                 locationImageView.setOnClickListener(view -> {
-                    Toast.makeText(getContext(), "Permission enabled and provider not enabled", Toast.LENGTH_SHORT).show();
+                    LocationSettingsHelper.requestOpenGpsSettings(getActivity());
                 });
+                removeCurrentLocationMarker();
             }
         }
     }
@@ -207,6 +236,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void showLoading() {
         map.getMapAsync(mapboxMap -> {
+            if (onDestroyViewCalled) return;
+
             mapboxMap.setOnMarkerClickListener(null);
             progressBar.setVisibility(View.VISIBLE);
         });
@@ -219,9 +250,13 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void showExcursion(@NonNull final Excursion excursion) {
         map.getMapAsync(mapboxMap -> {
+            if (onDestroyViewCalled) return;
+
             // add sights
             markersToSights.clear();
             for (int i = 0; i < excursion.getSightSize(); ++i) {
+                if (onDestroyViewCalled) return;
+
                 Sight sight = excursion.getSightAt(i);
                 Marker marker = mapboxMap.addMarker(new MarkerOptions()
                                                             .position(new LatLng(sight.getLatitude(), sight.getLongitude()))
@@ -231,6 +266,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
             // add paths
             for (int i = 0; i < excursion.getPathSize(); ++i) {
+                if (onDestroyViewCalled) return;
+
                 Path path = excursion.getPathAt(i);
 
                 Point firstEndpoint = path.getFirstEndpoint();
@@ -262,7 +299,11 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             mapboxMap.setMaxZoomPreference(25);
             mapboxMap.setMinZoomPreference(10);
 
+            if (onDestroyViewCalled) return;
+
             mapboxMap.setOnMarkerClickListener(marker -> {
+                if (onDestroyViewCalled) return false;
+
                 if (marker != selectedMarker && markersToSights.containsKey(marker)) {
                     ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
                     if (activity != null && activity.onSightSelected(markersToSights.get(marker))) {
@@ -284,18 +325,18 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void showNetworkUnavailable() {
         hideLoading();
-        Toast.makeText(getContext(), "Network unavailable", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showServerException() {
         hideLoading();
-        Toast.makeText(getContext(), "Api exception", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showSightSelection(@Nullable Sight sight, @Nullable Marker marker) {
         map.getMapAsync(mapboxMap -> {
+            if (onDestroyViewCalled) return;
+
             Marker previous = selectedMarker;
             if (previous != null) {
                 previous.setIcon(IconFactory.getInstance(getContext()).defaultMarker());
@@ -308,7 +349,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 // set marker selection
                 selectedMarker = marker;
 
-                selectedMarker.setIcon(IconHelper.getIcon(getContext(), CHECKED_SIGHT));
+                selectedMarker.setIcon(IconHelper.getIcon(getContext(), IconHelperType.CHECKED_SIGHT));
                 mapboxMap.updateMarker(selectedMarker);
             }
         });
@@ -316,5 +357,18 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
     public void removeSightSelection() {
         presenter.onSightClicked(null, selectedMarker);
+    }
+
+    private void removeCurrentLocationMarker() {
+        if (currentLocationMarker != null) {
+            map.getMapAsync(mapboxMap -> {
+                if (onDestroyViewCalled) return;
+
+                if (currentLocationMarker != null) {
+                    currentLocationMarker.setIcon(IconHelper.getIcon(getContext(), IconHelperType.CURRENT_LOCATION_OFFLINE));
+                    mapboxMap.updateMarker(currentLocationMarker);
+                }
+            });
+        }
     }
 }

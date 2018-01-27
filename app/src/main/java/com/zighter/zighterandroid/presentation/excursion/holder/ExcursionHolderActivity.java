@@ -42,7 +42,6 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
 
     private boolean locationPermissionNeedsRefresh = false;
     private boolean showBottomSheetAfterHide = false;
-    private boolean isBottomSheetUpdateNeeded = false;
 
     @Override
     protected void onInjectDependencies() {

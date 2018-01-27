@@ -1,6 +1,7 @@
 apply from: 'dependencies.gradle'
 
 buildscript {
+    ext.kotlin_version = '1.2.20'
     apply from: 'dependencies.gradle'
 
     repositories {
@@ -12,6 +13,7 @@ buildscript {
     dependencies {
         classpath gradlePlugins.android
         classpath gradlePlugins.googleServices
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 

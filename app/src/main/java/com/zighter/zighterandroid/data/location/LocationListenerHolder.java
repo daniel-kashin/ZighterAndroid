@@ -19,8 +19,8 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 public class LocationListenerHolder {
-    private static final long MIN_LOCATION_REQUEST_TIME = TimeUnit.SECONDS.toMillis(1);
-    private static final long MIN_LOCATION_REQUEST_DISTANCE_IN_METERS = 1;
+    private static final long MIN_LOCATION_REQUEST_TIME = TimeUnit.SECONDS.toMillis(15);
+    private static final long MIN_LOCATION_REQUEST_DISTANCE_IN_METERS = 15;
 
     @NonNull
     private final ProviderAwareLocationListener gpsLocationListener;
@@ -49,20 +49,15 @@ public class LocationListenerHolder {
         if (!isRegistered(subscriber)) {
             boolean wasEmpty = subscribers.isEmpty();
 
-            if (wasEmpty) {
-                updateProvidersAvailability();
-            }
-
+            if (wasEmpty) updateProvidersAvailability();
             subscriber.onLocationProvidersAvailabilityChanged(isNetworkLocationEnabled, isGpsLocationEnabled);
+
             Location location = LocationSettingsHelper.getLastKnownLocation(locationManager);
-            if (location != null) {
-                subscriber.onLocationChanged(location);
-            }
+            if (location != null) subscriber.onLocationChanged(location);
+
             subscribers.add(subscriber);
 
-            if (wasEmpty) {
-                startLocationUpdates();
-            }
+            if (wasEmpty) startLocationUpdates();
         }
     }
 

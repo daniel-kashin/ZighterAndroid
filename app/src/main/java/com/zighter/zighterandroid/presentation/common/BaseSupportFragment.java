@@ -40,7 +40,10 @@ public abstract class BaseSupportFragment extends MvpAppCompatFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (unbinder != null) unbinder.unbind();
+        if (unbinder != null) {
+            unbinder.unbind();
+            unbinder = null;
+        }
     }
 
     protected abstract void onInjectDependencies();
