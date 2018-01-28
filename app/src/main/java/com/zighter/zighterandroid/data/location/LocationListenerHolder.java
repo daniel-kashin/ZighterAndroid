@@ -19,44 +19,42 @@ import static android.location.LocationManager.GPS_PROVIDER;
 import static android.location.LocationManager.NETWORK_PROVIDER;
 
 public class LocationListenerHolder {
-    private static final long MIN_LOCATION_REQUEST_TIME = TimeUnit.SECONDS.toMillis(10);
-    private static final long MIN_LOCATION_REQUEST_DISTANCE_IN_METERS = 30;
+    private static final long MIN_GPS_LOCATION_REQUEST_TIME = TimeUnit.SECONDS.toMillis(20);
+    private static final long MIN_NETWORK_LOCATION_REQUEST_TIME = TimeUnit.SECONDS.toMillis(5);
+    private static final long MIN_LOCATION_REQUEST_DISTANCE_IN_METERS = 20;
 
+    @NonNull
+    private final LocationManager locationManager;
+    @NonNull
+    private final List<OnLocationChangeListener> subscribers;
     @NonNull
     private final ProviderAwareLocationListener gpsLocationListener;
     @NonNull
     private final ProviderAwareLocationListener networkLocationListener;
-    @NonNull
-    private final List<OnLocationChangeListener> subscribers;
-    @NonNull
-    private final LocationManager locationManager;
 
     private boolean areLocationUpdatesActive;
-    private boolean isGpsLocationEnabled;
-    private boolean isNetworkLocationEnabled;
+    @Nullable
+    private Boolean isGpsLocationEnabled;
+    @Nullable
+    private Boolean isNetworkLocationEnabled;
+    @Nullable
+    private Location lastKnownLocation;
 
     @UiThread
     public LocationListenerHolder(@NonNull LocationManager locationManager) {
         this.locationManager = locationManager;
-
-        this.subscribers = new ArrayList<>();
-        gpsLocationListener = new ProviderAwareLocationListener(this, locationManager, GPS_PROVIDER);
-        networkLocationListener = new ProviderAwareLocationListener(this, locationManager, NETWORK_PROVIDER);
+        subscribers = new ArrayList<>();
+        gpsLocationListener = new ProviderAwareLocationListener(this, GPS_PROVIDER);
+        networkLocationListener = new ProviderAwareLocationListener(this, NETWORK_PROVIDER);
     }
 
     @UiThread
     public void register(@NonNull OnLocationChangeListener subscriber) {
         if (!isRegistered(subscriber)) {
             boolean wasEmpty = subscribers.isEmpty();
-
-            if (wasEmpty) updateProvidersAvailability();
-            subscriber.onLocationProvidersAvailabilityChanged(isNetworkLocationEnabled, isGpsLocationEnabled);
-
-            Location location = LocationSettingsHelper.getLastKnownLocation(locationManager);
-            if (location != null) subscriber.onLocationChanged(location);
-
             subscribers.add(subscriber);
-
+            if (wasEmpty) updateProvidersAvailability();
+            notifyListener(subscriber);
             if (wasEmpty) startLocationUpdates();
         }
     }
@@ -71,21 +69,25 @@ public class LocationListenerHolder {
         }
     }
 
-    @UiThread
     private boolean isRegistered(@NonNull OnLocationChangeListener subscriber) {
         return subscribers.contains(subscriber);
     }
 
-    @UiThread
+    @SuppressLint("MissingPermission")
     private void startLocationUpdates() {
         if (!areLocationUpdatesActive) {
             areLocationUpdatesActive = true;
-            startLocationUpdates(gpsLocationListener);
-            startLocationUpdates(networkLocationListener);
+            locationManager.requestLocationUpdates(gpsLocationListener.getProvider(),
+                                                   MIN_GPS_LOCATION_REQUEST_TIME,
+                                                   MIN_LOCATION_REQUEST_DISTANCE_IN_METERS,
+                                                   gpsLocationListener);
+            locationManager.requestLocationUpdates(networkLocationListener.getProvider(),
+                                                   MIN_NETWORK_LOCATION_REQUEST_TIME,
+                                                   MIN_LOCATION_REQUEST_DISTANCE_IN_METERS,
+                                                   networkLocationListener);
         }
     }
 
-    @UiThread
     private void stopLocationUpdates() {
         if (areLocationUpdatesActive) {
             areLocationUpdatesActive = false;
@@ -94,51 +96,70 @@ public class LocationListenerHolder {
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private void startLocationUpdates(@NonNull ProviderAwareLocationListener listener) {
-        locationManager.requestLocationUpdates(listener.getProvider(),
-                                               MIN_LOCATION_REQUEST_TIME,
-                                               MIN_LOCATION_REQUEST_DISTANCE_IN_METERS,
-                                               listener);
+    private void stopLocationUpdates(@NonNull ProviderAwareLocationListener listener) {
+        locationManager.removeUpdates(listener);
     }
 
-    private void stopLocationUpdates(@NonNull LocationListener locationListener) {
-        locationManager.removeUpdates(locationListener);
+    @NonNull
+    private ProvidersUpdateResult updateProvidersAvailability() {
+        LocationState locationStatePrevious = getLocationState();
+        Boolean isGpsLocationEnabledPrevious = isGpsLocationEnabled;
+        Boolean isNetworkLocationEnabledPrevious = isNetworkLocationEnabled;
+
+        isGpsLocationEnabled = LocationSettingsHelper.isGpsLocationEnabled(locationManager);
+        isNetworkLocationEnabled = LocationSettingsHelper.isNetworkLocationEnabled(locationManager);
+
+        boolean providersUpdated = isGpsLocationEnabledPrevious == null
+                || isNetworkLocationEnabledPrevious == null
+                || isGpsLocationEnabledPrevious != isGpsLocationEnabled
+                || isNetworkLocationEnabledPrevious != isNetworkLocationEnabled;
+
+        LocationState locationState = getLocationState();
+
+        return new ProvidersUpdateResult(providersUpdated, locationState != locationStatePrevious);
     }
 
-    private void updateProvidersAvailability() {
-        boolean isGpsLocationEnabledNew = LocationSettingsHelper.isGpsLocationEnabled(locationManager);
-        boolean isNetworkLocationEnabledNew = LocationSettingsHelper.isNetworkLocationEnabled(locationManager);
+    private void notifyListeners(@NonNull ProvidersUpdateResult providersUpdateResult) {
+        if (isNetworkLocationEnabled == null || isGpsLocationEnabled == null) {
+            throw new IllegalStateException();
+        }
 
-        boolean updated = isGpsLocationEnabledNew != isGpsLocationEnabled
-                || isNetworkLocationEnabledNew != isNetworkLocationEnabled;
-
-        isGpsLocationEnabled = isGpsLocationEnabledNew;
-        isNetworkLocationEnabled = isNetworkLocationEnabledNew;
-
-        if (!subscribers.isEmpty() && updated) {
+        if (!subscribers.isEmpty() && providersUpdateResult.getProvidersUpdated()) {
             for (OnLocationChangeListener listener : subscribers) {
                 listener.onLocationProvidersAvailabilityChanged(isNetworkLocationEnabled, isGpsLocationEnabled);
+
+                if (providersUpdateResult.getLocationStateUpdated()) {
+                    if (lastKnownLocation != null) {
+                        listener.onLocationChanged(lastKnownLocation,
+                                                   getLocationState() == LocationState.ACTIVE);
+                    }
+                }
             }
         }
     }
 
-    private void updateProviderAvailability(@Nullable String provider) {
-        boolean updated = false;
-        if (GPS_PROVIDER.equals(provider)) {
-            boolean isGpsLocationEnabledNew = LocationSettingsHelper.isGpsLocationEnabled(locationManager);
-            updated = isGpsLocationEnabledNew != isGpsLocationEnabled;
-            isGpsLocationEnabled = isGpsLocationEnabledNew;
-        } else if (NETWORK_PROVIDER.equals(provider)) {
-            boolean isNetworkLocationEnabledNew = LocationSettingsHelper.isNetworkLocationEnabled(locationManager);
-            updated = isNetworkLocationEnabledNew != isNetworkLocationEnabled;
-            isNetworkLocationEnabled = isNetworkLocationEnabledNew;
+    private void notifyListener(@NonNull OnLocationChangeListener listenerToForceNotify) {
+        if (isNetworkLocationEnabled == null || isGpsLocationEnabled == null) {
+            throw new IllegalStateException();
         }
 
-        if (!subscribers.isEmpty() && updated) {
-            for (OnLocationChangeListener listener : subscribers) {
-                listener.onLocationProvidersAvailabilityChanged(isNetworkLocationEnabled, isGpsLocationEnabled);
-            }
+        listenerToForceNotify.onLocationProvidersAvailabilityChanged(isNetworkLocationEnabled, isGpsLocationEnabled);
+
+        lastKnownLocation = LocationSettingsHelper.getLastKnownLocation(locationManager, lastKnownLocation);
+        if (lastKnownLocation != null) {
+            listenerToForceNotify.onLocationChanged(lastKnownLocation,
+                                                    getLocationState() == LocationState.ACTIVE);
+        }
+    }
+
+    private LocationState getLocationState() {
+        if (isGpsLocationEnabled == null && isNetworkLocationEnabled == null) {
+            return LocationState.NOT_INITIALIZED;
+        } else if (isGpsLocationEnabled != null && isGpsLocationEnabled
+                || isNetworkLocationEnabled != null && isNetworkLocationEnabled) {
+            return LocationState.ACTIVE;
+        } else {
+            return LocationState.OUTDATED;
         }
     }
 
@@ -146,15 +167,11 @@ public class LocationListenerHolder {
         @NonNull
         private final LocationListenerHolder locationListenerHolder;
         @NonNull
-        private final LocationManager locationManager;
-        @NonNull
         private final String provider;
 
         ProviderAwareLocationListener(@NonNull LocationListenerHolder locationListenerHolder,
-                                      @NonNull LocationManager locationManager,
                                       @NonNull String provider) {
             this.locationListenerHolder = locationListenerHolder;
-            this.locationManager = locationManager;
             this.provider = provider;
         }
 
@@ -166,8 +183,9 @@ public class LocationListenerHolder {
         @Override
         public void onLocationChanged(Location location) {
             if (location != null) {
+                locationListenerHolder.lastKnownLocation = location;
                 for (OnLocationChangeListener listener : locationListenerHolder.subscribers) {
-                    listener.onLocationChanged(location);
+                    listener.onLocationChanged(location, true);
                 }
             }
         }
@@ -178,18 +196,26 @@ public class LocationListenerHolder {
 
         @Override
         public void onProviderEnabled(String provider) {
-            locationListenerHolder.updateProviderAvailability(provider);
+            ProvidersUpdateResult providersUpdateResult = locationListenerHolder.updateProvidersAvailability();
+            locationListenerHolder.notifyListeners(providersUpdateResult);
         }
 
         @Override
         public void onProviderDisabled(String provider) {
-            locationListenerHolder.updateProviderAvailability(provider);
+            ProvidersUpdateResult providersUpdateResult = locationListenerHolder.updateProvidersAvailability();
+            locationListenerHolder.notifyListeners(providersUpdateResult);
         }
     }
 
     public interface OnLocationChangeListener {
-        void onLocationChanged(@NonNull Location location);
+        void onLocationChanged(@NonNull Location location, boolean isActive);
 
         void onLocationProvidersAvailabilityChanged(boolean networkProviderEnabled, boolean gpsProviderEnabled);
+    }
+
+    private enum LocationState {
+        ACTIVE,
+        OUTDATED,
+        NOT_INITIALIZED
     }
 }

@@ -30,7 +30,7 @@ interface ExcursionMapView extends MvpView {
     void showSightSelection(@Nullable Sight sight, @Nullable Marker marker);
 
     @StateStrategyType(SkipStrategy.class)
-    void showCurrentLocation(@NonNull Location location);
+    void showCurrentLocation(@NonNull Location location, boolean active);
 
     @StateStrategyType(SkipStrategy.class)
     void updateLocationAvailability(boolean isPermissionGranted, boolean isLocationProviderEnabled);

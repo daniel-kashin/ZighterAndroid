@@ -32,11 +32,11 @@ public class SightPresenter extends MvpPresenter<SightView> {
         getViewState().showSight(sight);
     }
 
-    void onLocationChanged(@NonNull Location location) {
-        int distanceInMeters = (int) DistanceHelper.distanceInMeters(location.getLatitude(),
-                                                                     sight.getLatitude(),
-                                                                     location.getLongitude(),
-                                                                     sight.getLongitude());
+    void onLocationChanged(@NonNull Location location, boolean active) {
+        Integer distanceInMeters = active ?
+                (int) DistanceHelper.distanceInMeters(location.getLatitude(), sight.getLatitude(),
+                                                      location.getLongitude(), sight.getLongitude())
+                : null;
         getViewState().showCurrentDistance(distanceInMeters);
     }
 

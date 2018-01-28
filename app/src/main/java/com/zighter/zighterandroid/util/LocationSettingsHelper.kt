@@ -82,10 +82,11 @@ fun requestOpenGpsSettings(activity: Activity) {
 }
 
 @Throws(SecurityException::class)
-fun getLastKnownLocation(locationManager: LocationManager): Location? {
+fun getLastKnownLocation(locationManager: LocationManager, defaultLocation: Location?): Location? {
     val location: Location? = locationManager.getLastKnownLocation(GPS_PROVIDER)
             ?: locationManager.getLastKnownLocation(NETWORK_PROVIDER)
             ?: locationManager.getLastKnownLocation(PASSIVE_PROVIDER)
+            ?: defaultLocation
 
     return location
 }

@@ -142,8 +142,8 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     }
 
     @Override
-    public void onLocationChanged(@NonNull Location location) {
-        presenter.onLocationChanged(location);
+    public void onLocationChanged(@NonNull Location location, boolean active) {
+        presenter.onLocationChanged(location, active);
     }
 
     @Override
@@ -153,9 +153,7 @@ public class SightFragment extends BaseSupportFragment implements SightView,
 
     @Override
     public void updateLocationAvailability(boolean isPermissionAvailable, boolean isLocationProviderEnabled) {
-        if (!isPermissionAvailable || !isLocationProviderEnabled) {
-            sightDistance.setText("");
-        }
+
     }
 
     @Override
@@ -164,10 +162,15 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     }
 
     @Override
-    public void showCurrentDistance(int distanceInMeters) {
-        String distance = distanceInMeters > 1000
-                ? (distanceInMeters / 1000 + " " + getString(R.string.kilometers))
-                : (distanceInMeters + " " + getString(R.string.meters));
+    public void showCurrentDistance(Integer distanceInMeters) {
+        String distance;
+        if (distanceInMeters == null) {
+            distance = null;
+        } else {
+            distance = distanceInMeters > 1000
+                    ? distanceInMeters / 1000 + " " + getString(R.string.kilometers)
+                    : distanceInMeters + " " + getString(R.string.meters);
+        }
         sightDistance.setText(distance);
     }
 }

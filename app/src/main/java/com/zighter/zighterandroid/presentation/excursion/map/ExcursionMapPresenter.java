@@ -70,8 +70,8 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
         getViewState().updateLocationAvailability(isLocationPermissionGranted, isLocationProviderEnabled);
     }
 
-    void onLocationChanged(@NonNull Location location) {
-        getViewState().showCurrentLocation(location);
+    void onLocationChanged(@NonNull Location location, boolean active) {
+        getViewState().showCurrentLocation(location, active);
     }
 
     void onSightClicked(@Nullable Sight sight, @Nullable Marker marker) {

@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
@@ -105,6 +106,13 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         }
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        onDestroyViewCalled = false;
+        return super.onCreateView(inflater, container, savedInstanceState);
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -147,13 +155,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         locationListenerHolder.unregister(this);
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        onDestroyViewCalled = false;
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
     @Override
     public void onDestroyView() {
         onDestroyViewCalled = true;
@@ -191,8 +192,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     }
 
     @Override
-    public void onLocationChanged(@NonNull Location location) {
-        presenter.onLocationChanged(location);
+    public void onLocationChanged(@NonNull Location location, boolean active) {
+        presenter.onLocationChanged(location, active);
     }
 
     @Override
@@ -202,18 +203,22 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
 
     @Override
-    public void showCurrentLocation(@NonNull Location location) {
+    public void showCurrentLocation(@NonNull Location location, boolean active) {
         map.getMapAsync(mapboxMap -> {
             if (onDestroyViewCalled) return;
 
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            IconHelperType type = active
+                    ? IconHelperType.CURRENT_LOCATION_ACTIVE
+                    : IconHelperType.CURRENT_LOCATION_OUTDATED;
+            Icon icon = IconHelper.getIcon(getContext(), type);
+
             if (currentLocationMarker != null) {
                 currentLocationMarker.setPosition(latLng);
+                currentLocationMarker.setIcon(icon);
                 mapboxMap.updateMarker(currentLocationMarker);
             } else {
-                MarkerOptions markerOptions = new MarkerOptions()
-                        .position(new LatLng(location.getLatitude(), location.getLongitude()))
-                        .icon(IconHelper.getIcon(getContext(), IconHelperType.CURRENT_LOCATION));
+                MarkerOptions markerOptions = new MarkerOptions().position(latLng).icon(icon);
                 currentLocationMarker = mapboxMap.addMarker(markerOptions);
             }
         });
@@ -226,7 +231,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             locationImageView.setOnClickListener(view -> {
                 LocationSettingsHelper.requestOpenPermissionSettings(getActivity());
             });
-            removeCurrentLocationMarker();
         } else {
             if (isLocationProviderEnabled) {
                 locationImageView.setOnClickListener(view -> {
@@ -244,7 +248,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 locationImageView.setOnClickListener(view -> {
                     LocationSettingsHelper.requestOpenGpsSettings(getActivity());
                 });
-                removeCurrentLocationMarker();
             }
         }
     }
@@ -380,18 +383,5 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
     public void removeSightSelection() {
         presenter.onSightClicked(null, selectedMarker);
-    }
-
-    private void removeCurrentLocationMarker() {
-        if (currentLocationMarker != null) {
-            map.getMapAsync(mapboxMap -> {
-                if (onDestroyViewCalled) return;
-
-                if (currentLocationMarker != null) {
-                    currentLocationMarker.setIcon(IconHelper.getIcon(getContext(), IconHelperType.CURRENT_LOCATION_OFFLINE));
-                    mapboxMap.updateMarker(currentLocationMarker);
-                }
-            });
-        }
     }
 }

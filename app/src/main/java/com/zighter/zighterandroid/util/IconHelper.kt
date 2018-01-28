@@ -14,8 +14,8 @@ fun getIcon(context: Context, type: IconHelperType): Icon {
         IconHelperType.SIGHT -> R.drawable.ic_navigation_black
         IconHelperType.ENDPOINT -> R.drawable.ic_sight_black
         IconHelperType.CHECKED_SIGHT -> R.drawable.ic_checked_sight
-        IconHelperType.CURRENT_LOCATION -> R.mipmap.ic_accessibility
-        IconHelperType.CURRENT_LOCATION_OFFLINE -> R.mipmap.ic_accessibility_offline
+        IconHelperType.CURRENT_LOCATION_ACTIVE -> R.mipmap.ic_accessibility
+        IconHelperType.CURRENT_LOCATION_OUTDATED -> R.mipmap.ic_accessibility_outdated
         else -> throw IllegalStateException("Unknown icon type")
     }
 
@@ -26,7 +26,7 @@ enum class IconHelperType {
     ENDPOINT,
     SIGHT,
     CHECKED_SIGHT,
-    CURRENT_LOCATION,
-    CURRENT_LOCATION_OFFLINE
+    CURRENT_LOCATION_ACTIVE,
+    CURRENT_LOCATION_OUTDATED
 }
 

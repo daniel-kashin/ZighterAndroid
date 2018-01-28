@@ -13,8 +13,8 @@ public interface SightView extends MvpView {
     @StateStrategyType(SingleStateStrategy.class)
     void showSight(@NonNull Sight sight);
 
-    @StateStrategyType(AddToEndSingleStrategy.class)
-    void showCurrentDistance(int distanceInMeters);
+    @StateStrategyType(SkipStrategy.class)
+    void showCurrentDistance(Integer distanceInMeters);
 
     @StateStrategyType(SkipStrategy.class)
     void updateLocationAvailability(boolean isPermissionGranted, boolean isLocationProviderEnabled);
