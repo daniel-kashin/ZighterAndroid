@@ -10,7 +10,7 @@ import static com.zighter.zighterandroid.data.ZighterEndpoints.ROUTE;
 
 interface ExcursionsContract {
 
-    @GET(ROUTE + JSON_LIST + "/90")
+    @GET(ROUTE + JSON_LIST + "/40")
     Single<Excursion> getExcursion();
 
 }

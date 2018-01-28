@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.mapbox.mapboxsdk.annotations.Marker;
+import com.zighter.zighterandroid.data.entities.service.Excursion;
 import com.zighter.zighterandroid.data.entities.service.Sight;
 import com.zighter.zighterandroid.data.exception.BaseException;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;

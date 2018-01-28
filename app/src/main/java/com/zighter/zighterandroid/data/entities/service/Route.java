@@ -9,7 +9,7 @@ import com.zighter.zighterandroid.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Route implements Validable<Route> {
+public class Route extends Validable<Route> {
 
     @SerializedName("paths")
     private List<Path> paths;

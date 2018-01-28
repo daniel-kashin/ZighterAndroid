@@ -1,18 +1,20 @@
 package com.zighter.zighterandroid.data.entities.service;
 
-import android.support.annotation.NonNull;
+import java.io.Serializable;
 
-public interface Validable<T extends Validable> {
+abstract class Validable<T extends Validable> implements Serializable {
 
-    boolean isValid();
+    abstract boolean isValid();
 
     /**
      @return null if unable to validate
      */
-    T tryGetValidCopy();
+    abstract T tryGetValidCopy();
 
-    static void assertValid(@NonNull Validable validable) throws IllegalStateException {
-        if (!validable.isValid()) throw new IllegalStateException();
+    void assertValid() throws IllegalStateException {
+        if (!isValid()) {
+            throw new IllegalStateException("Is not valid");
+        }
     }
 
 }

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Sight implements Validable<Sight>, Serializable {
+public class Sight extends Validable<Sight> {
 
     @SerializedName("id")
     private String uuid;

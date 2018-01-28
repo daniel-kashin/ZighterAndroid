@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-public class Point implements Validable<Point>, Serializable {
+public class Point extends Validable<Point> {
 
     @SerializedName("lng")
     private double longitude;
@@ -21,7 +21,7 @@ public class Point implements Validable<Point>, Serializable {
 
     @Override
     public boolean isValid() {
-        return longitude != 0 && latitude != 0;
+        return longitude != 0.0 && latitude != 0.0;
     }
 
     @Override

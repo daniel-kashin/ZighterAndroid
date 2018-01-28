@@ -23,11 +23,11 @@ public class ExcursionsService extends BaseService<ExcursionsContract> {
     }
 
     Single<Excursion> getExcursion() {
-        //return getService().getExcursion();
-        return Single.fromCallable(() -> {
-            Gson gson = new Gson();
-            return gson.fromJson(HARDCODED, Excursion.class);
-        });
+        return getService().getExcursion();
+        //return Single.fromCallable(() -> {
+        //    Gson gson = new Gson();
+        //    return gson.fromJson(HARDCODED, Excursion.class);
+        //});
     }
 
 }

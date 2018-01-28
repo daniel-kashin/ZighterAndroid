@@ -22,6 +22,7 @@ import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.zighter.zighterandroid.R;
@@ -226,7 +227,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
     @Override
     public void updateLocationAvailability(boolean isPermissionAvailable, boolean isLocationProviderEnabled) {
-        locationImageView.setVisibility(View.VISIBLE);
         if (!isPermissionAvailable) {
             locationImageView.setOnClickListener(view -> {
                 LocationSettingsHelper.requestOpenPermissionSettings(getActivity());
@@ -271,7 +271,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     public void showExcursion(@NonNull final Excursion excursion) {
         map.getMapAsync(mapboxMap -> {
             if (onDestroyViewCalled) return;
-
             this.mapboxMapToSaveInstanceState = mapboxMap;
 
             // add sights
@@ -280,9 +279,10 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 if (onDestroyViewCalled) return;
 
                 Sight sight = excursion.getSightAt(i);
-                Marker marker = mapboxMap.addMarker(new MarkerOptions()
-                                                            .position(new LatLng(sight.getLatitude(), sight.getLongitude()))
-                                                            .title(sight.getName()));
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(new LatLng(sight.getLatitude(), sight.getLongitude()))
+                        .title(sight.getName());
+                Marker marker = mapboxMap.addMarker(markerOptions);
                 markersToSights.put(marker, sight);
             }
 
@@ -312,20 +312,25 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                                               .width(3f));
             }
 
-            if (cameraPositionFromSavedInstanceState == null) {
+            mapboxMap.setMaxZoomPreference(excursion.getMaxMapZoom());
+            mapboxMap.setMinZoomPreference(excursion.getMinMapZoom());
+
+            //if (excursion.getEastSouthMapBound() != null && excursion.getWestNorthMapBound() != null) {
+            //    LatLngBounds latLngBounds = LatLngBounds.from(excursion.getWestNorthMapBound().getLatitude(),
+            //                                                 excursion.getEastSouthMapBound().getLongitude(),
+            //                                                 excursion.getEastSouthMapBound().getLatitude(),
+            //                                                 excursion.getWestNorthMapBound().getLongitude());
+            //    mapboxMap.setLatLngBoundsForCameraTarget(latLngBounds);
+            //}
+
+            if (cameraPositionFromSavedInstanceState != null) {
+                mapboxMap.setCameraPosition(cameraPositionFromSavedInstanceState);
+            } else {
                 mapboxMap.moveCamera(mapboxMapInner -> new CameraPosition.Builder()
                         .target(new LatLng(excursion.getSightAt(0).getLatitude(),
                                            excursion.getSightAt(0).getLongitude()))
-                        .zoom(13)
-                        .build()
-                );
-            } else {
-                mapboxMap.setCameraPosition(cameraPositionFromSavedInstanceState);
+                        .build());
             }
-            mapboxMap.setMaxZoomPreference(25);
-            mapboxMap.setMinZoomPreference(10);
-
-            if (onDestroyViewCalled) return;
 
             mapboxMap.setOnMarkerClickListener(marker -> {
                 if (onDestroyViewCalled) return false;
@@ -345,6 +350,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
             hideLoading();
             map.setVisibility(View.VISIBLE);
+            locationImageView.setVisibility(View.VISIBLE);
         });
     }
 

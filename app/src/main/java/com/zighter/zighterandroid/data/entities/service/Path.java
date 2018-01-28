@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-public class Path implements Validable<Path> {
+public class Path extends Validable<Path> {
 
     @SerializedName("id")
     private int uuid;
