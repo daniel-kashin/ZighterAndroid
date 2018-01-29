@@ -10,8 +10,8 @@ import java.util.List;
 
 public class Excursion extends Validable<Excursion> {
 
-    public static final int DEFAULT_MIN_MAP_ZOOM = 10;
-    public static final int DEFAULT_MAX_MAP_ZOOM = 25;
+    public static final int DEFAULT_MIN_MAP_ZOOM = 8;
+    public static final int DEFAULT_MAX_MAP_ZOOM = 18;
 
     @SerializedName("id")
     private String uuid;
@@ -170,15 +170,17 @@ public class Excursion extends Validable<Excursion> {
     }
 
     public int getMinMapZoom() {
-        return mapZoomList != null && mapZoomList.size() >= 1 && mapZoomList.get(0) >= DEFAULT_MIN_MAP_ZOOM
-                ? mapZoomList.get(0)
-                : DEFAULT_MIN_MAP_ZOOM;
+        return //mapZoomList != null && mapZoomList.size() >= 1 && mapZoomList.get(0) >= DEFAULT_MIN_MAP_ZOOM
+               // ? mapZoomList.get(0)
+               // :
+                DEFAULT_MIN_MAP_ZOOM;
     }
 
     public int getMaxMapZoom() {
-        return mapZoomList != null && mapZoomList.size() >= 2 && mapZoomList.get(1) <= DEFAULT_MAX_MAP_ZOOM
-                ? mapZoomList.get(1)
-                : DEFAULT_MAX_MAP_ZOOM;
+        return //mapZoomList != null && mapZoomList.size() >= 2 && mapZoomList.get(1) <= DEFAULT_MAX_MAP_ZOOM
+               // ? mapZoomList.get(1)
+               // :
+                DEFAULT_MAX_MAP_ZOOM;
     }
 
     @Override

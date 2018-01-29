@@ -112,7 +112,6 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
 
         if (!isBottomSheetSliding(bottomSheetBehavior.getState())) {
             bottomSheet.post(() -> {
-                sight.setName(new Random(System.currentTimeMillis()).nextInt() + "");
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.bottom_sheet_fragment_container, SightFragment.newInstance(sight))
@@ -133,25 +132,21 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
 
     private void showBottomSheet() {
         Log.d(TAG, "showBottomSheet(" + bottomSheetBehavior.getState() + ")");
-        bottomSheet.post(() -> {
-            if (!isBottomSheetSliding(bottomSheetBehavior.getState())) {
-                if (bottomSheetBehavior.getState() == STATE_HIDDEN) {
-                    bottomSheet.setVisibility(View.VISIBLE);
-                    bottomSheetBehavior.setState(STATE_COLLAPSED);
-                } else {
-                    showBottomSheetAfterHide = true;
-                    bottomSheetBehavior.setState(STATE_HIDDEN);
-                }
+        if (!isBottomSheetSliding(bottomSheetBehavior.getState())) {
+            if (bottomSheetBehavior.getState() == STATE_HIDDEN) {
+                bottomSheet.setVisibility(View.VISIBLE);
+                bottomSheetBehavior.setState(STATE_COLLAPSED);
+            } else {
+                showBottomSheetAfterHide = true;
+                bottomSheetBehavior.setState(STATE_HIDDEN);
             }
-        });
+        }
     }
 
     private void hideBottomSheet() {
         Log.d(TAG, "hideBottomSheet");
-        bottomSheet.post(() -> {
-            showBottomSheetAfterHide = false;
-            bottomSheetBehavior.setState(STATE_HIDDEN);
-        });
+        showBottomSheetAfterHide = false;
+        bottomSheetBehavior.setState(STATE_HIDDEN);
     }
 
     private void initializeBottomSheet() {

@@ -18,16 +18,19 @@ public class Path extends Validable<Path> {
     @SerializedName("type")
     private String type;
 
-    @SerializedName("endpoint")
-    private List<Point> endpoints;
+    //@SerializedName("endpoint")
+    //private List<Point> endpoints;
 
-    @SerializedName("endpointId")
-    private List<Integer> endpointIds;
+    //@SerializedName("endpoints")
+    //private List<Integer> endpointIds;
 
-    @SerializedName("point")
+    @SerializedName("points")
     private List<Point> points;
 
-    private Path(int uuid, String type, List<Point> endpoints, List<Integer> endpointIds, List<Point> points) {
+    private Path(int uuid, String type,
+                 //List<Point> endpoints,
+                 //List<Integer> endpointIds,
+                 List<Point> points) {
         this.uuid = uuid;
         this.type = type;
     }
@@ -35,15 +38,18 @@ public class Path extends Validable<Path> {
     @Override
     public boolean isValid() {
         if (uuid == 0
-                || endpoints == null || endpoints.size() != 2
-                || endpointIds == null || endpointIds.size() != 2
-                || points == null || points.size() < 1) {
+                //|| endpoints == null || endpoints.size() != 2
+                //|| endpointIds == null || endpointIds.size() != 2
+                || points == null || points.size() < 1
+            //|| endpointIds.get(0) >= points.size()
+            //|| endpointIds.get(1) >= points.size()
+                ) {
             return false;
         }
 
-        for (Point point : endpoints) {
-            if (point == null || !point.isValid()) return false;
-        }
+        //for (Point point : endpoints) {
+        //    if (point == null || !point.isValid()) return false;
+        //}
         for (Point point : points) {
             if (point == null || !point.isValid()) return false;
         }
@@ -54,27 +60,33 @@ public class Path extends Validable<Path> {
     @Override
     public Path tryGetValidCopy() {
         if (uuid == 0
-                || endpoints == null || endpoints.size() != 2
-                || endpointIds == null || endpointIds.size() != 2
-                || points == null || points.size() < 1) {
+                //|| endpoints == null || endpoints.size() != 2
+                //|| endpointIds == null || endpointIds.size() != 2
+                || points == null || points.size() < 2) {
             return null;
         }
 
-        List<Point> endpointsCopy = new ArrayList<>();
-        for (Point point : endpoints) {
-            if (point != null && point.isValid()) endpointsCopy.add(point);
-        }
+        //List<Point> endpointsCopy = new ArrayList<>();
+        //for (Point point : endpoints) {
+        //    if (point != null && point.isValid()) endpointsCopy.add(point);
+        //}
 
-        List<Integer> endpointIdsCopy = new ArrayList<>();
-        endpointIdsCopy.addAll(endpointIds);
+        //List<Integer> endpointIdsCopy = new ArrayList<>();
+        //endpointIdsCopy.addAll(endpointIds);
 
         List<Point> pointsCopy = new ArrayList<>();
         for (Point point : points) {
             if (point != null && point.isValid()) pointsCopy.add(point);
         }
 
-        if (endpointsCopy.size() == 2 && endpointIdsCopy.size() == 2 && pointsCopy.size() >= 1) {
-            return new Path(uuid, type, endpointsCopy, endpointIdsCopy, pointsCopy);
+        if (//endpointsCopy.size() == 2 &&
+            //    endpointIdsCopy.size() == 2 &&
+                pointsCopy.size() >= 1) {
+            return new Path(uuid,
+                            type,
+                            //endpointsCopy,
+                            //    endpointIdsCopy,
+                            pointsCopy);
         } else {
             return null;
         }
@@ -97,12 +109,12 @@ public class Path extends Validable<Path> {
     }
 
     public Point getFirstEndpoint() {
-        return endpoints.get(0);
+        assertValid();
+        return points.get(0);
     }
 
     public Point getSecondEndpoint() {
-        return endpoints.get(1);
+        assertValid();
+        return points.get(points.size() - 1);
     }
-
-
 }
