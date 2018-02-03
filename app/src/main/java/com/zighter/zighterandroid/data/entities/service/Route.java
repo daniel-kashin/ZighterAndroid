@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Route extends Validable<Route> {
-
     @SerializedName("paths")
     private List<Path> paths;
 
@@ -85,6 +84,4 @@ public class Route extends Validable<Route> {
     Sight getSightAt(int index) {
         return sights.get(index);
     }
-
-
 }

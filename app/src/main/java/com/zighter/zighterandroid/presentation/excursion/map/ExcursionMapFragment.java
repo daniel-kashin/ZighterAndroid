@@ -333,19 +333,13 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             }
 
             mapboxMap.setOnMarkerClickListener(marker -> {
-                if (onDestroyViewCalled) return false;
-
-                if (marker != selectedMarker && markersToSights.containsKey(marker)) {
+                if (!onDestroyViewCalled && marker != selectedMarker && markersToSights.containsKey(marker)) {
                     ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
                     if (activity != null && activity.onSightSelected(markersToSights.get(marker))) {
                         presenter.onSightClicked(markersToSights.get(marker), marker);
-                        return true;
-                    } else {
-                        return false;
                     }
-                } else {
-                    return false;
                 }
+                return true;
             });
 
             hideLoading();

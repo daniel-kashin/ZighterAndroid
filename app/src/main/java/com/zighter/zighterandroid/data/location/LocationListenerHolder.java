@@ -115,8 +115,10 @@ public class LocationListenerHolder {
                 || isNetworkLocationEnabledPrevious != isNetworkLocationEnabled;
 
         LocationState locationState = getLocationState();
+        boolean locationStateUpdated = locationState != locationStatePrevious
+                && locationState != LocationState.ACTIVE;
 
-        return new ProvidersUpdateResult(providersUpdated, locationState != locationStatePrevious);
+        return new ProvidersUpdateResult(providersUpdated, locationStateUpdated);
     }
 
     private void notifyListeners(@NonNull ProvidersUpdateResult providersUpdateResult) {
