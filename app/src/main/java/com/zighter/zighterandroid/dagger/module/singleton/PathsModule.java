@@ -1,8 +1,9 @@
 package com.zighter.zighterandroid.dagger.module.singleton;
 
-import com.zighter.zighterandroid.data.repositories.excursions.ExcursionsRepository;
-import com.zighter.zighterandroid.data.repositories.excursions.ExcursionsService;
-import com.zighter.zighterandroid.data.repositories.excursions.ExcursionsStorage;
+import com.zighter.zighterandroid.data.entities.excursion.ExcursionMapper;
+import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
+import com.zighter.zighterandroid.data.repositories.excursion.ExcursionService;
+import com.zighter.zighterandroid.data.repositories.excursion.ExcursionStorage;
 
 import javax.inject.Singleton;
 
@@ -14,19 +15,27 @@ import okhttp3.OkHttpClient;
 public class PathsModule {
     @Singleton
     @Provides
-    ExcursionsService providePathsService(OkHttpClient okHttpClient) {
-        return new ExcursionsService(okHttpClient);
+    ExcursionService providePathsService(OkHttpClient okHttpClient) {
+        return new ExcursionService(okHttpClient);
     }
 
     @Singleton
     @Provides
-    ExcursionsStorage providePathsStorage() {
-        return new ExcursionsStorage();
+    ExcursionStorage providePathsStorage() {
+        return new ExcursionStorage();
     }
 
     @Singleton
     @Provides
-    ExcursionsRepository providePathsRepository(ExcursionsService excursionsService, ExcursionsStorage excursionsStorage) {
-        return new ExcursionsRepository(excursionsService, excursionsStorage);
+    ExcursionMapper provideExcursionMapper() {
+        return new ExcursionMapper();
+    }
+
+    @Singleton
+    @Provides
+    ExcursionRepository providePathsRepository(ExcursionService excursionService,
+                                               ExcursionStorage excursionStorage,
+                                               ExcursionMapper excursionMapper) {
+        return new ExcursionRepository(excursionService, excursionStorage, excursionMapper);
     }
 }

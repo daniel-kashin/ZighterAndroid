@@ -1,4 +1,6 @@
-package com.zighter.zighterandroid.data.entities.service;
+package com.zighter.zighterandroid.data.entities.excursion;
+
+import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -6,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-public class Path extends Validable<Path> {
+public class ServicePath extends Validable<ServicePath> {
 
     @SerializedName("id")
     private int uuid;
@@ -19,24 +21,24 @@ public class Path extends Validable<Path> {
     private String type;
 
     //@SerializedName("endpoint")
-    //private List<Point> endpoints;
+    //private List<ServicePoint> endpoints;
 
     //@SerializedName("endpoints")
     //private List<Integer> endpointIds;
 
     @SerializedName("points")
-    private List<Point> points;
+    private List<ServicePoint> points;
 
-    private Path(int uuid, String type,
-                 //List<Point> endpoints,
-                 //List<Integer> endpointIds,
-                 List<Point> points) {
+    private ServicePath(int uuid, String type,
+                        //List<ServicePoint> endpoints,
+                        //List<Integer> endpointIds,
+                        List<ServicePoint> points) {
         this.uuid = uuid;
         this.type = type;
     }
 
     @Override
-    public boolean isValid() {
+    boolean isValid() {
         if (uuid == 0
                 //|| endpoints == null || endpoints.size() != 2
                 //|| endpointIds == null || endpointIds.size() != 2
@@ -47,10 +49,10 @@ public class Path extends Validable<Path> {
             return false;
         }
 
-        //for (Point point : endpoints) {
+        //for (ServicePoint point : endpoints) {
         //    if (point == null || !point.isValid()) return false;
         //}
-        for (Point point : points) {
+        for (ServicePoint point : points) {
             if (point == null || !point.isValid()) return false;
         }
 
@@ -58,7 +60,8 @@ public class Path extends Validable<Path> {
     }
 
     @Override
-    public Path tryGetValidCopy() {
+    @Nullable
+    ServicePath tryGetValid(boolean copy) {
         if (uuid == 0
                 //|| endpoints == null || endpoints.size() != 2
                 //|| endpointIds == null || endpointIds.size() != 2
@@ -66,30 +69,34 @@ public class Path extends Validable<Path> {
             return null;
         }
 
-        //List<Point> endpointsCopy = new ArrayList<>();
-        //for (Point point : endpoints) {
+        //List<ServicePoint> endpointsCopy = new ArrayList<>();
+        //for (ServicePoint point : endpoints) {
         //    if (point != null && point.isValid()) endpointsCopy.add(point);
         //}
 
         //List<Integer> endpointIdsCopy = new ArrayList<>();
         //endpointIdsCopy.addAll(endpointIds);
 
-        List<Point> pointsCopy = new ArrayList<>();
-        for (Point point : points) {
+        List<ServicePoint> pointsCopy = new ArrayList<>();
+        for (ServicePoint point : points) {
             if (point != null && point.isValid()) pointsCopy.add(point);
         }
 
-        if (//endpointsCopy.size() == 2 &&
-            //    endpointIdsCopy.size() == 2 &&
-                pointsCopy.size() >= 1) {
-            return new Path(uuid,
-                            type,
-                            //endpointsCopy,
-                            //    endpointIdsCopy,
-                            pointsCopy);
-        } else {
+        if (//endpointsCopy.size() != 2 ||
+            //    endpointIdsCopy.size() != 2 ||
+                pointsCopy.size() < 1) {
             return null;
         }
+
+        if (!copy) {
+            return this;
+        }
+
+        return new ServicePath(uuid,
+                               type,
+                               //endpointsCopy,
+                               //    endpointIdsCopy,
+                               pointsCopy);
     }
 
     public int getUuid() {
@@ -104,16 +111,16 @@ public class Path extends Validable<Path> {
         return points.size();
     }
 
-    public Point getPointAt(int index) {
+    public ServicePoint getPointAt(int index) {
         return points.get(index);
     }
 
-    public Point getFirstEndpoint() {
+    public ServicePoint getFirstEndpoint() {
         assertValid();
         return points.get(0);
     }
 
-    public Point getSecondEndpoint() {
+    public ServicePoint getSecondEndpoint() {
         assertValid();
         return points.get(points.size() - 1);
     }

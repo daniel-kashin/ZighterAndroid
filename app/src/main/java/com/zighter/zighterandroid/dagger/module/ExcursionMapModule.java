@@ -1,7 +1,7 @@
 package com.zighter.zighterandroid.dagger.module;
 
 import com.zighter.zighterandroid.dagger.scope.NavigationScope;
-import com.zighter.zighterandroid.data.repositories.excursions.ExcursionsRepository;
+import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapPresenter;
 
 import javax.inject.Named;
@@ -18,10 +18,10 @@ public class ExcursionMapModule {
 
     @NavigationScope
     @Provides
-    ExcursionMapPresenter provideNavigationPresenter(ExcursionsRepository excursionsRepository,
+    ExcursionMapPresenter provideNavigationPresenter(ExcursionRepository excursionRepository,
                                                      @Named(TAG_IO) Scheduler worker,
                                                      @Named(TAG_UI) Scheduler ui) {
-        return new ExcursionMapPresenter(excursionsRepository, worker, ui);
+        return new ExcursionMapPresenter(excursionRepository, worker, ui);
     }
 
 }

@@ -22,15 +22,15 @@ import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
-import com.zighter.zighterandroid.data.entities.service.Excursion;
-import com.zighter.zighterandroid.data.entities.service.Path;
-import com.zighter.zighterandroid.data.entities.service.Point;
-import com.zighter.zighterandroid.data.entities.service.Sight;
+import com.zighter.zighterandroid.data.entities.excursion.Excursion;
+import com.zighter.zighterandroid.data.entities.excursion.ServicePoint;
+import com.zighter.zighterandroid.data.entities.excursion.ServicePath;
+import com.zighter.zighterandroid.data.entities.excursion.ServiceSight;
+import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
@@ -290,18 +290,18 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             for (int i = 0; i < excursion.getPathSize(); ++i) {
                 if (onDestroyViewCalled) return;
 
-                Path path = excursion.getPathAt(i);
+                ServicePath path = excursion.getPathAt(i);
 
-                Point firstEndpoint = path.getFirstEndpoint();
+                ServicePoint firstEndpoint = path.getFirstEndpoint();
                 mapboxMap.addMarker(new MarkerOptions().position(new LatLng(firstEndpoint.getLatitude(),
                                                                             firstEndpoint.getLongitude())));
-                Point secondEndpoint = path.getSecondEndpoint();
+                ServicePoint secondEndpoint = path.getSecondEndpoint();
                 mapboxMap.addMarker(new MarkerOptions().position(new LatLng(secondEndpoint.getLatitude(),
                                                                             secondEndpoint.getLongitude())));
 
                 List<LatLng> points = new ArrayList<>();
                 for (int j = 0; j < path.getPointSize(); ++j) {
-                    Point point = path.getPointAt(j);
+                    ServicePoint point = path.getPointAt(j);
                     points.add(new LatLng(point.getLatitude(), point.getLongitude()));
                 }
 

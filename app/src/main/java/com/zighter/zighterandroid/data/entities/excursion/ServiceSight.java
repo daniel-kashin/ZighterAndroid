@@ -1,19 +1,17 @@
-package com.zighter.zighterandroid.data.entities.service;
+package com.zighter.zighterandroid.data.entities.excursion;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class Sight extends Validable<Sight> {
+public class ServiceSight extends Validable<ServiceSight> {
 
     @SerializedName("id")
     private String uuid;
 
     @SerializedName("point")
-    private Point point;
+    private ServicePoint point;
 
     @SerializedName("description")
     private String description;
@@ -24,11 +22,11 @@ public class Sight extends Validable<Sight> {
     @SerializedName("type")
     private String type;
 
-    private Sight(@NonNull String uuid,
-                  @NonNull Point point,
-                  @Nullable String name,
-                  @Nullable String type,
-                  @Nullable String description) {
+    private ServiceSight(@NonNull String uuid,
+                         @NonNull ServicePoint point,
+                         @Nullable String name,
+                         @Nullable String type,
+                         @Nullable String description) {
         this.uuid = uuid;
         this.point = point;
         this.name = name;
@@ -41,12 +39,12 @@ public class Sight extends Validable<Sight> {
     }
 
     @Override
-    public Sight tryGetValidCopy() {
+    public ServiceSight tryGetValid(boolean copy) {
         if (point == null || uuid == null || uuid.equals("")) return null;
 
-        Point pointCopy = point.tryGetValidCopy();
+        ServicePoint pointCopy = point.tryGetValid(true);
         if (pointCopy != null) {
-            return new Sight(uuid, point.tryGetValidCopy(), name, type, description);
+            return new ServiceSight(uuid, pointCopy, name, type, description);
         } else {
             return null;
         }
@@ -59,23 +57,23 @@ public class Sight extends Validable<Sight> {
     }
 
     @Nullable
-    public String getType() {
+    String getType() {
         assertValid();
         return type;
     }
 
     @NonNull
-    public String getUuid() {
+    String getUuid() {
         assertValid();
         return uuid;
     }
 
-    public double getLongitude() {
+    double getLongitude() {
         assertValid();
         return point.getLongitude();
     }
 
-    public double getLatitude() {
+    double getLatitude() {
         assertValid();
         return point.getLatitude();
     }

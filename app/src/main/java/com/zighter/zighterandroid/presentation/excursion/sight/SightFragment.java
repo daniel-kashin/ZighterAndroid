@@ -7,14 +7,15 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
-import com.zighter.zighterandroid.data.entities.presentation.Media;
-import com.zighter.zighterandroid.data.entities.service.Sight;
+import com.zighter.zighterandroid.data.entities.excursion.Sight;
+import com.zighter.zighterandroid.data.entities.media.Media;
 import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
@@ -48,7 +49,7 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     @ProvidePresenter
     public SightPresenter providePresenter() {
         if (sight == null) {
-            throw new IllegalStateException("Sight must be non null when calling providePresenter");
+            throw new IllegalStateException("ServiceSight must be non null when calling providePresenter");
         }
 
         return sightPresenterBuilderProvider.get()
@@ -91,27 +92,39 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     @SuppressWarnings("ConstantConditions")
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        initializeSight();
+        super.onCreate(savedInstanceState);
+    }
+
+    private void initializeSight() {
         if (!getArguments().containsKey(KEY_SIGHT) || getArguments().getSerializable(KEY_SIGHT) == null) {
             throw new IllegalStateException("SightFragment must be created using newInstance method");
         }
 
         sight = (Sight) getArguments().getSerializable(KEY_SIGHT);
-        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initializeRecyclerView();
+    }
+
+    private void initializeRecyclerView() {
+        recyclerView.setNestedScrollingEnabled(false);
+
+        LinearLayoutManager layoutManager =
+                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        layoutManager.setAutoMeasureEnabled(true);
+        recyclerView.setLayoutManager(layoutManager);
+
+        ThumbnailsMediaAdapter thumbnailsMediaAdapter = new ThumbnailsMediaAdapter();
+        recyclerView.setAdapter(thumbnailsMediaAdapter);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),
-                                                                    LinearLayoutManager.HORIZONTAL,
-                                                                    false);
-        layoutManager.setAutoMeasureEnabled(true);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setNestedScrollingEnabled(false);
-        List<Media> list = new ArrayList<>();
-        for (int i = 0; i < 50; ++i) list.add(new Media());
-        recyclerView.setAdapter(new MediaAdapter(list));
     }
 
     @Override
@@ -147,6 +160,13 @@ public class SightFragment extends BaseSupportFragment implements SightView,
 
     @Override
     public void showSight(@NonNull Sight sight) {
+        int mediaSize = sight.getMediaSize();
+        List<Media> medias = new ArrayList<>(mediaSize);
+        for (int i = 0; i < mediaSize; ++i) {
+            medias.add(sight.getMediaAt(i));
+        }
+        ((ThumbnailsMediaAdapter)recyclerView.getAdapter()).setMedias(medias);
+
         sightName.setText(sight.getName() != null ? sight.getName() : "Колизей");
         sightDescription.setText(sight.getDescription());
     }

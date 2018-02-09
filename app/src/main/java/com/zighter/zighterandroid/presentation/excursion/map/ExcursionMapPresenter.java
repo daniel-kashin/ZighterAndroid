@@ -6,12 +6,12 @@ import android.support.annotation.Nullable;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.mapbox.mapboxsdk.annotations.Marker;
-import com.zighter.zighterandroid.data.entities.service.Excursion;
-import com.zighter.zighterandroid.data.entities.service.Sight;
+import com.zighter.zighterandroid.data.entities.excursion.ServiceSight;
+import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.data.exception.BaseException;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
 import com.zighter.zighterandroid.data.exception.ServerException;
-import com.zighter.zighterandroid.data.repositories.excursions.ExcursionsRepository;
+import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.presentation.common.BasePresenter;
 
 import io.reactivex.Scheduler;
@@ -26,13 +26,13 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
     private boolean isGpsLocationEnabled;
 
     @NonNull
-    private final ExcursionsRepository excursionsRepository;
+    private final ExcursionRepository excursionRepository;
 
-    public ExcursionMapPresenter(@NonNull ExcursionsRepository excursionsRepository,
+    public ExcursionMapPresenter(@NonNull ExcursionRepository excursionRepository,
                                  @NonNull Scheduler worker,
                                  @NonNull Scheduler ui) {
         super(worker, ui);
-        this.excursionsRepository = excursionsRepository;
+        this.excursionRepository = excursionRepository;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
         super.onFirstViewAttach();
         getViewState().showLoading();
 
-        excursionsRepository.getExcursion()
+        excursionRepository.getExcursion()
                 .compose(applySchedulersSingle())
                 .subscribe(excursion -> {
                     getViewState().showExcursion(excursion);

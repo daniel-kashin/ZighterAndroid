@@ -1,12 +1,10 @@
-package com.zighter.zighterandroid.data.entities.service;
+package com.zighter.zighterandroid.data.entities.excursion;
 
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class Point extends Validable<Point> {
+public class ServicePoint extends Validable<ServicePoint> {
 
     @SerializedName("lng")
     private double longitude;
@@ -14,7 +12,7 @@ public class Point extends Validable<Point> {
     @SerializedName("lat")
     private double latitude;
 
-    private Point(double longitude, double latitude) {
+    private ServicePoint(double longitude, double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
     }
@@ -25,10 +23,13 @@ public class Point extends Validable<Point> {
     }
 
     @Override
-    public Point tryGetValidCopy() {
-        return isValid()
-            ? new Point(longitude, latitude)
-            : null;
+    @Nullable
+    ServicePoint tryGetValid(boolean copy) {
+        if (isValid()) {
+            return copy ? new ServicePoint(longitude, latitude) : this;
+        } else {
+            return null;
+        }
     }
 
     public double getLongitude() {

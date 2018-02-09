@@ -1,17 +1,14 @@
 package com.zighter.zighterandroid.presentation.excursion.sight;
 
 import android.location.Location;
-import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.zighter.zighterandroid.data.entities.service.Sight;
-import com.zighter.zighterandroid.data.location.LocationListenerHolder;
+import com.zighter.zighterandroid.data.entities.excursion.ServiceSight;
+import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.util.DistanceHelper;
-
-import static com.zighter.zighterandroid.data.location.LocationListenerHolder.OnLocationChangeListener;
 
 @InjectViewState
 public class SightPresenter extends MvpPresenter<SightView> {

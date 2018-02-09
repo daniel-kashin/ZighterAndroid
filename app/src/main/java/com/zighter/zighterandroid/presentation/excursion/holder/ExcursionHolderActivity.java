@@ -13,14 +13,13 @@ import android.util.Log;
 import android.view.View;
 
 import com.zighter.zighterandroid.R;
-import com.zighter.zighterandroid.data.entities.service.Sight;
+import com.zighter.zighterandroid.data.entities.excursion.ServiceSight;
+import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment;
 import com.zighter.zighterandroid.presentation.excursion.sight.SightFragment;
 import com.zighter.zighterandroid.util.AnchorBottomSheetBehavior;
 import com.zighter.zighterandroid.util.LocationSettingsHelper;
-
-import java.util.Random;
 
 import butterknife.BindView;
 
