@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 
 import java.util.HashMap;
 
-public class ImageHelper {
+public class MediaHelper {
     @Nullable
     public static Bitmap getBitmapFromUri(@NonNull String uri) throws Exception {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();

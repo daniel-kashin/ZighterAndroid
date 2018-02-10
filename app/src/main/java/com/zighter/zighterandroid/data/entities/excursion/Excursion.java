@@ -3,9 +3,10 @@ package com.zighter.zighterandroid.data.entities.excursion;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Excursion {
+public class Excursion implements Serializable {
     @NonNull
     private final String uuid;
     @Nullable

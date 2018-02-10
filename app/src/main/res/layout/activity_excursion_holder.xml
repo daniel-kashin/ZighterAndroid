@@ -17,6 +17,7 @@
         android:orientation="vertical"
         app:behavior_peekHeight="80dp"
         android:id="@+id/bottom_sheet"
+        android:elevation="4dp"
         app:layout_behavior="com.zighter.zighterandroid.util.AnchorBottomSheetBehavior"
         app:behavior_anchorOffset="200dp"
         app:behavior_hideable="true"

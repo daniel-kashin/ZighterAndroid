@@ -5,12 +5,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.io.File;
+import java.io.Serializable;
 
-public class Media {
-    @Nullable
-    private final String path;
+public class Media implements Serializable {
     @NonNull
     private final String url;
+    @Nullable
+    private final String path;
 
     public Media(@NonNull String url, @Nullable String path) {
         this.url = url;

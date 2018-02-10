@@ -28,7 +28,7 @@ interface ExcursionMapView extends MvpView {
     void showServerException();
 
     @StateStrategyType(AddToEndSingleStrategy.class)
-    void showSightSelection(@Nullable Sight sight, @Nullable Marker marker);
+    void showSightSelection(@Nullable Sight sight);
 
     @StateStrategyType(SkipStrategy.class)
     void showCurrentLocation(@NonNull Location location, boolean active);

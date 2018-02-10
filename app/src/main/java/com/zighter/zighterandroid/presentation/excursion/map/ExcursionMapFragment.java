@@ -6,6 +6,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,6 @@ import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.excursion.Excursion;
 import com.zighter.zighterandroid.data.entities.excursion.ServicePoint;
 import com.zighter.zighterandroid.data.entities.excursion.ServicePath;
-import com.zighter.zighterandroid.data.entities.excursion.ServiceSight;
 import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
@@ -42,6 +42,8 @@ import com.zighter.zighterandroid.util.LocationSettingsHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -73,7 +75,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 .inject(this);
     }
 
-
     @BindView(R.id.map_view)
     MapView map;
     @BindView(R.id.progress_bar)
@@ -91,7 +92,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     private MapboxMap mapboxMapToSaveInstanceState;
     @Nullable
     private CameraPosition cameraPositionFromSavedInstanceState;
-    private boolean onDestroyViewCalled = false;
 
     @Override
     protected int getLayoutId() {
@@ -110,7 +110,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        onDestroyViewCalled = false;
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
@@ -158,7 +157,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
     @Override
     public void onDestroyView() {
-        onDestroyViewCalled = true;
         map.onDestroy();
         super.onDestroyView();
     }
@@ -202,11 +200,13 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         presenter.onLocationProvidersAvailabilityChanged(networkProviderEnabled, gpsProviderEnabled);
     }
 
-
     @Override
     public void showCurrentLocation(@NonNull Location location, boolean active) {
+        Log.d(TAG, "showCurrentLocation");
         map.getMapAsync(mapboxMap -> {
-            if (onDestroyViewCalled) return;
+            Log.d(TAG, "mapboxMap in showCurrentLocation");
+
+            if (getContext() == null) return;
 
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             IconHelperType type = active
@@ -227,6 +227,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
     @Override
     public void updateLocationAvailability(boolean isPermissionAvailable, boolean isLocationProviderEnabled) {
+        if (getActivity() == null) return;
+
         if (!isPermissionAvailable) {
             locationImageView.setOnClickListener(view -> {
                 LocationSettingsHelper.requestOpenPermissionSettings(getActivity());
@@ -236,8 +238,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 locationImageView.setOnClickListener(view -> {
                     if (currentLocationMarker != null) {
                         map.getMapAsync(mapboxMap -> {
-                            if (onDestroyViewCalled) return;
-
                             mapboxMap.moveCamera(mapboxMapInner -> new CameraPosition.Builder()
                                     .target(currentLocationMarker.getPosition())
                                     .build());
@@ -252,11 +252,11 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         }
     }
 
-
     @Override
     public void showLoading() {
+        Log.d(TAG, "showLoading");
         map.getMapAsync(mapboxMap -> {
-            if (onDestroyViewCalled) return;
+            Log.d(TAG, "mapboxMap in showLoading");
 
             mapboxMap.setOnMarkerClickListener(null);
             progressBar.setVisibility(View.VISIBLE);
@@ -269,18 +269,21 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
     @Override
     public void showExcursion(@NonNull final Excursion excursion) {
+        Log.d(TAG, "showExcursion");
         map.getMapAsync(mapboxMap -> {
-            if (onDestroyViewCalled) return;
+            Log.d(TAG, "mapboxMap in showExcursion");
+
+            if (getContext() == null) return;
+
             this.mapboxMapToSaveInstanceState = mapboxMap;
 
             // add sights
             markersToSights.clear();
             for (int i = 0; i < excursion.getSightSize(); ++i) {
-                if (onDestroyViewCalled) return;
-
                 Sight sight = excursion.getSightAt(i);
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(sight.getLatitude(), sight.getLongitude()))
+                        .icon(IconFactory.getInstance(getContext()).defaultMarker())
                         .title(sight.getName());
                 Marker marker = mapboxMap.addMarker(markerOptions);
                 markersToSights.put(marker, sight);
@@ -288,8 +291,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
             // add paths
             for (int i = 0; i < excursion.getPathSize(); ++i) {
-                if (onDestroyViewCalled) return;
-
                 ServicePath path = excursion.getPathAt(i);
 
                 ServicePoint firstEndpoint = path.getFirstEndpoint();
@@ -333,10 +334,10 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             }
 
             mapboxMap.setOnMarkerClickListener(marker -> {
-                if (!onDestroyViewCalled && marker != selectedMarker && markersToSights.containsKey(marker)) {
+                if (marker != selectedMarker && markersToSights.containsKey(marker)) {
                     ExcursionHolderActivity activity = (ExcursionHolderActivity) getActivity();
                     if (activity != null && activity.onSightSelected(markersToSights.get(marker))) {
-                        presenter.onSightClicked(markersToSights.get(marker), marker);
+                        presenter.onSightClicked(markersToSights.get(marker));
                     }
                 }
                 return true;
@@ -345,43 +346,99 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             hideLoading();
             map.setVisibility(View.VISIBLE);
             locationImageView.setVisibility(View.VISIBLE);
+
+            logAllSightMarkers(mapboxMap);
         });
     }
 
     @Override
     public void showNetworkUnavailable() {
+        Log.d(TAG, "showNetworkUnavailable");
         hideLoading();
     }
 
     @Override
     public void showServerException() {
+        Log.d(TAG, "showServerException");
         hideLoading();
     }
 
     @Override
-    public void showSightSelection(@Nullable Sight sight, @Nullable Marker marker) {
+    public void showSightSelection(@Nullable Sight sight) {
+        Log.d(TAG, "showSightSelection(" +
+                (sight != null ? sight.getLongitude() : "null") +
+                ", " +
+                (sight != null ? sight.getLatitude() : "null") +
+                ")");
+
         map.getMapAsync(mapboxMap -> {
-            if (onDestroyViewCalled) return;
+            Log.d(TAG, "mapboxMap in showSightSelection");
+
+            if (getContext() == null) return;
 
             Marker previous = selectedMarker;
             if (previous != null) {
                 previous.setIcon(IconFactory.getInstance(getContext()).defaultMarker());
                 mapboxMap.updateMarker(previous);
             }
-            if (sight == null || marker == null) {
-                // remove marker selection
-                selectedMarker = null;
-            } else {
-                // set marker selection
-                selectedMarker = marker;
 
-                selectedMarker.setIcon(IconHelper.getIcon(getContext(), IconHelperType.CHECKED_SIGHT));
-                mapboxMap.updateMarker(selectedMarker);
+            if (sight == null) {
+                selectedMarker = null;
+                return;
             }
+
+            Marker marker = null;
+            Set<Map.Entry<Marker, Sight>> set = markersToSights.entrySet();
+            for (Map.Entry<Marker, Sight> entry : set) {
+                if (sight.equals(entry.getValue())) {
+                    marker = entry.getKey();
+                }
+            }
+
+            if (marker == null) {
+                selectedMarker = null;
+                return;
+            }
+
+            selectedMarker = marker;
+            selectedMarker.setIcon(IconHelper.getIcon(getContext(), IconHelperType.CHECKED_SIGHT));
+            mapboxMap.updateMarker(selectedMarker);
+
+            logAllSightMarkers(mapboxMap);
         });
     }
 
     public void removeSightSelection() {
-        presenter.onSightClicked(null, selectedMarker);
+        presenter.onSightClicked(null);
+    }
+
+    private void logAllSightMarkers(@NonNull MapboxMap mapboxMap) {
+        List<Marker> markers = mapboxMap.getMarkers();
+        if (markers.isEmpty()) {
+            Log.d(TAG, "markers are empty");
+        } else {
+            StringBuilder stringBuilder = new StringBuilder("  markers [");
+            for (Marker marker : markers) {
+                if (markersToSights.containsKey(marker)) {
+                    LatLng position = marker.getPosition();
+                    boolean equalsSelected = marker.equals(selectedMarker);
+
+                    stringBuilder.append("(");
+                    if (equalsSelected) {
+                        stringBuilder.append("!");
+                    }
+                    stringBuilder.append(position.getLongitude());
+                    stringBuilder.append(", ");
+                    stringBuilder.append(position.getLatitude());
+                    if (equalsSelected) {
+                        stringBuilder.append("!");
+                    }
+                    stringBuilder.append(") ");
+                }
+            }
+            stringBuilder.append("]");
+
+            Log.d(TAG, stringBuilder.toString());
+        }
     }
 }

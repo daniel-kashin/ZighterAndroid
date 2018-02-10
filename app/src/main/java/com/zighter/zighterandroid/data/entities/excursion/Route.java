@@ -2,9 +2,10 @@ package com.zighter.zighterandroid.data.entities.excursion;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Route {
+public class Route implements Serializable {
     @NonNull
     private List<ServicePath> paths;
     @NonNull

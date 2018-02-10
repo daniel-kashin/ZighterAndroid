@@ -110,17 +110,15 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
         Log.d(TAG, "onSightSelected(" + bottomSheetBehavior.getState() + ")");
 
         if (!isBottomSheetSliding(bottomSheetBehavior.getState())) {
-            bottomSheet.post(() -> {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.bottom_sheet_fragment_container, SightFragment.newInstance(sight))
-                        .commitNow();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.bottom_sheet_fragment_container, SightFragment.newInstance(sight))
+                    .commitNow();
 
-                showBottomSheet();
+            showBottomSheet();
 
-                boolean locationPermissionGranted = LocationSettingsHelper.isLocationPermissionGranted(this);
-                onRequestLocationPermissionResult(locationPermissionGranted, true, false);
-            });
+            boolean locationPermissionGranted = LocationSettingsHelper.isLocationPermissionGranted(this);
+            onRequestLocationPermissionResult(locationPermissionGranted, true, false);
 
             return true;
         } else {
@@ -131,9 +129,10 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
 
     private void showBottomSheet() {
         Log.d(TAG, "showBottomSheet(" + bottomSheetBehavior.getState() + ")");
+        bottomSheet.setVisibility(View.VISIBLE);
         if (!isBottomSheetSliding(bottomSheetBehavior.getState())) {
-            if (bottomSheetBehavior.getState() == STATE_HIDDEN) {
-                bottomSheet.setVisibility(View.VISIBLE);
+            int state = bottomSheetBehavior.getState();
+            if (state == STATE_HIDDEN) {
                 bottomSheetBehavior.setState(STATE_COLLAPSED);
             } else {
                 showBottomSheetAfterHide = true;
@@ -160,10 +159,8 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
                     case STATE_HIDDEN: {
                         if (showBottomSheetAfterHide) {
                             showBottomSheetAfterHide = false;
-                            bottomSheet.post(() -> {
-                                bottomSheet.setVisibility(View.VISIBLE);
-                                bottomSheetBehavior.setState(STATE_COLLAPSED);
-                            });
+                            bottomSheet.setVisibility(View.VISIBLE);
+                            bottomSheetBehavior.setState(STATE_COLLAPSED);
                         } else {
                             bottomSheet.setVisibility(View.INVISIBLE);
 

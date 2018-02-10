@@ -5,8 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.arellomobile.mvp.InjectViewState;
-import com.mapbox.mapboxsdk.annotations.Marker;
-import com.zighter.zighterandroid.data.entities.excursion.ServiceSight;
 import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.data.exception.BaseException;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
@@ -16,7 +14,6 @@ import com.zighter.zighterandroid.presentation.common.BasePresenter;
 
 import io.reactivex.Scheduler;
 
-@SuppressWarnings("CodeBlock2Expr")
 @InjectViewState
 public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
 
@@ -75,7 +72,7 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
         getViewState().showCurrentLocation(location, active);
     }
 
-    void onSightClicked(@Nullable Sight sight, @Nullable Marker marker) {
-        getViewState().showSightSelection(sight, marker);
+    void onSightClicked(@Nullable Sight sight) {
+        getViewState().showSightSelection(sight);
     }
 }

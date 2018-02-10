@@ -1,32 +1,37 @@
 package com.zighter.zighterandroid.presentation.excursion.sight;
 
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
+import com.bumptech.glide.request.RequestOptions;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.excursion.Sight;
-import com.zighter.zighterandroid.data.entities.media.Media;
 import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.zighter.zighterandroid.util.ImageViewLoader;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import butterknife.BindView;
+
+import static android.graphics.Typeface.BOLD;
 
 public class SightFragment extends BaseSupportFragment implements SightView,
         LocationListenerHolder.OnLocationChangeListener, LocationPermissionListener {
@@ -74,12 +79,16 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     TextView sightName;
     @BindView(R.id.sight_distance)
     TextView sightDistance;
-    @BindView(R.id.recycler_view)
-    RecyclerView recyclerView;
     @BindView(R.id.root_view)
     ConstraintLayout rootView;
     @BindView(R.id.sight_description)
     TextView sightDescription;
+    @BindView(R.id.media_thumbnail_background)
+    ImageView mediaThumbnailBackground;
+    @BindView(R.id.media_count)
+    TextView mediaCountView;
+    @BindView(R.id.media_count_circle)
+    ImageView mediaCountCircle;
 
     @Nullable
     private Sight sight;
@@ -97,7 +106,9 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     }
 
     private void initializeSight() {
-        if (!getArguments().containsKey(KEY_SIGHT) || getArguments().getSerializable(KEY_SIGHT) == null) {
+        if (getArguments() == null
+                || !getArguments().containsKey(KEY_SIGHT)
+                || getArguments().getSerializable(KEY_SIGHT) == null) {
             throw new IllegalStateException("SightFragment must be created using newInstance method");
         }
 
@@ -107,19 +118,6 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initializeRecyclerView();
-    }
-
-    private void initializeRecyclerView() {
-        recyclerView.setNestedScrollingEnabled(false);
-
-        LinearLayoutManager layoutManager =
-                new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
-        layoutManager.setAutoMeasureEnabled(true);
-        recyclerView.setLayoutManager(layoutManager);
-
-        ThumbnailsMediaAdapter thumbnailsMediaAdapter = new ThumbnailsMediaAdapter();
-        recyclerView.setAdapter(thumbnailsMediaAdapter);
     }
 
     @Override
@@ -159,28 +157,57 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     }
 
     @Override
-    public void showSight(@NonNull Sight sight) {
-        int mediaSize = sight.getMediaSize();
-        List<Media> medias = new ArrayList<>(mediaSize);
-        for (int i = 0; i < mediaSize; ++i) {
-            medias.add(sight.getMediaAt(i));
-        }
-        ((ThumbnailsMediaAdapter)recyclerView.getAdapter()).setMedias(medias);
+    public void showSight(@NonNull Sight sight, @Nullable ImageViewLoader imageViewLoader) {
+        if (getContext() == null) return;
 
-        sightName.setText(sight.getName() != null ? sight.getName() : "Колизей");
+        sightName.setText(sight.getName());
         sightDescription.setText(sight.getDescription());
+
+        int mediaCount = sight.getVideoCount() + sight.getImageCount();
+        if (mediaCount == 0) {
+            mediaCountView.setVisibility(View.GONE);
+            mediaCountCircle.setVisibility(View.GONE);
+            mediaThumbnailBackground.setVisibility(View.GONE);
+        } else {
+            String mediaCountString = String.valueOf(mediaCount);
+            SpannableStringBuilder builder = new SpannableStringBuilder(mediaCountString)
+                    .append("\n")
+                    .append("media");
+            builder.setSpan(new StyleSpan(BOLD), 0, mediaCountString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+            mediaCountView.setText(builder);
+            mediaCountView.setVisibility(View.VISIBLE);
+            mediaCountCircle.setVisibility(View.VISIBLE);
+            mediaThumbnailBackground.setVisibility(View.VISIBLE);
+
+            Drawable placeholder = new ColorDrawable(getContext().getResources().getColor(R.color.lightHintText));
+            imageViewLoader = null;
+            if (imageViewLoader != null) {
+                imageViewLoader.load(mediaThumbnailBackground,
+                                     new RequestOptions()
+                                             .centerCrop()
+                                             .error(placeholder)
+                                             .fallback(placeholder)
+                                             .placeholder(placeholder),
+                                     null);
+            } else {
+                mediaThumbnailBackground.setBackground(placeholder);
+            }
+        }
     }
 
     @Override
     public void showCurrentDistance(Integer distanceInMeters) {
-        String distance;
-        if (distanceInMeters == null) {
-            distance = null;
-        } else {
-            distance = distanceInMeters > 1000
-                    ? distanceInMeters / 1000 + " " + getString(R.string.kilometers)
-                    : distanceInMeters + " " + getString(R.string.meters);
+        if (getContext() != null) {
+            if (distanceInMeters == null) {
+                sightDistance.setTextColor(ContextCompat.getColor(getContext(), R.color.hintText));
+            } else {
+                String distance = distanceInMeters > 1000
+                        ? distanceInMeters / 1000 + " " + getString(R.string.kilometers)
+                        : distanceInMeters + " " + getString(R.string.meters);
+                sightDistance.setText(distance);
+
+                sightDistance.setTextColor(ContextCompat.getColor(getContext(), R.color.secondaryText));
+            }
         }
-        sightDistance.setText(distance);
     }
 }
