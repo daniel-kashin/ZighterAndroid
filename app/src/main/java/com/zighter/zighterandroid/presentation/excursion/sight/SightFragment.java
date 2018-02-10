@@ -180,7 +180,6 @@ public class SightFragment extends BaseSupportFragment implements SightView,
             mediaThumbnailBackground.setVisibility(View.VISIBLE);
 
             Drawable placeholder = new ColorDrawable(getContext().getResources().getColor(R.color.lightHintText));
-            imageViewLoader = null;
             if (imageViewLoader != null) {
                 imageViewLoader.load(mediaThumbnailBackground,
                                      new RequestOptions()
