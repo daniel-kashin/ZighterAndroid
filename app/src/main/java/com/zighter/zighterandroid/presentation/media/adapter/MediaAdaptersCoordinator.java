@@ -1,7 +1,6 @@
 package com.zighter.zighterandroid.presentation.media.adapter;
 
 import android.support.annotation.NonNull;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PagerSnapHelper;
 import android.support.v7.widget.RecyclerView;
@@ -11,7 +10,6 @@ import android.view.View;
 
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.util.recyclerview.FullscreenScrollListener;
-import com.zighter.zighterandroid.util.recyclerview.HorizontalSpaceItemDecoration;
 
 import java.util.List;
 
@@ -30,7 +28,9 @@ public class MediaAdaptersCoordinator implements FullscreenScrollListener.OnSwip
         this.fullscreenMedia = fullscreenMedia;
         this.fullscreenMediaAdapter = new FullscreenMediaAdapter();
         initializeFullscreenMedia();
+    }
 
+    private void initializeFullscreenMedia() {
         onFullscreenAdapterLayoutChangeListener = new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -42,16 +42,12 @@ public class MediaAdaptersCoordinator implements FullscreenScrollListener.OnSwip
                 }
             }
         };
-    }
 
-    private void initializeFullscreenMedia() {
         fullscreenMedia.setAdapter(fullscreenMediaAdapter);
 
         fullscreenMedia.setLayoutManager(new LinearLayoutManager(fullscreenMedia.getContext(),
                                                                  LinearLayoutManager.HORIZONTAL,
                                                                  false));
-
-        fullscreenMedia.addItemDecoration(new HorizontalSpaceItemDecoration(25));
 
         FullscreenScrollListener previewSwipeListener = new FullscreenScrollListener(this);
         fullscreenMedia.addOnScrollListener(previewSwipeListener);
