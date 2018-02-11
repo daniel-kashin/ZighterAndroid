@@ -11,9 +11,9 @@ public abstract class BaseSupportActivity extends MvpAppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        onInjectDependencies();
         super.onCreate(savedInstanceState);
         setContentView(getLayoutId());
-        onInjectDependencies();
         ButterKnife.bind(this);
     }
 

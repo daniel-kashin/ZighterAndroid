@@ -25,8 +25,8 @@ ext.versions = [
         moxy                   : '1.5.3',
 
         glide                  : '4.6.1',
-        glide_transformations  : '3.0.1',
-        gpuimage               : '1.4.1',
+        glideTransformations   : '3.0.1',
+        photoView              : '2.1.3',
 
         mapbox                 : '5.2.0@aar'
 ]
@@ -64,8 +64,8 @@ ext.libraries = [
 
         glide                : "com.github.bumptech.glide:glide:$versions.glide",
         glideCompiler        : "com.github.bumptech.glide:compiler:$versions.glide",
-        glide_transformations: "jp.wasabeef:glide-transformations:$versions.glide_transformations",
-        gpuimage             : "jp.co.cyberagent.android.gpuimage:gpuimage-library:$versions.gpuimage",
+        glideTransformations : "jp.wasabeef:glide-transformations:$versions.glideTransformations",
+        photoView            : "com.github.chrisbanes:PhotoView:$versions.photoView",
 
         mapbox               : "com.mapbox.mapboxsdk:mapbox-android-sdk:$versions.mapbox"
 ]

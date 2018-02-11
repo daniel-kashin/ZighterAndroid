@@ -16,7 +16,16 @@ public class ExcursionMapper {
     static {
         DUMMY_MEDIAS.add(new Image("http://freewallpapersworld.com/ui/images/2/WDF_1858745.jpg", null));
         DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null));
+        DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null));
+        DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null));
+        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null));
+        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null));
+        DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null));
         DUMMY_MEDIAS.add(new Image("http://spain-dream.ru/wp-content/uploads/2017/12/Otdyh-v-Barselone.jpg", null));
+        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null));
+        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null));
+        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null));
+        DUMMY_MEDIAS.add(new Image("https://livewallpaperhd.com/wp-content/uploads/2017/05/Barcelona-Wallpaper-Iphone-Hd.jpg", null));
         DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null));
     }
 

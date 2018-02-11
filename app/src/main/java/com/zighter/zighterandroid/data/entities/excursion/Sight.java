@@ -8,6 +8,7 @@ import com.zighter.zighterandroid.data.entities.media.Media;
 import com.zighter.zighterandroid.data.entities.media.Video;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Sight implements Serializable {
@@ -23,13 +24,6 @@ public class Sight implements Serializable {
     private String type;
     @NonNull
     private List<Media> medias;
-
-    @Nullable
-    private Image cachedFirstImage;
-    private boolean firstImageCached;
-    @Nullable
-    private Video cachedFirstVideo;
-    private boolean firstVideoCached;
 
     Sight(@NonNull String uuid,
           double longitude,
@@ -82,75 +76,46 @@ public class Sight implements Serializable {
         return !medias.isEmpty();
     }
 
-    public int getImageCount() {
-        if (!hasMedia()) {
-            return 0;
-        }
-
-        int imageCount = 0;
-        for (Media media : medias) {
-            if (media instanceof Image) {
-                imageCount++;
-            }
-        }
-        return imageCount;
-    }
-
-    @Nullable
-    public Image getFirstImage() {
-        if (!hasMedia()) {
-            return null;
-        }
-
-        if (!firstImageCached) {
-            for (Media media : medias) {
-                if (media instanceof Image) {
-                    cachedFirstImage = (Image) media;
-                    firstImageCached = true;
-                    break;
-                }
-            }
-        }
-
-        return cachedFirstImage;
-    }
-
-    public int getVideoCount() {
-        if (!hasMedia()) {
-            return 0;
-        }
-
-        int videoCount = 0;
-        for (Media media : medias) {
-            if (media instanceof Video) {
-                videoCount++;
-            }
-        }
-        return videoCount;
-    }
-
-    @Nullable
-    public Video getFirstVideo() {
-        if (!hasMedia()) {
-            return null;
-        }
-
-        if (!firstVideoCached) {
-            for (Media media : medias) {
-                if (media instanceof Video) {
-                    cachedFirstVideo= (Video) media;
-                    firstVideoCached = true;
-                    break;
-                }
-            }
-        }
-
-        return cachedFirstVideo;
-    }
-
     @NonNull
-    public Media getMediaAt(int index) {
-        return medias.get(index);
+    public <T extends Media> List<T> getMediasCopy(Class<T> mediaClass) {
+        List<T> mediasCopy = new ArrayList<>(medias.size());
+        for (Media media : medias) {
+            if (mediaClass.isInstance(media)) {
+                mediasCopy.add(mediaClass.cast(media));
+            }
+        }
+        return mediasCopy;
+    }
+
+    public <T extends Media> int getMediaCount(Class<T> mediaClass) {
+        if (!hasMedia()) {
+            return 0;
+        }
+
+        int count = 0;
+        for (Media media : medias) {
+            if (mediaClass.isInstance(media)) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    @Nullable
+    public <T extends  Media> T getFirstMedia(Class<T> mediaClass) {
+        if (!hasMedia()) {
+            return null;
+        }
+
+        T first = null;
+        for (Media media : medias) {
+            if (mediaClass.isInstance(media)) {
+                first = mediaClass.cast(media);
+                break;
+            }
+        }
+        return first;
     }
 
     @Override

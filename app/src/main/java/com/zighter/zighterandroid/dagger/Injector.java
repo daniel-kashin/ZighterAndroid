@@ -8,6 +8,7 @@ import android.support.annotation.UiThread;
 import com.zighter.zighterandroid.dagger.component.AppComponent;
 import com.zighter.zighterandroid.dagger.component.DaggerAppComponent;
 import com.zighter.zighterandroid.dagger.component.ExcursionMapComponent;
+import com.zighter.zighterandroid.dagger.component.MediaComponent;
 import com.zighter.zighterandroid.dagger.component.SightComponent;
 import com.zighter.zighterandroid.dagger.module.singleton.AppModule;
 
@@ -26,11 +27,10 @@ public class Injector {
     @UiThread
     public static Injector getInstance() {
         if (instance == null) {
-            throw new IllegalStateException("Injector must be initialized before getting");
+            throw new IllegalStateException();
         }
         return instance;
     }
-
 
     @NonNull
     private final AppComponent appComponent;
@@ -38,7 +38,8 @@ public class Injector {
     private WeakReference<ExcursionMapComponent> navigationComponentWeakReference;
     @NonNull
     private WeakReference<SightComponent> sightComponentWeakReference;
-
+    @NonNull
+    private WeakReference<MediaComponent> mediaComponentWeakReference;
 
     @UiThread
     private Injector(@NonNull Context context) {
@@ -47,6 +48,7 @@ public class Injector {
                 .build();
         navigationComponentWeakReference = new WeakReference<>(null);
         sightComponentWeakReference = new WeakReference<>(null);
+        mediaComponentWeakReference = new WeakReference<>(null);
     }
 
     @NonNull
@@ -65,5 +67,14 @@ public class Injector {
             sightComponentWeakReference = new WeakReference<>(appComponent.plusSightComponent());
         }
         return sightComponentWeakReference.get();
+    }
+
+    @NonNull
+    @UiThread
+    public MediaComponent getMediaComponent() {
+        if (mediaComponentWeakReference.get() == null) {
+            mediaComponentWeakReference = new WeakReference<>(appComponent.plusMediaComponent());
+        }
+        return mediaComponentWeakReference.get();
     }
 }

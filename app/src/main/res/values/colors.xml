@@ -7,5 +7,5 @@
     <color name="primaryText">#000000</color>
     <color name="secondaryText">#8a000000</color>
     <color name="hintText">#61000000</color>
-    <color name="lightHintText">#22000000</color>
+    <color name="lightHintText">#18000000</color>
 </resources>

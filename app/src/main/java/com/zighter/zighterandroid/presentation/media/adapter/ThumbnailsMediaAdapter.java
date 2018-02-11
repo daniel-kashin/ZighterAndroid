@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.presentation.media;
+package com.zighter.zighterandroid.presentation.media.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,35 +11,27 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.zighter.zighterandroid.R;
+import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Media;
 import com.zighter.zighterandroid.data.entities.media.Video;
-import com.zighter.zighterandroid.util.MediaHelper;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import retrofit2.http.Url;
 
-import static com.zighter.zighterandroid.presentation.media.ThumbnailsMediaAdapter.ViewType.IMAGE;
-import static com.zighter.zighterandroid.presentation.media.ThumbnailsMediaAdapter.ViewType.VIDEO;
+import static com.zighter.zighterandroid.presentation.media.adapter.ThumbnailsMediaAdapter.ViewType.IMAGE;
+import static com.zighter.zighterandroid.presentation.media.adapter.ThumbnailsMediaAdapter.ViewType.VIDEO;
 
 public class ThumbnailsMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    @NonNull
-    private final RequestOptions mediaRequestOptions;
     @Nullable
-    private List<Media> medias;
+    private List<DrawableMedia> medias;
 
-    public ThumbnailsMediaAdapter(@NonNull RequestOptions mediaRequestOptions) {
-        this.mediaRequestOptions = mediaRequestOptions;
+    public ThumbnailsMediaAdapter() {
     }
 
-    public void setMedias(@NonNull List<Media> medias) {
+    public void setMedias(@NonNull List<DrawableMedia> medias) {
         this.medias = medias;
     }
 
@@ -66,11 +58,11 @@ public class ThumbnailsMediaAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         Media media = medias.get(position);
 
         if (holder instanceof VideoViewHolder && media instanceof Video) {
-            ((VideoViewHolder) holder).bind((Video) media, mediaRequestOptions);
+            ((VideoViewHolder) holder).bind((Video) media);
         }
 
         if (holder instanceof ImageViewHolder && media instanceof Image) {
-            ((ImageViewHolder) holder).bind((Image) media, mediaRequestOptions);
+            ((ImageViewHolder) holder).bind((Image) media);
         }
     }
 
@@ -84,8 +76,8 @@ public class ThumbnailsMediaAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (medias == null) {
             throw new IllegalStateException();
         }
+        DrawableMedia media = medias.get(position);
 
-        Media media = medias.get(position);
         if (media instanceof Video) {
             return VIDEO.resourceId;
         }
@@ -108,7 +100,7 @@ public class ThumbnailsMediaAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             ButterKnife.bind(this, view);
         }
 
-        void bind(@NonNull Image image, @NonNull RequestOptions mediaRequestOptions) {
+        void bind(@NonNull Image image) {
 
         }
     }
@@ -119,33 +111,16 @@ public class ThumbnailsMediaAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         @BindView(R.id.image_view)
         ImageView imageView;
 
-        @Nullable
-        Disposable loadVideoDisposable;
-
         VideoViewHolder(@NonNull View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
 
-        void bind(@NonNull Video video, @NonNull RequestOptions mediaRequestOptions) {
-            if (loadVideoDisposable != null) {
-                loadVideoDisposable.dispose();
-                loadVideoDisposable = null;
-            }
-
-            loadVideoDisposable = Single
-                    .fromCallable(() -> MediaHelper.getBitmapFromUri(video.getUrl()))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(bitmap -> {
-                        Glide.with(imageView.getContext())
-                                .asBitmap()
-                                .load(bitmap)
-                                .apply(mediaRequestOptions)
-                                .into(imageView);
-                    }, throwable -> {
-                        // do nothing
-                    });
+        void bind(@NonNull Video video) {
+            Glide.with(imageView.getContext())
+                    .asBitmap()
+                    .load(video.getUrl())
+                    .into(imageView);
         }
     }
 

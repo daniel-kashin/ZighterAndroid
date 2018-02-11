@@ -12,7 +12,6 @@ import io.reactivex.Scheduler;
 import io.reactivex.SingleTransformer;
 
 public abstract class BasePresenter<T extends MvpView> extends MvpPresenter<T> {
-
     @NonNull
     private final Scheduler worker;
     @NonNull

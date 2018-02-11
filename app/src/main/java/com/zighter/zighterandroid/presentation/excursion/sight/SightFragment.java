@@ -1,5 +1,6 @@
 package com.zighter.zighterandroid.presentation.excursion.sight;
 
+import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -21,10 +22,12 @@ import com.bumptech.glide.request.RequestOptions;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.excursion.Sight;
+import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
-import com.zighter.zighterandroid.util.ImageViewLoader;
+import com.zighter.zighterandroid.presentation.media.MediaActivity;
+import com.zighter.zighterandroid.util.media.ImageViewLoader;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -47,18 +50,17 @@ public class SightFragment extends BaseSupportFragment implements SightView,
         return sightFragment;
     }
 
-
     @InjectPresenter
     SightPresenter presenter;
 
     @ProvidePresenter
     public SightPresenter providePresenter() {
         if (sight == null) {
-            throw new IllegalStateException("ServiceSight must be non null when calling providePresenter");
+            throw new IllegalStateException();
         }
 
         return sightPresenterBuilderProvider.get()
-                .setSight(sight)
+                .sight(sight)
                 .build();
     }
 
@@ -73,7 +75,6 @@ public class SightFragment extends BaseSupportFragment implements SightView,
                 .getSightComponent()
                 .inject(this);
     }
-
 
     @BindView(R.id.sight_name)
     TextView sightName;
@@ -98,7 +99,6 @@ public class SightFragment extends BaseSupportFragment implements SightView,
         return R.layout.fragment_sight;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         initializeSight();
@@ -106,12 +106,9 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     }
 
     private void initializeSight() {
-        if (getArguments() == null
-                || !getArguments().containsKey(KEY_SIGHT)
-                || getArguments().getSerializable(KEY_SIGHT) == null) {
-            throw new IllegalStateException("SightFragment must be created using newInstance method");
+        if (getArguments() == null || getArguments().getSerializable(KEY_SIGHT) == null) {
+            throw new IllegalStateException();
         }
-
         sight = (Sight) getArguments().getSerializable(KEY_SIGHT);
     }
 
@@ -163,7 +160,7 @@ public class SightFragment extends BaseSupportFragment implements SightView,
         sightName.setText(sight.getName());
         sightDescription.setText(sight.getDescription());
 
-        int mediaCount = sight.getVideoCount() + sight.getImageCount();
+        int mediaCount = sight.getMediaCount(DrawableMedia.class);
         if (mediaCount == 0) {
             mediaCountView.setVisibility(View.GONE);
             mediaCountCircle.setVisibility(View.GONE);
@@ -175,6 +172,7 @@ public class SightFragment extends BaseSupportFragment implements SightView,
                     .append("media");
             builder.setSpan(new StyleSpan(BOLD), 0, mediaCountString.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
             mediaCountView.setText(builder);
+
             mediaCountView.setVisibility(View.VISIBLE);
             mediaCountCircle.setVisibility(View.VISIBLE);
             mediaThumbnailBackground.setVisibility(View.VISIBLE);
@@ -191,6 +189,21 @@ public class SightFragment extends BaseSupportFragment implements SightView,
             } else {
                 mediaThumbnailBackground.setBackground(placeholder);
             }
+
+            mediaThumbnailBackground.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Context context = SightFragment.this.getContext();
+                    Sight sight = SightFragment.this.sight;
+
+                    if (context != null) {
+                        if (sight == null) {
+                            throw new IllegalStateException();
+                        }
+                        MediaActivity.start(context, sight);
+                    }
+                }
+            });
         }
     }
 

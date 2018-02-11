@@ -70,8 +70,8 @@ dependencies {
 
     compile libraries.glide
     annotationProcessor libraries.glideCompiler
-    compile libraries.glide_transformations
-    compile libraries.gpuimage
+    compile libraries.glideTransformations
+    compile libraries.photoView
 
     compile(libraries.mapbox) {
         transitive=true

@@ -35,8 +35,8 @@ import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
 import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
-import com.zighter.zighterandroid.util.IconHelper;
-import com.zighter.zighterandroid.util.IconHelperType;
+import com.zighter.zighterandroid.util.media.IconHelper;
+import com.zighter.zighterandroid.util.media.IconHelperType;
 import com.zighter.zighterandroid.util.LocationSettingsHelper;
 
 import java.util.ArrayList;

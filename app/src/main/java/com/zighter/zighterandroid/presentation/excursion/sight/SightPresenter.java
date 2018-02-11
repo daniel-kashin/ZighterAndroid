@@ -5,17 +5,17 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.arellomobile.mvp.InjectViewState;
-import com.arellomobile.mvp.MvpPresenter;
-import com.bumptech.glide.Glide;
-import com.zighter.zighterandroid.data.entities.excursion.ServiceSight;
 import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Video;
+import com.zighter.zighterandroid.presentation.common.BasePresenter;
 import com.zighter.zighterandroid.util.DistanceHelper;
-import com.zighter.zighterandroid.util.ImageViewLoader;
+import com.zighter.zighterandroid.util.media.ImageViewLoader;
+
+import io.reactivex.Scheduler;
 
 @InjectViewState
-public class SightPresenter extends MvpPresenter<SightView> {
+public class SightPresenter extends BasePresenter<SightView> {
     @NonNull
     private final Sight sight;
 
@@ -23,7 +23,8 @@ public class SightPresenter extends MvpPresenter<SightView> {
     private boolean isNetworkLocationEnabled;
     private boolean isGpsLocationEnabled;
 
-    SightPresenter(@NonNull Sight sight) {
+    SightPresenter(@NonNull Sight sight, @NonNull Scheduler worker, @NonNull Scheduler ui) {
+        super(worker, ui);
         this.sight = sight;
     }
 
@@ -33,11 +34,11 @@ public class SightPresenter extends MvpPresenter<SightView> {
 
         ImageViewLoader imageViewLoader;
 
-        Image firstImage = sight.getFirstImage();
+        Image firstImage = sight.getFirstMedia(Image.class);
         if (firstImage != null) {
             imageViewLoader = new ImageViewLoader.UrlLoader(firstImage.getUrl(), false);
         } else {
-            Video firstVideo = sight.getFirstVideo();
+            Video firstVideo = sight.getFirstMedia(Video.class);
             imageViewLoader = firstVideo != null
                     ? new ImageViewLoader.UrlLoader(firstVideo.getUrl(), true)
                     : null;
@@ -70,11 +71,17 @@ public class SightPresenter extends MvpPresenter<SightView> {
     public static class Builder {
         @Nullable
         private Sight sight;
+        @NonNull
+        private final Scheduler worker;
+        @NonNull
+        private final Scheduler ui;
 
-        public Builder() {
+        public Builder(@NonNull Scheduler worker, @NonNull Scheduler ui) {
+            this.worker = worker;
+            this.ui = ui;
         }
 
-        public Builder setSight(@NonNull Sight sight) {
+        public Builder sight(@NonNull Sight sight) {
             this.sight = sight;
             return this;
         }
@@ -83,7 +90,7 @@ public class SightPresenter extends MvpPresenter<SightView> {
             if (sight == null) {
                 throw new IllegalStateException("Sight must be defined for creating SightPresenter");
             }
-            return new SightPresenter(sight);
+            return new SightPresenter(sight, worker, ui);
         }
     }
 }

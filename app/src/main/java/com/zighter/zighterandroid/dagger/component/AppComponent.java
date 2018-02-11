@@ -12,10 +12,17 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 @Singleton
-@Component(modules = {AppModule.class, NetworkModule.class, PathsModule.class, SchedulerModule.class,
-        SystemManagersModule.class, LocationModule.class})
+@Component(modules = {
+        AppModule.class,
+        NetworkModule.class,
+        PathsModule.class,
+        SchedulerModule.class,
+        SystemManagersModule.class,
+        LocationModule.class})
 public interface AppComponent {
     ExcursionMapComponent plusNavigationComponent();
 
     SightComponent plusSightComponent();
+
+    MediaComponent plusMediaComponent();
 }

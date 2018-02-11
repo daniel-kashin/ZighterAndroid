@@ -1,6 +1,6 @@
 @file:JvmName("IconHelper")
 
-package com.zighter.zighterandroid.util
+package com.zighter.zighterandroid.util.media
 
 import android.content.Context
 
