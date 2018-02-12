@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.MediaController;
 
 public class FullscreenScrollListener extends RecyclerView.OnScrollListener {
     private static final String TAG = "ScrollListener";
