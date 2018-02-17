@@ -23,11 +23,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".presentation.excursion.holder.ExcursionHolderActivity">
-        </activity>
+        <activity android:name=".presentation.excursion.holder.ExcursionHolderActivity" />
 
-        <activity android:name=".presentation.media.MediaActivity">
-        </activity>
+        <activity android:name=".presentation.media.MediaActivity" />
 
     </application>
 

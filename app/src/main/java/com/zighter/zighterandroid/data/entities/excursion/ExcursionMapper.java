@@ -14,6 +14,15 @@ public class ExcursionMapper {
     private static final List<Media> DUMMY_MEDIAS = new ArrayList<>(10);
 
     static {
+        DUMMY_MEDIAS.add(new Image("https://mfiles.alphacoders.com/680/680627.jpg", null));
+        DUMMY_MEDIAS.add(new Image("https://livewallpaperhd.com/wp-content/uploads/2017/05/Barcelona-Wallpaper-Iphone-Hd.jpg", null));
+        DUMMY_MEDIAS.add(new Image("https://mfiles.alphacoders.com/680/680627.jpg", null));
+        DUMMY_MEDIAS.add(new Image("https://mfiles.alphacoders.com/342/342156.jpg", null));
+        DUMMY_MEDIAS.add(new Image("https://livewallpaperhd.com/wp-content/uploads/2017/05/Barcelona-Wallpaper-Iphone-Hd.jpg", null));
+        DUMMY_MEDIAS.add(new Image("http://i.imgur.com/CNSEdYc.jpg", null));
+        DUMMY_MEDIAS.add(new Image("https://mfiles.alphacoders.com/680/680627.jpg", null));
+        DUMMY_MEDIAS.add(new Image("http://i.imgur.com/CNSEdYc.jpg", null));
+        DUMMY_MEDIAS.add(new Image("https://livewallpaperhd.com/wp-content/uploads/2017/05/Barcelona-Wallpaper-Iphone-Hd.jpg", null));
         DUMMY_MEDIAS.add(new Image("http://freewallpapersworld.com/ui/images/2/WDF_1858745.jpg", null));
         DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null));
         DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null));

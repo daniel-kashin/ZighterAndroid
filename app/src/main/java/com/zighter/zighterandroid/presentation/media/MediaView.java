@@ -14,6 +14,6 @@ public interface MediaView extends MvpView {
     @StateStrategyType(AddToEndSingleStrategy.class)
     void setMedias(@NonNull List<DrawableMedia> medias);
 
-    @StateStrategyType(SkipStrategy.class)
-    void onFullyDestroy();
+    @StateStrategyType(AddToEndSingleStrategy.class)
+    void showCurrentMediaPositionChange(int currentPosition, int size);
 }

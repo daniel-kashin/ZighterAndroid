@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.MediaController;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
+
 public class FullscreenScrollListener extends RecyclerView.OnScrollListener {
     private static final String TAG = "ScrollListener";
 
@@ -27,7 +29,7 @@ public class FullscreenScrollListener extends RecyclerView.OnScrollListener {
 
         int currentPosition = ((LinearLayoutManager)layoutManager).findLastCompletelyVisibleItemPosition();
         Log.d(TAG, "onSwiped(" + currentPosition + ")");
-        if (newState == RecyclerView.SCROLL_STATE_IDLE && currentPosition != RecyclerView.NO_POSITION) {
+        if (newState == RecyclerView.SCROLL_STATE_IDLE && currentPosition != NO_POSITION) {
             listener.onSwiped(currentPosition);
         }
     }

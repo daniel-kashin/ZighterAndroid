@@ -35,12 +35,10 @@ import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.zighter.zighterandroid.presentation.media.adapter.FullscreenMediaAdapter.ViewType.IMAGE;
 import static com.zighter.zighterandroid.presentation.media.adapter.FullscreenMediaAdapter.ViewType.VIDEO;
 
-public class FullscreenMediaAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder> {
     private static final String TAG = "FullscreenMediaAdapter";
     private static final int KEY_NEW_SELECTED_POSITION = 111;
 
-    @Nullable
-    private List<DrawableMedia> medias;
     @NonNull
     private MediaPlayer mediaPlayer;
     private int currentSelectedPosition;
@@ -48,11 +46,6 @@ public class FullscreenMediaAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     FullscreenMediaAdapter() {
         this.mediaPlayer = new MediaPlayer();
         currentSelectedPosition = NO_POSITION;
-    }
-
-    void setMedias(@NonNull List<DrawableMedia> medias) {
-        Log.d(TAG, "setMedias");
-        this.medias = medias;
     }
 
     void setCurrentSelectedPosition(int position) {
@@ -128,10 +121,7 @@ public class FullscreenMediaAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return medias != null ? medias.size() : 0;
-    }
+
 
     @Override
     public int getItemViewType(int position) {
@@ -146,14 +136,6 @@ public class FullscreenMediaAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         throw new IllegalStateException();
-    }
-
-    @NonNull
-    private DrawableMedia getItemAt(int position) {
-        if (medias == null) {
-            throw new IllegalStateException();
-        }
-        return medias.get(position);
     }
 
     static final class ImageViewHolder extends RecyclerView.ViewHolder {
@@ -294,7 +276,7 @@ public class FullscreenMediaAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         @Override public void onSurfaceTextureUpdated(SurfaceTexture surface) {}
     }
-    
+
     enum ViewType {
         VIDEO(R.layout.item_fullscreen_video),
         IMAGE(R.layout.item_fullscreen_image);
