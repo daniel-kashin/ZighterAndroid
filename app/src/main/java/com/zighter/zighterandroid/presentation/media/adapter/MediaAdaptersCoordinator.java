@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.util.recyclerview.FullscreenScrollListener;
@@ -46,13 +47,14 @@ public class MediaAdaptersCoordinator implements
     public MediaAdaptersCoordinator(@NonNull RecyclerView fullscreenMedia,
                                     @NonNull RecyclerView thumbnailMedia,
                                     @Nullable OnMediaPositionChangeListener onMediaPositionChangeListener,
-                                    @Nullable OnFullscreenMediaClickListener onFullscreenMediaClickListener) {
+                                    @Nullable OnFullscreenMediaClickListener onFullscreenMediaClickListener,
+                                    @NonNull ViewGroup mediaControllerView) {
         this.fullscreenMedia = fullscreenMedia;
         this.thumbnailMedia = thumbnailMedia;
         this.onMediaPositionChangeListener = onMediaPositionChangeListener;
         this.onFullscreenMediaClickListener = onFullscreenMediaClickListener;
 
-        fullscreenMediaAdapter = new FullscreenMediaAdapter(this);
+        fullscreenMediaAdapter = new FullscreenMediaAdapter(this, mediaControllerView);
         thumbnailMediaAdapter = new ThumbnailMediaAdapter(this);
         initializeFullscreenMedia();
         initializeThumbnailMedia();

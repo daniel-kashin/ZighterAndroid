@@ -5,7 +5,7 @@ ext.versions = [
         appVersionCode         : 1,
         appVersionName         : '1.0',
 
-        minSdk                 : 19,
+        minSdk                 : 21,
         targetSdk              : 26,
         compileSdk             : 26,
         buildTools             : '26.0.2',

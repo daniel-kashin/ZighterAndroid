@@ -7,4 +7,5 @@
     <color name="lightLightHintText">#06000000</color>
 
     <color name="lightGrey">#c8b4b4b4</color>
+    <color name="lightLightGrey">#c8dcdcdc</color>
 </resources>

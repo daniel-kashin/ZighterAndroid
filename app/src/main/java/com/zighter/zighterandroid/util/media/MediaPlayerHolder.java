@@ -2,9 +2,12 @@ package com.zighter.zighterandroid.util.media;
 
 import android.media.MediaPlayer;
 import android.support.annotation.NonNull;
+import android.widget.CustomMediaController;
 import android.widget.MediaController;
 
-public class MediaPlayerHolder implements MediaController.MediaPlayerControl,
+public class MediaPlayerHolder
+        implements
+        CustomMediaController.MediaPlayerControl,
         MediaPlayer.OnBufferingUpdateListener {
 
     @NonNull
@@ -13,37 +16,62 @@ public class MediaPlayerHolder implements MediaController.MediaPlayerControl,
 
     public MediaPlayerHolder(@NonNull MediaPlayer mediaPlayer) {
         this.mediaPlayer = mediaPlayer;
+        this.mediaPlayer.setOnBufferingUpdateListener(this);
         this.bufferingPercent = 0;
     }
 
     @Override
     public void start() {
-        mediaPlayer.start();
+        try {
+            mediaPlayer.start();
+        } catch (IllegalStateException e) {
+            // do nothing
+        }
     }
 
     @Override
     public void pause() {
-        mediaPlayer.pause();
+        try {
+            mediaPlayer.pause();
+        } catch (IllegalStateException e) {
+            // do nothing
+        }
     }
 
     @Override
     public int getDuration() {
-        return mediaPlayer.getDuration();
+        try {
+            return mediaPlayer.getDuration();
+        } catch (IllegalStateException e) {
+            return 0;
+        }
     }
 
     @Override
     public int getCurrentPosition() {
-        return mediaPlayer.getCurrentPosition();
+        try {
+            return mediaPlayer.getCurrentPosition();
+        } catch (IllegalStateException e) {
+            return 0;
+        }
     }
 
     @Override
     public void seekTo(int pos) {
-        mediaPlayer.seekTo(pos);
+        try {
+            mediaPlayer.seekTo(pos);
+        } catch (IllegalStateException e) {
+            // do nothing
+        }
     }
 
     @Override
     public boolean isPlaying() {
-        return mediaPlayer.isPlaying();
+        try {
+            return mediaPlayer.isPlaying();
+        } catch (IllegalStateException e) {
+            return false;
+        }
     }
 
     @Override
@@ -64,11 +92,6 @@ public class MediaPlayerHolder implements MediaController.MediaPlayerControl,
     @Override
     public boolean canSeekForward() {
         return true;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return mediaPlayer.getAudioSessionId();
     }
 
     @Override

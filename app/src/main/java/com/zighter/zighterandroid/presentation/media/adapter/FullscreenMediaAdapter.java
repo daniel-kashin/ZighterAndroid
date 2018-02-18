@@ -12,7 +12,6 @@ import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.MediaController;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -22,6 +21,7 @@ import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Video;
+import android.widget.CustomMediaController;
 import com.zighter.zighterandroid.util.media.MediaPlayerHolder;
 import com.zighter.zighterandroid.util.media.TextureViewHelper;
 
@@ -43,13 +43,20 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
     private final OnClickListener onClickListener;
 
     @NonNull
-    private MediaPlayer mediaPlayer;
+    private final MediaPlayer mediaPlayer;
+    @NonNull
+    private final CustomMediaController mediaController;
     private int currentSelectedPosition;
 
-    FullscreenMediaAdapter(@Nullable OnClickListener onClickListener) {
+    FullscreenMediaAdapter(@Nullable OnClickListener onClickListener, @NonNull ViewGroup mediaControllerView) {
         this.onClickListener = onClickListener;
 
-        this.mediaPlayer = new MediaPlayer();
+        mediaPlayer = new MediaPlayer();
+
+        mediaController = new CustomMediaController(mediaControllerView.getContext());
+        mediaController.setAnchorView(mediaControllerView);
+        mediaController.setMediaPlayer(new MediaPlayerHolder(mediaPlayer));
+
         currentSelectedPosition = NO_POSITION;
     }
 
@@ -59,6 +66,7 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
             int oldPosition = currentSelectedPosition;
             currentSelectedPosition = position;
 
+            mediaController.doHide();
             mediaPlayer.reset();
 
             if (oldPosition != NO_POSITION && oldPosition >= 0 && oldPosition < getItemCount()) {
@@ -99,7 +107,7 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         };
 
         if (resourceId == VIDEO.resourceId) {
-            VideoViewHolder videoViewHolder = new VideoViewHolder(view, mediaPlayer);
+            VideoViewHolder videoViewHolder = new VideoViewHolder(view, mediaPlayer, mediaController);
             videoViewHolder.setOnClickListener(listener);
             return videoViewHolder;
         } else if (resourceId == IMAGE.resourceId) {
@@ -206,26 +214,22 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         @NonNull
         private final MediaPlayer mediaPlayer;
         @NonNull
-        private final MediaPlayerHolder mediaPlayerHolder;
-        @NonNull
-        private final MediaController mediaController;
+        private final CustomMediaController mediaController;
 
         @Nullable
         private Video video;
         private boolean playInnerAfterSurfaceTextureAvailable;
         private boolean startMediaPlayerWhenPrepared;
 
-        VideoViewHolder(@NonNull View view, @NonNull MediaPlayer mediaPlayer) {
+        VideoViewHolder(@NonNull View view,
+                        @NonNull MediaPlayer mediaPlayer,
+                        @NonNull CustomMediaController mediaController) {
             super(view);
             ButterKnife.bind(this, view);
             videoView.setSurfaceTextureListener(this);
 
             this.mediaPlayer = mediaPlayer;
-            mediaPlayerHolder = new MediaPlayerHolder(mediaPlayer);
-
-            mediaController = new MediaController(rootView.getContext());
-            mediaController.setMediaPlayer(mediaPlayerHolder);
-            mediaController.setAnchorView(rootView);
+            this.mediaController = mediaController;
         }
 
         void setOnClickListener(@NonNull View.OnClickListener listener) {
@@ -260,7 +264,6 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
             videoView.setAlpha(0.0f);
             playInnerAfterSurfaceTextureAvailable = false;
             startMediaPlayerWhenPrepared = false;
-            mediaController.setEnabled(false);
         }
 
         private void playInner() {
@@ -294,7 +297,7 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
                                                     mediaPlayer.getVideoWidth(),
                                                     mediaPlayer.getVideoHeight());
                 mediaPlayer.start();
-                mediaController.setEnabled(true);
+                mediaController.show(0);
                 videoView.setAlpha(1.0f);
             }
         }

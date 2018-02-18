@@ -113,4 +113,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
+    <FrameLayout
+        android:id="@+id/media_controller_holder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/thumbnail_media"
+        android:layout_width="0dp"
+        android:layout_height="0dp"/>
+
 </android.support.constraint.ConstraintLayout>

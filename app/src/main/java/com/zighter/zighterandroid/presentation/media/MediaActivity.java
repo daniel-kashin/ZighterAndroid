@@ -13,6 +13,7 @@ import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -98,6 +99,8 @@ public class MediaActivity
     TextView textDescription;
     @BindView(R.id.footer)
     View footer;
+    @BindView(R.id.media_controller_holder)
+    FrameLayout mediaControllerHolder;
     MediaAdaptersCoordinator mediaAdaptersCoordinator;
 
     private boolean isToolbarShown = true;
@@ -120,7 +123,8 @@ public class MediaActivity
         mediaAdaptersCoordinator = new MediaAdaptersCoordinator(fullscreenMedia,
                                                                 thumbnailMedia,
                                                                 this,
-                                                                this);
+                                                                this,
+                                                                mediaControllerHolder);
     }
 
     private void initializeControls() {
@@ -137,7 +141,8 @@ public class MediaActivity
                           it -> screenHeight + it.getHeight(),
                           ControlsAnimator.Axis.VERTICAL,
                           footer,
-                          thumbnailMedia)
+                          thumbnailMedia,
+                          mediaControllerHolder)
                 .build();
 
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

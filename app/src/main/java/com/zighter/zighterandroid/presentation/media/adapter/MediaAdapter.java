@@ -9,7 +9,6 @@ import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import java.util.List;
 
 public abstract class MediaAdapter<T extends RecyclerView.ViewHolder> extends RecyclerView.Adapter<T> {
-
     @Nullable
     private List<DrawableMedia> medias;
 
