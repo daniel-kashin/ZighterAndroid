@@ -19,7 +19,8 @@ import static android.support.v7.widget.RecyclerView.NO_POSITION;
 
 public class MediaAdaptersCoordinator implements
         FullscreenScrollListener.OnSwipeListener,
-        ThumbnailMediaAdapter.OnThumbnailClickListener {
+        ThumbnailMediaAdapter.OnClickListener,
+        FullscreenMediaAdapter.OnClickListener {
 
     private static final String TAG = "Coordinator";
 
@@ -35,17 +36,21 @@ public class MediaAdaptersCoordinator implements
     private View.OnLayoutChangeListener onFullscreenAdapterLayoutChangeListener;
     @Nullable
     private final OnMediaPositionChangeListener onMediaPositionChangeListener;
+    @Nullable
+    private final OnFullscreenMediaClickListener onFullscreenMediaClickListener;
 
     private int currentPosition = NO_POSITION;
 
     public MediaAdaptersCoordinator(@NonNull RecyclerView fullscreenMedia,
                                     @NonNull RecyclerView thumbnailMedia,
-                                    @Nullable OnMediaPositionChangeListener onMediaPositionChangeListener) {
+                                    @Nullable OnMediaPositionChangeListener onMediaPositionChangeListener,
+                                    @Nullable OnFullscreenMediaClickListener onFullscreenMediaClickListener) {
         this.fullscreenMedia = fullscreenMedia;
         this.thumbnailMedia = thumbnailMedia;
         this.onMediaPositionChangeListener = onMediaPositionChangeListener;
+        this.onFullscreenMediaClickListener = onFullscreenMediaClickListener;
 
-        fullscreenMediaAdapter = new FullscreenMediaAdapter();
+        fullscreenMediaAdapter = new FullscreenMediaAdapter(this);
         thumbnailMediaAdapter = new ThumbnailMediaAdapter(this);
         initializeFullscreenMedia();
         initializeThumbnailMedia();
@@ -107,6 +112,13 @@ public class MediaAdaptersCoordinator implements
     }
 
     @Override
+    public void onFullscreenMediaClicked() {
+        if (onFullscreenMediaClickListener != null) {
+            onFullscreenMediaClickListener.onFullscreenMediaClicked();
+        }
+    }
+
+    @Override
     public void onSwiped(int currentPosition) {
         Log.d(TAG, "onSwiped(" + currentPosition + ")");
         int previousPosition = this.currentPosition;
@@ -163,5 +175,9 @@ public class MediaAdaptersCoordinator implements
 
     public interface OnMediaPositionChangeListener {
         void onMediaPositionChanged(int currentPosition);
+    }
+
+    public interface OnFullscreenMediaClickListener {
+        void onFullscreenMediaClicked();
     }
 }

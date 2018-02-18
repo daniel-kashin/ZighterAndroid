@@ -39,11 +39,16 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
     private static final String TAG = "FullscreenMediaAdapter";
     private static final int KEY_NEW_SELECTED_POSITION = 111;
 
+    @Nullable
+    private final OnClickListener onClickListener;
+
     @NonNull
     private MediaPlayer mediaPlayer;
     private int currentSelectedPosition;
 
-    FullscreenMediaAdapter() {
+    FullscreenMediaAdapter(@Nullable OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
+
         this.mediaPlayer = new MediaPlayer();
         currentSelectedPosition = NO_POSITION;
     }
@@ -75,10 +80,20 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(resourceId, parent, false);
 
+        View.OnClickListener listener = it -> {
+            if (onClickListener != null) {
+                onClickListener.onFullscreenMediaClicked();
+            }
+        };
+
         if (resourceId == VIDEO.resourceId) {
-            return new VideoViewHolder(view, mediaPlayer);
+            VideoViewHolder videoViewHolder = new VideoViewHolder(view, mediaPlayer);
+            videoViewHolder.setOnClickListener(listener);
+            return videoViewHolder;
         } else if (resourceId == IMAGE.resourceId) {
-            return new ImageViewHolder(view);
+            ImageViewHolder imageViewHolder = new ImageViewHolder(view);
+            imageViewHolder.setOnClickListener(listener);
+            return imageViewHolder;
         }
 
         throw new IllegalStateException();
@@ -149,6 +164,11 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
             ButterKnife.bind(this, view);
         }
 
+        void setOnClickListener(@NonNull View.OnClickListener listener) {
+            rootView.setOnClickListener(listener);
+            photoView.setOnClickListener(listener);
+        }
+
         void bind(@NonNull Image image) {
             Glide.with(photoView.getContext())
                     .load(image.getUrl())
@@ -194,6 +214,12 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
             mediaController = new MediaController(rootView.getContext());
             mediaController.setMediaPlayer(mediaPlayerHolder);
             mediaController.setAnchorView(rootView);
+        }
+
+        void setOnClickListener(@NonNull View.OnClickListener listener) {
+            rootView.setOnClickListener(listener);
+            thumbnail.setOnClickListener(listener);
+            videoView.setOnClickListener(listener);
         }
 
         void bind(@NonNull Video video) {
@@ -286,5 +312,9 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         ViewType(int resourceId) {
             this.resourceId = resourceId;
         }
+    }
+
+    public interface OnClickListener {
+        void onFullscreenMediaClicked();
     }
 }

@@ -5,14 +5,12 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
@@ -22,9 +20,6 @@ import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Video;
-import com.zighter.zighterandroid.util.recyclerview.UnitConverter;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,22 +27,21 @@ import butterknife.ButterKnife;
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.zighter.zighterandroid.presentation.media.adapter.ThumbnailMediaAdapter.ThumbnailViewHolder;
 import static com.zighter.zighterandroid.util.recyclerview.UnitConverter.dpToPx;
-import static com.zighter.zighterandroid.util.recyclerview.UnitConverter.pxToDp;
 
 public class ThumbnailMediaAdapter extends MediaAdapter<ThumbnailViewHolder> {
     private static final String TAG = "ThumbnailMediaAdapter";
 
     @Nullable
-    private OnThumbnailClickListener onThumbnailClickListener;
+    private OnClickListener onClickListener;
 
     private int currentSelectedPosition = NO_POSITION;
 
-    ThumbnailMediaAdapter(@Nullable OnThumbnailClickListener onThumbnailClickListener) {
-        this.onThumbnailClickListener = onThumbnailClickListener;
+    ThumbnailMediaAdapter(@Nullable OnClickListener onClickListener) {
+        this.onClickListener = onClickListener;
     }
 
     void onDestroy() {
-        onThumbnailClickListener = null;
+        onClickListener = null;
     }
 
     void setCurrentSelectedPosition(int position) {
@@ -79,10 +73,10 @@ public class ThumbnailMediaAdapter extends MediaAdapter<ThumbnailViewHolder> {
         DrawableMedia media = getItemAt(position);
 
         holder.setOnRootViewClickListener(it -> {
-            if (onThumbnailClickListener != null) {
+            if (onClickListener != null) {
                 int adapterPosition = holder.getAdapterPosition();
                 if (adapterPosition != NO_POSITION) {
-                    onThumbnailClickListener.onThumbnailClicked(adapterPosition);
+                    onClickListener.onThumbnailClicked(adapterPosition);
                 }
             }
         });
@@ -172,7 +166,7 @@ public class ThumbnailMediaAdapter extends MediaAdapter<ThumbnailViewHolder> {
         }
     }
 
-    interface OnThumbnailClickListener {
+    interface OnClickListener {
         void onThumbnailClicked(int position);
     }
 }

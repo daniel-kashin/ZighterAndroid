@@ -5,9 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -18,6 +22,7 @@ import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.media.adapter.MediaAdaptersCoordinator;
+import com.zighter.zighterandroid.util.animation.ControlsAnimator;
 
 import java.util.List;
 
@@ -25,12 +30,18 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import butterknife.BindView;
-import timber.log.Timber;
 
 import static com.zighter.zighterandroid.presentation.media.adapter.MediaAdaptersCoordinator.OnMediaPositionChangeListener;
+import static com.zighter.zighterandroid.presentation.media.adapter.MediaAdaptersCoordinator.OnFullscreenMediaClickListener;
 
-public class MediaActivity extends BaseSupportActivity implements MediaView, OnMediaPositionChangeListener {
+
+public class MediaActivity
+        extends BaseSupportActivity
+        implements MediaView, OnMediaPositionChangeListener, OnFullscreenMediaClickListener {
     private static final String KEY_SIGHT = "SIGHT";
+
+    private static final String KEY_ANIMATION_TOOLBAR = "KEY_ANIMATION_TOOLBAR";
+    private static final String KEY_ANIMATION_FOOTER = "KEY_ANIMATION_FOOTER";
 
     public static void start(@NonNull Context context, @NonNull Sight sight) {
         Intent intent = new Intent(context, MediaActivity.class);
@@ -64,6 +75,8 @@ public class MediaActivity extends BaseSupportActivity implements MediaView, OnM
                 .inject(this);
     }
 
+    @BindView(R.id.root_view)
+    ConstraintLayout rootView;
     @BindView(R.id.fullscreen_media)
     RecyclerView fullscreenMedia;
     @BindView(R.id.thumbnail_media)
@@ -72,8 +85,14 @@ public class MediaActivity extends BaseSupportActivity implements MediaView, OnM
     Toolbar toolbar;
     @BindView(R.id.toolbar_title)
     TextView toolbarTitle;
+    @BindView(R.id.footer)
+    View footer;
     MediaAdaptersCoordinator mediaAdaptersCoordinator;
 
+    private boolean areToolbarShown = true;
+    private boolean areFooterShown = true;
+
+    private ControlsAnimator controlsAnimator;
     private Sight sight;
 
     @Override
@@ -86,7 +105,37 @@ public class MediaActivity extends BaseSupportActivity implements MediaView, OnM
         initializeSight();
         super.onCreate(savedInstanceState);
         initializeView();
-        mediaAdaptersCoordinator = new MediaAdaptersCoordinator(fullscreenMedia, thumbnailMedia, this);
+        initializeControls();
+        mediaAdaptersCoordinator = new MediaAdaptersCoordinator(fullscreenMedia,
+                                                                thumbnailMedia,
+                                                                this,
+                                                                this);
+    }
+
+    private void initializeControls() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int screenHeight = displayMetrics.heightPixels;
+
+        controlsAnimator = new ControlsAnimator.Builder()
+                .addGroup(KEY_ANIMATION_TOOLBAR,
+                          it -> -it.getHeight(),
+                          ControlsAnimator.Axis.VERTICAL,
+                          toolbar)
+                .addGroup(KEY_ANIMATION_FOOTER,
+                          it -> screenHeight + it.getHeight(),
+                          ControlsAnimator.Axis.VERTICAL,
+                          footer,
+                          thumbnailMedia)
+                .build();
+
+        rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                controlsAnimator.initPositions();
+                rootView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+            }
+        });
     }
 
     private void initializeSight() {
@@ -133,5 +182,24 @@ public class MediaActivity extends BaseSupportActivity implements MediaView, OnM
     @Override
     public void onMediaPositionChanged(int currentPosition) {
         presenter.onMediaPositionChanged(currentPosition);
+    }
+
+    @Override
+    public void onFullscreenMediaClicked() {
+        if (areToolbarShown) {
+            areToolbarShown = false;
+            controlsAnimator.hideControls(KEY_ANIMATION_TOOLBAR);
+        } else {
+            areToolbarShown = true;
+            controlsAnimator.showControls(KEY_ANIMATION_TOOLBAR);
+        }
+
+        if (areFooterShown) {
+            areFooterShown = false;
+            controlsAnimator.hideControls(KEY_ANIMATION_FOOTER);
+        } else {
+            areFooterShown = true;
+            controlsAnimator.showControls(KEY_ANIMATION_FOOTER);
+        }
     }
 }
