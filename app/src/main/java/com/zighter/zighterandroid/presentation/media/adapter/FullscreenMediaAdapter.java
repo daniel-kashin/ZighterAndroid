@@ -71,6 +71,18 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         }
     }
 
+    void onStart() {
+        if (!mediaPlayer.isPlaying()) {
+            mediaPlayer.start();
+        }
+    }
+
+    void onPause() {
+        if (mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+    }
+
     void onDestroy() {
         mediaPlayer.release();
     }

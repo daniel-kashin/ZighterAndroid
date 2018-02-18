@@ -168,6 +168,18 @@ public class MediaActivity
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        mediaAdaptersCoordinator.onStart();
+    }
+
+    @Override
+    protected void onPause() {
+        mediaAdaptersCoordinator.onPause();
+        super.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         mediaAdaptersCoordinator.onDestroy();
         super.onDestroy();

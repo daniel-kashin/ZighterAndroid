@@ -110,6 +110,14 @@ public class MediaAdaptersCoordinator implements
         }
     }
 
+    public void onStart() {
+        fullscreenMediaAdapter.onStart();
+    }
+
+    public void onPause() {
+        fullscreenMediaAdapter.onPause();
+    }
+
     public void onDestroy() {
         fullscreenMediaAdapter.onDestroy();
         thumbnailMediaAdapter.onDestroy();
