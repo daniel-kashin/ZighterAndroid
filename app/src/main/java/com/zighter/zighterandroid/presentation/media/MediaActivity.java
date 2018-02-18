@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -12,6 +13,8 @@ import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -83,14 +86,22 @@ public class MediaActivity
     RecyclerView thumbnailMedia;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.toolbar_title)
-    TextView toolbarTitle;
+    @BindView(R.id.toolbar_title_count)
+    TextView toolbarTitleCount;
+    @BindView(R.id.toolbar_title_name)
+    TextView toolbarTitleName;
+    @BindView(R.id.icon_text)
+    ImageView iconText;
+    @BindView(R.id.description_scroll)
+    ScrollView descriptionScroll;
+    @BindView(R.id.text_description)
+    TextView textDescription;
     @BindView(R.id.footer)
     View footer;
     MediaAdaptersCoordinator mediaAdaptersCoordinator;
 
-    private boolean areToolbarShown = true;
-    private boolean areFooterShown = true;
+    private boolean isToolbarShown = true;
+    private boolean isFooterShown = true;
 
     private ControlsAnimator controlsAnimator;
     private Sight sight;
@@ -150,12 +161,25 @@ public class MediaActivity
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbarTitleCount.setVisibility(View.GONE);
+        toolbarTitleName.setVisibility(View.GONE);
+        iconText.setVisibility(View.GONE);
+        descriptionScroll.setVisibility(View.GONE);
     }
 
     @Override
     protected void onDestroy() {
         mediaAdaptersCoordinator.onDestroy();
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (descriptionScroll.getVisibility() == View.VISIBLE) {
+            presenter.onHideDescription();
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -174,9 +198,61 @@ public class MediaActivity
 
     @Override
     @SuppressLint("SetTextI18n")
-    public void showCurrentMediaPositionChange(int currentPosition, int size) {
+    public void showCurrentMediaPosition(int currentPosition, int size, boolean isIconTextShown) {
         //noinspection ConstantConditions
-        toolbarTitle.setText((currentPosition + 1) + " of " + size);
+        toolbarTitleCount.setText((currentPosition + 1) + " of " + size);
+        if (descriptionScroll.getVisibility() != View.VISIBLE) {
+            toolbarTitleCount.setVisibility(View.VISIBLE);
+        }
+
+        if (isIconTextShown) {
+            iconText.setOnClickListener(view -> {
+                presenter.onIconTextClicked();
+            });
+            if (descriptionScroll.getVisibility() != View.VISIBLE) {
+                iconText.setVisibility(View.VISIBLE);
+            }
+        } else {
+            iconText.setVisibility(View.GONE);
+            iconText.setOnClickListener(null);
+        }
+    }
+
+    @Override
+    public void showMediaDescription(@Nullable String name, @NonNull String body) {
+        iconText.setVisibility(View.GONE);
+        toolbarTitleCount.setVisibility(View.GONE);
+
+        toolbarTitleName.setText(name);
+        textDescription.setText(body);
+
+        toolbarTitleName.setVisibility(View.VISIBLE);
+        descriptionScroll.setVisibility(View.VISIBLE);
+
+        if (isFooterShown) {
+            isFooterShown = false;
+            controlsAnimator.hideControls(KEY_ANIMATION_FOOTER);
+        }
+    }
+
+    @Override
+    public void hideMediaDescription(boolean isIconTextShown) {
+        toolbarTitleName.setVisibility(View.GONE);
+        descriptionScroll.setVisibility(View.GONE);
+
+        toolbarTitleCount.setVisibility(View.VISIBLE);
+
+        if (!isFooterShown) {
+            isFooterShown = true;
+            controlsAnimator.showControls(KEY_ANIMATION_FOOTER);
+        }
+
+        if (isIconTextShown) {
+            iconText.setVisibility(View.VISIBLE);
+            iconText.setOnClickListener(view -> {
+                presenter.onIconTextClicked();
+            });
+        }
     }
 
     @Override
@@ -186,19 +262,19 @@ public class MediaActivity
 
     @Override
     public void onFullscreenMediaClicked() {
-        if (areToolbarShown) {
-            areToolbarShown = false;
+        if (isToolbarShown) {
+            isToolbarShown = false;
             controlsAnimator.hideControls(KEY_ANIMATION_TOOLBAR);
         } else {
-            areToolbarShown = true;
+            isToolbarShown = true;
             controlsAnimator.showControls(KEY_ANIMATION_TOOLBAR);
         }
 
-        if (areFooterShown) {
-            areFooterShown = false;
+        if (isFooterShown) {
+            isFooterShown = false;
             controlsAnimator.hideControls(KEY_ANIMATION_FOOTER);
         } else {
-            areFooterShown = true;
+            isFooterShown = true;
             controlsAnimator.showControls(KEY_ANIMATION_FOOTER);
         }
     }

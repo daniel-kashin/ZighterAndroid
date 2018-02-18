@@ -38,6 +38,8 @@ public class MediaAdaptersCoordinator implements
     private final OnMediaPositionChangeListener onMediaPositionChangeListener;
     @Nullable
     private final OnFullscreenMediaClickListener onFullscreenMediaClickListener;
+    @Nullable
+    private List<DrawableMedia> medias;
 
     private int currentPosition = NO_POSITION;
 
@@ -97,6 +99,8 @@ public class MediaAdaptersCoordinator implements
     }
 
     public void setMedias(@NonNull List<DrawableMedia> medias) {
+        this.medias = medias;
+
         fullscreenMediaAdapter.setMedias(medias);
         thumbnailMediaAdapter.setMedias(medias);
         if (!medias.isEmpty()) {
@@ -139,7 +143,7 @@ public class MediaAdaptersCoordinator implements
             fullscreenMediaAdapter.setCurrentSelectedPosition(currentPosition);
             thumbnailMediaAdapter.setCurrentSelectedPosition(currentPosition);
 
-            if (currentPosition != NO_POSITION) {
+            if (currentPosition != NO_POSITION && currentPosition >= 0 && medias != null && currentPosition < medias.size()) {
                 if (fromThumbnail) {
                     fullscreenMedia.scrollToPosition(currentPosition);
                 }
@@ -165,10 +169,10 @@ public class MediaAdaptersCoordinator implements
                 }
 
                 thumbnailMedia.smoothScrollToPosition(positionToScrollThumbnail);
-            }
 
-            if (onMediaPositionChangeListener != null) {
-                onMediaPositionChangeListener.onMediaPositionChanged(currentPosition);
+                if (onMediaPositionChangeListener != null) {
+                    onMediaPositionChangeListener.onMediaPositionChanged(currentPosition);
+                }
             }
         }
     }

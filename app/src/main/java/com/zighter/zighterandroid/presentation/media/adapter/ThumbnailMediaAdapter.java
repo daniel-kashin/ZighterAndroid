@@ -49,10 +49,10 @@ public class ThumbnailMediaAdapter extends MediaAdapter<ThumbnailViewHolder> {
             int oldPosition = currentSelectedPosition;
             currentSelectedPosition = position;
 
-            if (oldPosition != NO_POSITION) {
+            if (oldPosition != NO_POSITION && oldPosition >= 0 && oldPosition < getItemCount()) {
                 notifyItemChanged(oldPosition);
             }
-            if (currentSelectedPosition != NO_POSITION) {
+            if (currentSelectedPosition != NO_POSITION && currentSelectedPosition >= 0 && currentSelectedPosition < getItemCount()) {
                 notifyItemChanged(position);
             }
         }

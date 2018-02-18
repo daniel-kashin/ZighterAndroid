@@ -2,18 +2,22 @@ package com.zighter.zighterandroid.util.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
+import android.support.annotation.NonNull;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
 
 public final class ControlsAnimator {
 
     private final Map<String, ControlsGroup> controlsGroups;
     private boolean isInitialized;
+    private Queue<Runnable> runnablesToRunOnInitialization = new LinkedList<>();
 
-    private ControlsAnimator(HashMap<String, ControlsGroup> map) {
+    private ControlsAnimator(@NonNull HashMap<String, ControlsGroup> map) {
         this.controlsGroups = map;
     }
 
@@ -22,21 +26,37 @@ public final class ControlsAnimator {
         for (Map.Entry<String, ControlsGroup> controlsGroup : controlsGroups.entrySet()) {
             controlsGroup.getValue().init();
         }
+
+        while (!runnablesToRunOnInitialization.isEmpty()) {
+            runnablesToRunOnInitialization.remove().run();
+        }
     }
 
     public void hideControls(String... keys) {
-        if (isInitialized) {
+        Runnable runnable = () -> {
             for (String key : keys) {
                 controlsGroups.get(key).hideControls();
             }
+        };
+
+        if (isInitialized) {
+            runnable.run();
+        } else {
+            runnablesToRunOnInitialization.add(runnable);
         }
     }
 
     public void showControls(String... keys) {
-        if (isInitialized) {
+        Runnable runnable = () -> {
             for (String key : keys) {
                 controlsGroups.get(key).showControls();
             }
+        };
+
+        if (isInitialized) {
+            runnable.run();
+        } else {
+            runnablesToRunOnInitialization.add(runnable);
         }
     }
 
@@ -127,12 +147,14 @@ public final class ControlsAnimator {
     }
 
     public static class Builder {
+        @NonNull
         final HashMap<String, ControlsGroup> controlsGroups;
 
         public Builder() {
             controlsGroups = new HashMap<>();
         }
 
+        @NonNull
         public Builder addGroup(String key,
                                 PositionRetriever hidePositionRetriever,
                                 Axis axis,
@@ -141,6 +163,7 @@ public final class ControlsAnimator {
             return this;
         }
 
+        @NonNull
         public ControlsAnimator build() {
             return new ControlsAnimator(controlsGroups);
         }

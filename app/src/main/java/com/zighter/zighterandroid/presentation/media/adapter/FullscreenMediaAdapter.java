@@ -61,11 +61,11 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
 
             mediaPlayer.reset();
 
-            if (oldPosition != NO_POSITION) {
+            if (oldPosition != NO_POSITION && oldPosition >= 0 && oldPosition < getItemCount()) {
                 notifyItemChanged(oldPosition);
             }
 
-            if (currentSelectedPosition != NO_POSITION) {
+            if (currentSelectedPosition != NO_POSITION && currentSelectedPosition >= 0 && currentSelectedPosition < getItemCount()) {
                 notifyItemChanged(currentSelectedPosition, KEY_NEW_SELECTED_POSITION);
             }
         }
