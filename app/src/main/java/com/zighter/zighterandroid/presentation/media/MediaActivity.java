@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
+import com.zighter.zighterandroid.presentation.media.adapter.FullscreenMediaAdapter;
 import com.zighter.zighterandroid.presentation.media.adapter.MediaAdaptersCoordinator;
 import com.zighter.zighterandroid.util.animation.ControlsAnimator;
 
@@ -39,9 +41,12 @@ import static com.zighter.zighterandroid.presentation.media.adapter.MediaAdapter
 import static com.zighter.zighterandroid.presentation.media.adapter.MediaAdaptersCoordinator.OnFullscreenMediaClickListener;
 
 
-public class MediaActivity
-        extends BaseSupportActivity
-        implements MediaView, OnMediaPositionChangeListener, OnFullscreenMediaClickListener {
+public class MediaActivity extends BaseSupportActivity
+        implements MediaView,
+        OnMediaPositionChangeListener,
+        OnFullscreenMediaClickListener,
+        FullscreenMediaAdapter.OnUploadListener {
+
     private static final String KEY_SIGHT = "SIGHT";
 
     private static final String KEY_ANIMATION_TOOLBAR = "KEY_ANIMATION_TOOLBAR";
@@ -101,6 +106,10 @@ public class MediaActivity
     View footer;
     @BindView(R.id.media_controller_holder)
     FrameLayout mediaControllerHolder;
+    @BindView(R.id.error_message)
+    TextView errorMessage;
+    @BindView(R.id.progress_bar)
+    ProgressBar progressBar;
     MediaAdaptersCoordinator mediaAdaptersCoordinator;
 
     private boolean isToolbarShown = true;
@@ -124,6 +133,7 @@ public class MediaActivity
                                                                 thumbnailMedia,
                                                                 this,
                                                                 this,
+                                                                this,
                                                                 mediaControllerHolder);
     }
 
@@ -142,7 +152,9 @@ public class MediaActivity
                           ControlsAnimator.Axis.VERTICAL,
                           footer,
                           thumbnailMedia,
-                          mediaControllerHolder)
+                          mediaControllerHolder,
+                          progressBar,
+                          errorMessage)
                 .build();
 
         rootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -170,6 +182,8 @@ public class MediaActivity
         toolbarTitleName.setVisibility(View.GONE);
         iconText.setVisibility(View.GONE);
         descriptionScroll.setVisibility(View.GONE);
+        progressBar.setVisibility(View.INVISIBLE);
+        errorMessage.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -294,5 +308,23 @@ public class MediaActivity
             isFooterShown = true;
             controlsAnimator.showControls(KEY_ANIMATION_FOOTER);
         }
+    }
+
+    @Override
+    public void onMediaUploadStarted(int adapterPosition) {
+        progressBar.setVisibility(View.VISIBLE);
+        errorMessage.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onMediaUploadSuccess(int adapterPosition) {
+        progressBar.setVisibility(View.INVISIBLE);
+        errorMessage.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onMediaUploadFailed(int adapterPosition) {
+        progressBar.setVisibility(View.INVISIBLE);
+        errorMessage.setVisibility(View.VISIBLE);
     }
 }

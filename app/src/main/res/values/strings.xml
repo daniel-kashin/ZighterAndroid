@@ -17,4 +17,9 @@
 
     <string name="yes">YES</string>
     <string name="no">NO</string>
+
+    <string name="try_again">Try again</string>
+    <string name="network_error_message">An error occurred while trying to download data. Please, check your network connection.</string>
+    <string name="server_error_message">An error occurred on the server side. Please, try again later.</string>
+    <string name="media_upload_error_message">Unable to upload</string>
 </resources>

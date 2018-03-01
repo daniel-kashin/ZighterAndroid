@@ -8,9 +8,9 @@
     android:background="@color/lightGrey">
 
     <ImageView
+        android:id="@+id/placeholder"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:background="@drawable/ic_landscape_black"
         android:layout_centerInParent="true" />
 
     <ImageView

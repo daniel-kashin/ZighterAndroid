@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
@@ -81,6 +82,10 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     ProgressBar progressBar;
     @BindView(R.id.location_image_view)
     ImageView locationImageView;
+    @BindView(R.id.try_again)
+    TextView tryAgain;
+    @BindView(R.id.error_message)
+    TextView errorMessage;
 
     @NonNull
     private HashMap<Marker, Sight> markersToSights = new HashMap<>();
@@ -128,6 +133,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         map.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
         locationImageView.setVisibility(View.INVISIBLE);
+        tryAgain.setVisibility(View.INVISIBLE);
+        errorMessage.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -259,6 +266,10 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             Log.d(TAG, "mapboxMap in showLoading");
 
             mapboxMap.setOnMarkerClickListener(null);
+            tryAgain.setOnClickListener(null);
+            tryAgain.setVisibility(View.INVISIBLE);
+            errorMessage.setVisibility(View.INVISIBLE);
+
             progressBar.setVisibility(View.VISIBLE);
         });
     }
@@ -344,6 +355,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             });
 
             hideLoading();
+            tryAgain.setVisibility(View.INVISIBLE);
+            errorMessage.setVisibility(View.INVISIBLE);
             map.setVisibility(View.VISIBLE);
             locationImageView.setVisibility(View.VISIBLE);
 
@@ -354,13 +367,31 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     @Override
     public void showNetworkUnavailable() {
         Log.d(TAG, "showNetworkUnavailable");
+        if (getContext() == null) {
+            return;
+        }
+
         hideLoading();
+
+        errorMessage.setText(getContext().getString(R.string.network_error_message));
+        tryAgain.setOnClickListener(view -> presenter.onReloadExcursionRequest());
+        errorMessage.setVisibility(View.VISIBLE);
+        tryAgain.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showServerException() {
         Log.d(TAG, "showServerException");
+        if (getContext() == null) {
+            return;
+        }
+
         hideLoading();
+
+        errorMessage.setText(getContext().getString(R.string.server_error_message));
+        tryAgain.setOnClickListener(view -> presenter.onReloadExcursionRequest());
+        errorMessage.setVisibility(View.VISIBLE);
+        tryAgain.setVisibility(View.VISIBLE);
     }
 
     @Override

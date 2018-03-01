@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -95,6 +96,8 @@ public class ThumbnailMediaAdapter extends MediaAdapter<ThumbnailViewHolder> {
         RelativeLayout rootView;
         @BindView(R.id.thumbnail)
         ImageView thumbnail;
+        @BindView(R.id.placeholder)
+        ImageView placeholder;
 
         @NonNull
         private final Context context;
@@ -139,7 +142,6 @@ public class ThumbnailMediaAdapter extends MediaAdapter<ThumbnailViewHolder> {
                     animator.setDuration(100);
                 }
 
-
                 if (animator != null) {
                     animator.addUpdateListener(it -> {
                         int margin = Math.round((Float) it.getAnimatedValue());
@@ -152,12 +154,16 @@ public class ThumbnailMediaAdapter extends MediaAdapter<ThumbnailViewHolder> {
             }
 
             if (media instanceof Video) {
+                placeholder.setBackground(ContextCompat.getDrawable(placeholder.getContext(), R.drawable.ic_play_black));
+
                 Glide.with(context)
                         .asBitmap()
                         .load(media.getUrl())
                         .apply(requestOptions)
                         .into(thumbnail);
             } else if (media instanceof Image) {
+                placeholder.setBackground(ContextCompat.getDrawable(placeholder.getContext(), R.drawable.ic_landscape_black));
+
                 Glide.with(context)
                         .load(media.getUrl())
                         .apply(requestOptions)

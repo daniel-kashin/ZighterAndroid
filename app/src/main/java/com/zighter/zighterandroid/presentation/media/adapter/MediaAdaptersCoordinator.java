@@ -48,13 +48,14 @@ public class MediaAdaptersCoordinator implements
                                     @NonNull RecyclerView thumbnailMedia,
                                     @Nullable OnMediaPositionChangeListener onMediaPositionChangeListener,
                                     @Nullable OnFullscreenMediaClickListener onFullscreenMediaClickListener,
+                                    @Nullable FullscreenMediaAdapter.OnUploadListener onUploadListener,
                                     @NonNull ViewGroup mediaControllerView) {
         this.fullscreenMedia = fullscreenMedia;
         this.thumbnailMedia = thumbnailMedia;
         this.onMediaPositionChangeListener = onMediaPositionChangeListener;
         this.onFullscreenMediaClickListener = onFullscreenMediaClickListener;
 
-        fullscreenMediaAdapter = new FullscreenMediaAdapter(this, mediaControllerView);
+        fullscreenMediaAdapter = new FullscreenMediaAdapter(this, onUploadListener, mediaControllerView);
         thumbnailMediaAdapter = new ThumbnailMediaAdapter(this);
         initializeFullscreenMedia();
         initializeThumbnailMedia();

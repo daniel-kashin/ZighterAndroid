@@ -15,7 +15,7 @@ public class NetworkModule {
     OkHttpClient provideOkHttpClient() {
         return new OkHttpClient().newBuilder()
                 .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(10, TimeUnit.SECONDS)
                 .build();
     }
 }

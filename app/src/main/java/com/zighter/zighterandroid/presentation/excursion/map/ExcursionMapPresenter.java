@@ -35,22 +35,25 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
     @Override
     protected void onFirstViewAttach() {
         super.onFirstViewAttach();
-        getViewState().showLoading();
+        onReloadExcursionRequest();
+    }
 
+    void onReloadExcursionRequest() {
+        getViewState().showLoading();
         excursionRepository.getExcursion()
                 .compose(applySchedulersSingle())
                 .subscribe(excursion -> {
                     getViewState().showExcursion(excursion);
                 }, throwable -> {
-                   if (throwable instanceof BaseException) {
-                       if (throwable instanceof NetworkUnavailableException) {
-                           getViewState().showNetworkUnavailable();
-                       } else if (throwable instanceof ServerException) {
-                           getViewState().showServerException();
-                       }
-                   } else {
+                    if (throwable instanceof BaseException) {
+                        if (throwable instanceof NetworkUnavailableException) {
+                            getViewState().showNetworkUnavailable();
+                        } else if (throwable instanceof ServerException) {
+                            getViewState().showServerException();
+                        }
+                    } else {
                         handleThrowable(throwable, TAG);
-                   }
+                    }
                 });
     }
 

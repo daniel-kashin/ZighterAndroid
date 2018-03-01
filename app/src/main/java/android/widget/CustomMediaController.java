@@ -386,7 +386,7 @@ public class CustomMediaController extends FrameLayout {
         if (mPlayer.isPlaying()) {
             mPauseButton.setImageResource(R.drawable.ic_pause);
         } else {
-            mPauseButton.setImageResource(R.drawable.ic_play);
+            mPauseButton.setImageResource(R.drawable.ic_play_white);
         }
     }
 
