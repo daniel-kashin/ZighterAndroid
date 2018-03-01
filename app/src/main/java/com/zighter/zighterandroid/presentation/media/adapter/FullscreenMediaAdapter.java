@@ -158,31 +158,37 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         OnUploadListener onUploadListener = new OnUploadListener() {
             @Override
             public void onMediaUploadStarted(int adapterPosition) {
-                setUploadState(adapterPosition, UploadState.STARTED);
+                if (adapterPosition != NO_POSITION) {
+                    setUploadState(adapterPosition, UploadState.STARTED);
 
-                OnUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
-                if (outerListener != null && adapterPosition == currentSelectedPosition) {
-                    outerListener.onMediaUploadStarted(adapterPosition);
+                    OnUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
+                    if (outerListener != null && adapterPosition == currentSelectedPosition) {
+                        outerListener.onMediaUploadStarted(adapterPosition);
+                    }
                 }
             }
 
             @Override
             public void onMediaUploadSuccess(int adapterPosition) {
-                setUploadState(adapterPosition, UploadState.SUCCESS);
+                if (adapterPosition != NO_POSITION) {
+                    setUploadState(adapterPosition, UploadState.SUCCESS);
 
-                OnUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
-                if (outerListener != null && adapterPosition == currentSelectedPosition) {
-                    outerListener.onMediaUploadSuccess(adapterPosition);
+                    OnUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
+                    if (outerListener != null && adapterPosition == currentSelectedPosition) {
+                        outerListener.onMediaUploadSuccess(adapterPosition);
+                    }
                 }
             }
 
             @Override
             public void onMediaUploadFailed(int adapterPosition) {
-                setUploadState(adapterPosition, UploadState.FAILED);
+                if (adapterPosition != NO_POSITION) {
+                    setUploadState(adapterPosition, UploadState.FAILED);
 
-                OnUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
-                if (outerListener != null && adapterPosition == currentSelectedPosition) {
-                    outerListener.onMediaUploadFailed(adapterPosition);
+                    OnUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
+                    if (outerListener != null && adapterPosition == currentSelectedPosition) {
+                        outerListener.onMediaUploadFailed(adapterPosition);
+                    }
                 }
             }
         };
