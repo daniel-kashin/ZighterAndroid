@@ -6,7 +6,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 
 import com.zighter.zighterandroid.dagger.component.AppComponent;
+import com.zighter.zighterandroid.dagger.component.BoughtExcursionsComponent;
 import com.zighter.zighterandroid.dagger.component.DaggerAppComponent;
+import com.zighter.zighterandroid.dagger.component.DownloadExcursionJobComponent;
 import com.zighter.zighterandroid.dagger.component.ExcursionMapComponent;
 import com.zighter.zighterandroid.dagger.component.MediaComponent;
 import com.zighter.zighterandroid.dagger.component.SightComponent;
@@ -32,6 +34,12 @@ public class Injector {
         return instance;
     }
 
+    @Nullable
+    @UiThread
+    public static Injector getInstanceSafe() {
+        return instance;
+    }
+
     @NonNull
     private final AppComponent appComponent;
     @NonNull
@@ -40,6 +48,10 @@ public class Injector {
     private WeakReference<SightComponent> sightComponentWeakReference;
     @NonNull
     private WeakReference<MediaComponent> mediaComponentWeakReference;
+    @NonNull
+    private WeakReference<BoughtExcursionsComponent> boughtExcursionsComponentWeakReference;
+    @NonNull
+    private WeakReference<DownloadExcursionJobComponent> downloadExcursionJobComponentWeakReference;
 
     @UiThread
     private Injector(@NonNull Context context) {
@@ -49,6 +61,8 @@ public class Injector {
         navigationComponentWeakReference = new WeakReference<>(null);
         sightComponentWeakReference = new WeakReference<>(null);
         mediaComponentWeakReference = new WeakReference<>(null);
+        boughtExcursionsComponentWeakReference = new WeakReference<>(null);
+        downloadExcursionJobComponentWeakReference = new WeakReference<>(null);
     }
 
     @NonNull
@@ -76,5 +90,23 @@ public class Injector {
             mediaComponentWeakReference = new WeakReference<>(appComponent.plusMediaComponent());
         }
         return mediaComponentWeakReference.get();
+    }
+
+    @NonNull
+    @UiThread
+    public BoughtExcursionsComponent getBoughtExcursionsMediaComponent() {
+        if (boughtExcursionsComponentWeakReference.get() == null) {
+            boughtExcursionsComponentWeakReference = new WeakReference<>(appComponent.plusBoughtExcursionsComponent());
+        }
+        return boughtExcursionsComponentWeakReference.get();
+    }
+
+    @NonNull
+    @UiThread
+    public DownloadExcursionJobComponent getDowndloadExcursionJobComponent() {
+        if (downloadExcursionJobComponentWeakReference.get() == null) {
+            downloadExcursionJobComponentWeakReference = new WeakReference<>(appComponent.plusDownloadExcursionJobComponent());
+        }
+        return downloadExcursionJobComponentWeakReference.get();
     }
 }

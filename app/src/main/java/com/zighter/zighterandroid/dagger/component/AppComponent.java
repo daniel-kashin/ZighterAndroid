@@ -1,6 +1,8 @@
 package com.zighter.zighterandroid.dagger.component;
 
 import com.zighter.zighterandroid.dagger.module.singleton.AppModule;
+import com.zighter.zighterandroid.dagger.module.singleton.DownloadExcursionModule;
+import com.zighter.zighterandroid.dagger.module.singleton.JobManagerModule;
 import com.zighter.zighterandroid.dagger.module.singleton.LocationModule;
 import com.zighter.zighterandroid.dagger.module.singleton.NetworkModule;
 import com.zighter.zighterandroid.dagger.module.singleton.PathsModule;
@@ -18,11 +20,18 @@ import dagger.Component;
         PathsModule.class,
         SchedulerModule.class,
         SystemManagersModule.class,
-        LocationModule.class})
+        LocationModule.class,
+        JobManagerModule.class,
+        DownloadExcursionModule.class})
 public interface AppComponent {
+
     ExcursionMapComponent plusNavigationComponent();
 
     SightComponent plusSightComponent();
 
     MediaComponent plusMediaComponent();
+
+    BoughtExcursionsComponent plusBoughtExcursionsComponent();
+
+    DownloadExcursionJobComponent plusDownloadExcursionJobComponent();
 }

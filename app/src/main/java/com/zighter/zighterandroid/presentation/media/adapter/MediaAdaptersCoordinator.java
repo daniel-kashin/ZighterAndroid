@@ -21,7 +21,7 @@ import static android.support.v7.widget.RecyclerView.NO_POSITION;
 public class MediaAdaptersCoordinator implements
         FullscreenScrollListener.OnSwipeListener,
         ThumbnailMediaAdapter.OnClickListener,
-        FullscreenMediaAdapter.OnClickListener {
+        FullscreenMediaAdapter.OnFullscreenMediaClickListener {
 
     private static final String TAG = "Coordinator";
 
@@ -48,7 +48,7 @@ public class MediaAdaptersCoordinator implements
                                     @NonNull RecyclerView thumbnailMedia,
                                     @Nullable OnMediaPositionChangeListener onMediaPositionChangeListener,
                                     @Nullable OnFullscreenMediaClickListener onFullscreenMediaClickListener,
-                                    @Nullable FullscreenMediaAdapter.OnUploadListener onUploadListener,
+                                    @Nullable FullscreenMediaAdapter.OnMediaUploadListener onUploadListener,
                                     @NonNull ViewGroup mediaControllerView) {
         this.fullscreenMedia = fullscreenMedia;
         this.thumbnailMedia = thumbnailMedia;

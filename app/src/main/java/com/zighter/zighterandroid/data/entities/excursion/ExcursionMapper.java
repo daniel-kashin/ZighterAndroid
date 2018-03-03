@@ -46,7 +46,9 @@ public class ExcursionMapper {
     }
 
     @NonNull
-    public Excursion fromService(@NonNull ServiceExcursion serviceExcursion) throws ServerResponseValidationException {
+    public Excursion fromService(@NonNull ServiceExcursion serviceExcursion)
+            throws ServerResponseValidationException {
+
         serviceExcursion.tryGetValidOrThrowException();
 
         int sightSize = serviceExcursion.getSightSize();
@@ -85,4 +87,14 @@ public class ExcursionMapper {
                              serviceExcursion.getMinMapZoom());
     }
 
+    @NonNull
+    public List<Excursion> fromService(@NonNull List<ServiceExcursion> serviceExcursions)
+            throws ServerResponseValidationException {
+
+        List<Excursion> result = new ArrayList<>(serviceExcursions.size());
+        for (ServiceExcursion serviceExcursion : serviceExcursions) {
+            result.add(fromService(serviceExcursion));
+        }
+        return result;
+    }
 }

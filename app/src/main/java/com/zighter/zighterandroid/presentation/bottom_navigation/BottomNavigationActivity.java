@@ -1,16 +1,16 @@
 package com.zighter.zighterandroid.presentation.bottom_navigation;
 
+import android.content.Intent;
 import android.support.annotation.IdRes;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.presentation.account.AccountFragment;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment;
-import com.zighter.zighterandroid.presentation.my_excursions.MyExcursionsFragment;
+import com.zighter.zighterandroid.presentation.bought_excursions.BoughtExcursionsFragment;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +20,8 @@ import io.reactivex.Completable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
+
+import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.ACTION_OPEN_ACTIVITY;
 
 public class BottomNavigationActivity extends BaseSupportActivity {
 
@@ -46,6 +48,20 @@ public class BottomNavigationActivity extends BaseSupportActivity {
 
         if (getSupportFragmentManager().findFragmentById(R.id.fragment_container) == null) {
             bottomNavigationView.setSelectedItemId(R.id.action_my_excursions);
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent == null || intent.getAction() == null) {
+            return;
+        }
+
+        if (intent.getAction().equals(ACTION_OPEN_ACTIVITY)) {
+            if (bottomNavigationView.getSelectedItemId() != R.id.action_my_excursions) {
+                bottomNavigationView.setSelectedItemId(R.id.action_my_excursions);
+            }
         }
     }
 
@@ -87,7 +103,7 @@ public class BottomNavigationActivity extends BaseSupportActivity {
         switch (navigationItemId) {
             case R.id.action_my_excursions:
                 if (!(topFragment instanceof ExcursionMapFragment)) {
-                    fragmentToOpen = MyExcursionsFragment.newInstance();
+                    fragmentToOpen = BoughtExcursionsFragment.newInstance();
                     break;
                 } else {
                     return;

@@ -49,9 +49,9 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
     private static final int KEY_NEW_SELECTED_POSITION = 111;
 
     @Nullable
-    private final OnClickListener onClickListener;
+    private final OnFullscreenMediaClickListener onClickListener;
     @Nullable
-    private final OnUploadListener onUploadListener;
+    private final OnMediaUploadListener onUploadListener;
 
     @NonNull
     private final MediaPlayer mediaPlayer;
@@ -61,8 +61,8 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
     @Nullable
     private List<UploadState> uploadStates;
 
-    FullscreenMediaAdapter(@Nullable OnClickListener onClickListener,
-                           @Nullable OnUploadListener onUploadListener,
+    FullscreenMediaAdapter(@Nullable OnFullscreenMediaClickListener onClickListener,
+                           @Nullable OnMediaUploadListener onUploadListener,
                            @NonNull ViewGroup mediaControllerView) {
         this.onClickListener = onClickListener;
         this.onUploadListener = onUploadListener;
@@ -155,13 +155,13 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
             }
         };
 
-        OnUploadListener onUploadListener = new OnUploadListener() {
+        OnMediaUploadListener onUploadListener = new OnMediaUploadListener() {
             @Override
             public void onMediaUploadStarted(int adapterPosition) {
                 if (adapterPosition != NO_POSITION) {
                     setUploadState(adapterPosition, UploadState.STARTED);
 
-                    OnUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
+                    OnMediaUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
                     if (outerListener != null && adapterPosition == currentSelectedPosition) {
                         outerListener.onMediaUploadStarted(adapterPosition);
                     }
@@ -173,7 +173,7 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
                 if (adapterPosition != NO_POSITION) {
                     setUploadState(adapterPosition, UploadState.SUCCESS);
 
-                    OnUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
+                    OnMediaUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
                     if (outerListener != null && adapterPosition == currentSelectedPosition) {
                         outerListener.onMediaUploadSuccess(adapterPosition);
                     }
@@ -185,7 +185,7 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
                 if (adapterPosition != NO_POSITION) {
                     setUploadState(adapterPosition, UploadState.FAILED);
 
-                    OnUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
+                    OnMediaUploadListener outerListener = FullscreenMediaAdapter.this.onUploadListener;
                     if (outerListener != null && adapterPosition == currentSelectedPosition) {
                         outerListener.onMediaUploadFailed(adapterPosition);
                     }
@@ -274,9 +274,9 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         PhotoView photoView;
 
         @NonNull
-        private final OnUploadListener onUploadListener;
+        private final OnMediaUploadListener onUploadListener;
 
-        ImageViewHolder(@NonNull View view, @NonNull OnUploadListener onUploadListener) {
+        ImageViewHolder(@NonNull View view, @NonNull OnMediaUploadListener onUploadListener) {
             super(view);
             ButterKnife.bind(this, view);
 
@@ -332,7 +332,7 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         @NonNull
         private final CustomMediaController mediaController;
         @NonNull
-        private final OnUploadListener onUploadListener;
+        private final OnMediaUploadListener onUploadListener;
 
         @Nullable
         private Video video;
@@ -343,7 +343,7 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         VideoViewHolder(@NonNull View view,
                         @NonNull MediaPlayer mediaPlayer,
                         @NonNull CustomMediaController mediaController,
-                        @NonNull OnUploadListener onUploadListener) {
+                        @NonNull OnMediaUploadListener onUploadListener) {
             super(view);
             ButterKnife.bind(this, view);
             videoView.setSurfaceTextureListener(this);
@@ -481,11 +481,11 @@ public class FullscreenMediaAdapter extends MediaAdapter<RecyclerView.ViewHolder
         }
     }
 
-    public interface OnClickListener {
+    public interface OnFullscreenMediaClickListener {
         void onFullscreenMediaClicked();
     }
 
-    public interface OnUploadListener {
+    public interface OnMediaUploadListener {
         void onMediaUploadStarted(int adapterPosition);
 
         void onMediaUploadSuccess(int adapterPosition);

@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.zighter.zighterandroid.presentation.bottom_navigation.BottomNavigationActivity">
+    tools:applicationContext="com.zighter.zighterandroid.presentation.bottom_navigation.BottomNavigationActivity">
 
    <FrameLayout
        android:id="@+id/fragment_container"

@@ -21,11 +21,22 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <intent-filter>
+                <action android:name="ACTION_OPEN_ACTIVITY" />
+            </intent-filter>
         </activity>
 
         <activity android:name=".presentation.excursion.holder.ExcursionHolderActivity" />
 
         <activity android:name=".presentation.media.MediaActivity" />
+
+        <receiver
+            android:name=".data.download_excursion.DownloadExcursionNotificationBroadcastReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ACTION_CANCEL_JOB" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

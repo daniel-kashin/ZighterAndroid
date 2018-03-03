@@ -22,4 +22,6 @@
     <string name="network_error_message">An error occurred while trying to download data. Please, check your network connection.</string>
     <string name="server_error_message">An error occurred on the server side. Please, try again later.</string>
     <string name="media_upload_error_message">Unable to upload</string>
+
+    <string name="cancel">Cancel</string>
 </resources>

@@ -64,6 +64,8 @@ dependencies {
     compile libraries.retrofitRxAdapter
     compile libraries.retrofitGsonConverter
 
+    compile libraries.priorityJobQueue
+
     compile libraries.moxy
     compile libraries.moxyAppCompat
     annotationProcessor libraries.moxyCompiler

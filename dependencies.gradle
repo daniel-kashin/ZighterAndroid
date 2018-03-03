@@ -23,6 +23,7 @@ ext.versions = [
         rxAndroid              : '2.0.1',
         retrofit               : '2.3.0',
         moxy                   : '1.5.3',
+        priorityJobQueue       : '2.0.1',
 
         glide                  : '4.6.1',
         glideTransformations   : '3.0.1',
@@ -57,6 +58,7 @@ ext.libraries = [
         retrofit             : "com.squareup.retrofit2:retrofit:$versions.retrofit",
         retrofitRxAdapter    : "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit",
         retrofitGsonConverter: "com.squareup.retrofit2:converter-gson:$versions.retrofit",
+        priorityJobQueue     : "com.birbit:android-priority-jobqueue:$versions.priorityJobQueue",
 
         moxy                 : "com.arello-mobile:moxy:$versions.moxy",
         moxyCompiler         : "com.arello-mobile:moxy-compiler:$versions.moxy",

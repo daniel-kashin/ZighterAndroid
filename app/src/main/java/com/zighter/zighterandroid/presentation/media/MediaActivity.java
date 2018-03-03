@@ -45,7 +45,7 @@ public class MediaActivity extends BaseSupportActivity
         implements MediaView,
         OnMediaPositionChangeListener,
         OnFullscreenMediaClickListener,
-        FullscreenMediaAdapter.OnUploadListener {
+        FullscreenMediaAdapter.OnMediaUploadListener {
 
     private static final String KEY_SIGHT = "SIGHT";
 

@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.common;
+package com.zighter.zighterandroid.data.repositories.common;
 
 import android.support.annotation.NonNull;
 
