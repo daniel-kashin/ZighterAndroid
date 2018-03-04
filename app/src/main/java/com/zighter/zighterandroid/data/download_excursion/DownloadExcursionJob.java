@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.birbit.android.jobqueue.CancelReason;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
@@ -58,8 +59,6 @@ public class DownloadExcursionJob extends Job implements Serializable {
 
         for (int i = 0; i < 10; ++i) {
             if (isCancelled()) {
-                notificationManager.cancelNotification();
-                JobManagerProgressContract.notifyCancelled(applicationContext, boughtExcursion);
                 return;
             } else {
                 notificationManager.updateNotification(boughtExcursion, new DownloadProgress(DownloadProgress.Type.DATABASE, i, 10));
@@ -67,23 +66,25 @@ public class DownloadExcursionJob extends Job implements Serializable {
             }
         }
 
-        notificationManager.cancelNotification();
-
         JobManagerProgressContract.notifySuccess(applicationContext, boughtExcursion);
+
+        notificationManager.cancelNotification();
     }
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
         Log.d(TAG, "onCancel");
 
-        notificationManager.cancelNotification();
+        if (cancelReason != CancelReason.CANCELLED_WHILE_RUNNING) {
+            JobManagerProgressContract.notifyException(applicationContext, boughtExcursion);
 
-        JobManagerProgressContract.notifyException(applicationContext, boughtExcursion);
+            notificationManager.cancelNotification();
+        }
     }
 
     @Override
     protected RetryConstraint shouldReRunOnThrowable(@NonNull Throwable throwable, int runCount, int maxRunCount) {
         Log.d(TAG, "shouldReRunOnThrowable");
-        return null;
+        return RetryConstraint.CANCEL;
     }
 }

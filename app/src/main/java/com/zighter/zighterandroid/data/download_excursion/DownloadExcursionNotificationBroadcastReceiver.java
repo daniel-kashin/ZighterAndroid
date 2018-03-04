@@ -34,14 +34,13 @@ public class DownloadExcursionNotificationBroadcastReceiver extends BroadcastRec
                 BoughtExcursion boughtExcursion = (BoughtExcursion) intent.getSerializableExtra(EXTRA_EXCURSION);
                 if (boughtExcursion == null) return;
 
-                Injector injector = Injector.getInstanceSafe();
-                if (injector == null) return;
+                JobManagerProgressContract.notifyCancelled(context, boughtExcursion);
 
+                Injector injector = Injector.getInstance();
                 injector.getDowndloadExcursionJobComponent().inject(this);
 
                 notificationManager.cancelNotification();
                 jobManagerWrapper.getJobManager().cancelJobsInBackground(null, TagConstraint.ALL, boughtExcursion.getUuid());
-                JobManagerProgressContract.notifyCancelled(context, boughtExcursion);
 
                 break;
             }
