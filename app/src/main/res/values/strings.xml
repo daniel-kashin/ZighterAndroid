@@ -24,4 +24,6 @@
     <string name="media_upload_error_message">Unable to upload</string>
 
     <string name="cancel">Cancel</string>
+
+    <string name="download_excursion">Download excursion</string>
 </resources>

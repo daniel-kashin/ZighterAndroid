@@ -5,27 +5,29 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
-import com.birbit.android.jobqueue.JobManager;
-import com.birbit.android.jobqueue.TagConstraint;
-import com.zighter.zighterandroid.dagger.Injector;
-import com.zighter.zighterandroid.data.download_excursion.DownloadExcursionJob;
 import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus;
 import com.zighter.zighterandroid.data.exception.BaseException;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
 import com.zighter.zighterandroid.data.exception.ServerException;
+import com.zighter.zighterandroid.data.job_manager.JobManagerWrapper;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.presentation.common.BasePresenter;
 
-import io.reactivex.Scheduler;
+import static com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus.DownloadStatus;
 
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionProgressContract.ACTION_DOWNLOAD_CANCELLED;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionProgressContract.ACTION_DOWNLOAD_EXCEPTION;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionProgressContract.ACTION_DOWNLOAD_STARTED;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionProgressContract.ACTION_DOWNLOAD_SUCCESS;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionProgressContract.EXTRA_EXCURSION;
+import io.reactivex.Scheduler;
+import io.reactivex.disposables.Disposable;
+
+import static com.zighter.zighterandroid.data.job_manager.JobManagerProgressContract.ACTION_CANCELLED;
+import static com.zighter.zighterandroid.data.job_manager.JobManagerProgressContract.ACTION_EXCEPTION;
+import static com.zighter.zighterandroid.data.job_manager.JobManagerProgressContract.ACTION_STARTED;
+import static com.zighter.zighterandroid.data.job_manager.JobManagerProgressContract.ACTION_SUCCESS;
+import static com.zighter.zighterandroid.data.job_manager.JobManagerProgressContract.EXTRA_EXCURSION;
 
 @InjectViewState
 public class BoughtExcursionsPresenter extends BasePresenter<BoughtExcursionsView> {
@@ -35,28 +37,18 @@ public class BoughtExcursionsPresenter extends BasePresenter<BoughtExcursionsVie
     private final Context applicationContext;
     @NonNull
     private final ExcursionRepository excursionRepository;
-    @NonNull
-    private final JobManager jobManager;
-    @NonNull
-    private final DownloadExcursionProgressBroadcastReceiver receiver;
+    @Nullable
+    private Disposable getExcursionsDisposable;
+    @Nullable
+    private Disposable subscribeOnDownloadDisposable;
 
     public BoughtExcursionsPresenter(@NonNull Context applicationContext,
                                      @NonNull ExcursionRepository excursionRepository,
-                                     @NonNull JobManager jobManager,
                                      @NonNull Scheduler worker,
                                      @NonNull Scheduler ui) {
         super(worker, ui);
         this.applicationContext = applicationContext;
         this.excursionRepository = excursionRepository;
-        this.jobManager = jobManager;
-
-        receiver = new DownloadExcursionProgressBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_DOWNLOAD_STARTED);
-        intentFilter.addAction(ACTION_DOWNLOAD_EXCEPTION);
-        intentFilter.addAction(ACTION_DOWNLOAD_SUCCESS);
-        intentFilter.addAction(ACTION_DOWNLOAD_CANCELLED);
-        applicationContext.registerReceiver(receiver, intentFilter);
     }
 
     @Override
@@ -67,16 +59,23 @@ public class BoughtExcursionsPresenter extends BasePresenter<BoughtExcursionsVie
 
     @Override
     public void onDestroy() {
-        applicationContext.unregisterReceiver(receiver);
+        if (getExcursionsDisposable != null) {
+            getExcursionsDisposable.dispose();
+        }
+        if (subscribeOnDownloadDisposable != null) {
+            subscribeOnDownloadDisposable.dispose();
+        }
+
         super.onDestroy();
     }
 
     void onReloadExcursionsRequest() {
         getViewState().showLoading();
-        excursionRepository.getBoughtExcursions()
+        getExcursionsDisposable = excursionRepository.getBoughtExcursions()
                 .compose(applySchedulersSingle())
                 .subscribe(excursions -> {
                     getViewState().showExcursions(excursions);
+                    subscribeOnDownloadActions();
                 }, throwable -> {
                     if (throwable instanceof BaseException) {
                         if (throwable instanceof NetworkUnavailableException) {
@@ -90,8 +89,43 @@ public class BoughtExcursionsPresenter extends BasePresenter<BoughtExcursionsVie
                 });
     }
 
-    void onDownloadClicked(@NonNull BoughtExcursion boughtExcursion) {
-        jobManager.addJobInBackground(new DownloadExcursionJob(boughtExcursion));
+    void onDownloadClicked(@NonNull BoughtExcursionWithStatus boughtExcursionWithStatus) {
+        DownloadStatus downloadStatus = boughtExcursionWithStatus.getStatus();
+        BoughtExcursion boughtExcursion = boughtExcursionWithStatus.getExcursion();
+        if (downloadStatus == DownloadStatus.IDLE) {
+            excursionRepository.addDownloadExcursionJob(boughtExcursion)
+                    .compose(applySchedulersCompletable())
+                    .subscribe(() -> {
+                        getViewState().showExcursionStatus(boughtExcursion.getUuid(), DownloadStatus.DOWNLOADING);
+                    });
+        }
+    }
+
+    private void subscribeOnDownloadActions() {
+        if (subscribeOnDownloadDisposable == null) {
+            subscribeOnDownloadDisposable = excursionRepository.subscribeOnDownloadExcursionEvents()
+                    .subscribe(pair -> {
+                        String boughtExcursionId = pair.first;
+                        JobManagerWrapper.Action action = pair.second;
+                        DownloadStatus downloadStatus = null;
+                        switch (action) {
+                            case Started:
+                                downloadStatus = DownloadStatus.DOWNLOADING;
+                                break;
+                            case Exception:
+                            case Cancelled:
+                                downloadStatus = DownloadStatus.IDLE;
+                                break;
+                            case Success:
+                                downloadStatus = DownloadStatus.DOWNLOADED;
+                                break;
+                        }
+
+                        if (downloadStatus != null) {
+                            getViewState().showExcursionStatus(boughtExcursionId, downloadStatus);
+                        }
+                    });
+        }
     }
 
     public class DownloadExcursionProgressBroadcastReceiver extends BroadcastReceiver {
@@ -102,14 +136,26 @@ public class BoughtExcursionsPresenter extends BasePresenter<BoughtExcursionsVie
                 return;
             }
 
+            BoughtExcursion boughtExcursion = (BoughtExcursion) intent.getSerializableExtra(EXTRA_EXCURSION);
+            if (boughtExcursion == null) {
+                return;
+            }
+
             switch (intent.getAction()) {
-                case ACTION_DOWNLOAD_STARTED: {
+                case ACTION_STARTED: {
+                    getViewState().showExcursionStatus(boughtExcursion.getUuid(), DownloadStatus.DOWNLOADING);
                     break;
                 }
-                case ACTION_DOWNLOAD_SUCCESS: {
+                case ACTION_SUCCESS: {
+                    getViewState().showExcursionStatus(boughtExcursion.getUuid(), DownloadStatus.DOWNLOADED);
                     break;
                 }
-                case ACTION_DOWNLOAD_EXCEPTION: {
+                case ACTION_EXCEPTION: {
+                    getViewState().showExcursionStatus(boughtExcursion.getUuid(), DownloadStatus.IDLE);
+                    break;
+                }
+                case ACTION_CANCELLED: {
+                    getViewState().showExcursionStatus(boughtExcursion.getUuid(), DownloadStatus.IDLE);
                     break;
                 }
             }

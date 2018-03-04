@@ -1,6 +1,8 @@
 package com.zighter.zighterandroid.dagger.module.singleton;
 
+import com.birbit.android.jobqueue.JobManager;
 import com.zighter.zighterandroid.data.entities.excursion.ExcursionMapper;
+import com.zighter.zighterandroid.data.job_manager.JobManagerWrapper;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionService;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionStorage;
@@ -33,9 +35,10 @@ public class PathsModule {
 
     @Singleton
     @Provides
-    ExcursionRepository providePathsRepository(ExcursionService excursionService,
-                                               ExcursionStorage excursionStorage,
-                                               ExcursionMapper excursionMapper) {
-        return new ExcursionRepository(excursionService, excursionStorage, excursionMapper);
+    ExcursionRepository provideExcursionRepository(ExcursionService excursionService,
+                                                   ExcursionStorage excursionStorage,
+                                                   ExcursionMapper excursionMapper,
+                                                   JobManagerWrapper jobManager) {
+        return new ExcursionRepository(excursionService, excursionStorage, excursionMapper, jobManager);
     }
 }

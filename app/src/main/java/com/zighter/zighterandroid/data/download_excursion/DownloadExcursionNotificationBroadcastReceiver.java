@@ -5,20 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.birbit.android.jobqueue.JobManager;
 import com.birbit.android.jobqueue.TagConstraint;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.job_manager.JobManagerProgressContract;
+import com.zighter.zighterandroid.data.job_manager.JobManagerWrapper;
 
 import javax.inject.Inject;
 
 import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.ACTION_CANCEL_JOB;
 import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.EXTRA_EXCURSION;
 
-
 public class DownloadExcursionNotificationBroadcastReceiver extends BroadcastReceiver {
     @Inject
-    JobManager jobManager;
+    JobManagerWrapper jobManagerWrapper;
     @Inject
     DownloadExcursionNotificationManager notificationManager;
 
@@ -40,8 +40,8 @@ public class DownloadExcursionNotificationBroadcastReceiver extends BroadcastRec
                 injector.getDowndloadExcursionJobComponent().inject(this);
 
                 notificationManager.cancelNotification();
-                jobManager.cancelJobsInBackground(null, TagConstraint.ALL, boughtExcursion.getUuid());
-                DownloadExcursionProgressContract.notifyCancelled(context, boughtExcursion);
+                jobManagerWrapper.getJobManager().cancelJobsInBackground(null, TagConstraint.ALL, boughtExcursion.getUuid());
+                JobManagerProgressContract.notifyCancelled(context, boughtExcursion);
 
                 break;
             }

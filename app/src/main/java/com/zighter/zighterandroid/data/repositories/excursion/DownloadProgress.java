@@ -2,13 +2,13 @@ package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.support.annotation.NonNull;
 
-public class DownloadStatus {
+public class DownloadProgress {
     @NonNull
     private final Type type;
     private final int currentPosition;
     private final int count;
 
-    public DownloadStatus(@NonNull Type type, int currentPosition, int count) {
+    public DownloadProgress(@NonNull Type type, int currentPosition, int count) {
         this.type = type;
         this.currentPosition = currentPosition;
         this.count = count;

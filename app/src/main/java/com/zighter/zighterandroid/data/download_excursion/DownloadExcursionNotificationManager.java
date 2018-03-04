@@ -1,6 +1,5 @@
 package com.zighter.zighterandroid.data.download_excursion;
 
-import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -14,7 +13,7 @@ import android.support.v4.app.NotificationManagerCompat;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
-import com.zighter.zighterandroid.data.repositories.excursion.DownloadStatus;
+import com.zighter.zighterandroid.data.repositories.excursion.DownloadProgress;
 import com.zighter.zighterandroid.presentation.bottom_navigation.BottomNavigationActivity;
 
 import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.ACTION_CANCEL_JOB;
@@ -33,11 +32,11 @@ public class DownloadExcursionNotificationManager {
     }
 
     public void updateNotification(@NonNull BoughtExcursion boughtExcursion,
-                                   @Nullable DownloadStatus downloadStatus) {
+                                   @Nullable DownloadProgress downloadProgress) {
         NotificationManager notificationManager = getNotificationManager(applicationContext);
         PendingIntent cancelPendingIntent = getCancelPendingIntent(applicationContext, boughtExcursion);
 
-        createNotificationChannel(notificationManager);
+        createNotificationChannel(applicationContext, notificationManager);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(boughtExcursion.getName())
@@ -48,8 +47,8 @@ public class DownloadExcursionNotificationManager {
                 .setSmallIcon(R.drawable.ic_my_location_black)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
-        if (downloadStatus != null && downloadStatus.getCount() != 0) {
-            builder.setProgress(downloadStatus.getCount(), downloadStatus.getCurrentPosition() + 1, false);
+        if (downloadProgress != null && downloadProgress.getCount() != 0) {
+            builder.setProgress(downloadProgress.getCount(), downloadProgress.getCurrentPosition() + 1, false);
         }
 
         notificationManager.notify(DownloadExcursionNotificationContract.NOTIFICATION_ID, builder.build());
@@ -72,9 +71,11 @@ public class DownloadExcursionNotificationManager {
         return (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
     }
 
-    private static void createNotificationChannel(@NonNull NotificationManager notificationManager) {
+    private static void createNotificationChannel(@NonNull Context context, @NonNull NotificationManager notificationManager) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Download excursion", NotificationManager.IMPORTANCE_LOW);
+            NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,
+                                                                  context.getString(R.string.download_excursion),
+                                                                  NotificationManager.IMPORTANCE_LOW);
             channel.setSound(null, null);
             notificationManager.createNotificationChannel(channel);
         }
@@ -97,7 +98,7 @@ public class DownloadExcursionNotificationManager {
     private static PendingIntent getOpenActivityPendingIntent(@NonNull Context context) {
         Intent intent = new Intent(ACTION_OPEN_ACTIVITY);
         intent.setClass(context, BottomNavigationActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         return PendingIntent.getActivity(context,
                                   REQUEST_CODE_OPEN_ACTIVITY,

@@ -22,9 +22,8 @@ public class BoughtExcursionsModule {
     @BoughtExcursionsScope
     BoughtExcursionsPresenter provideBoughtExcursionsPresenter(Context context,
                                                                ExcursionRepository excursionRepository,
-                                                               JobManager jobManager,
                                                                @Named(TAG_WORKER) Scheduler worker,
                                                                @Named(TAG_UI) Scheduler ui) {
-        return new BoughtExcursionsPresenter(context, excursionRepository, jobManager, worker, ui);
+        return new BoughtExcursionsPresenter(context, excursionRepository, worker, ui);
     }
 }

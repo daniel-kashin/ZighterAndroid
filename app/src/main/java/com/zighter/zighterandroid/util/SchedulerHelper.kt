@@ -2,6 +2,7 @@
 
 package com.zighter.zighterandroid.util
 
+import io.reactivex.CompletableTransformer
 import io.reactivex.ObservableTransformer
 import io.reactivex.Scheduler
 import io.reactivex.SingleTransformer
@@ -17,5 +18,11 @@ fun <T> applySchedulersObservable(worker: Scheduler, ui: Scheduler): ObservableT
 fun <T> applySchedulersSingle(worker: Scheduler, ui: Scheduler): SingleTransformer<T, T> {
     return SingleTransformer { single ->
         single.subscribeOn(worker).observeOn(ui)
+    }
+}
+
+fun <T> applySchedulersCompletable(worker: Scheduler, ui: Scheduler): CompletableTransformer {
+    return CompletableTransformer { completable ->
+        completable.subscribeOn(worker).observeOn(ui)
     }
 }

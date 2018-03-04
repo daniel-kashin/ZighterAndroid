@@ -7,6 +7,7 @@ import com.arellomobile.mvp.MvpView;
 import com.google.firebase.crash.FirebaseCrash;
 import com.zighter.zighterandroid.util.SchedulerHelper;
 
+import io.reactivex.CompletableTransformer;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.Scheduler;
 import io.reactivex.SingleTransformer;
@@ -29,6 +30,10 @@ public abstract class BasePresenter<T extends MvpView> extends MvpPresenter<T> {
 
     protected <P> SingleTransformer<P,P> applySchedulersSingle() {
         return SchedulerHelper.applySchedulersSingle(worker, ui);
+    }
+
+    protected <P>CompletableTransformer applySchedulersCompletable() {
+        return SchedulerHelper.applySchedulersCompletable(worker, ui);
     }
 
     protected void handleThrowable(Throwable throwable, String tag) {

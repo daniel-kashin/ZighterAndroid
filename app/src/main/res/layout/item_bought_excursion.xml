@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
+    android:layout_marginTop="5dp"
     android:padding="5dp">
 
     <ImageView
@@ -18,17 +18,17 @@
     <ImageView
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_marginTop="12dp"
         android:layout_marginStart="12dp"
-        android:background="@drawable/ic_landscape_white"/>
+        android:layout_marginTop="12dp"
+        android:background="@drawable/ic_landscape_white" />
 
     <TextView
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@id/placeholder"
-        android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/placeholder"
         android:layout_toStartOf="@id/location"
         android:ellipsize="end"
@@ -57,12 +57,12 @@
 
     <TextView
         android:id="@+id/location"
-        android:layout_marginEnd="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/name"
         android:layout_alignParentEnd="true"
         android:layout_alignTop="@id/name"
+        android:layout_marginEnd="10dp"
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="1"
@@ -72,12 +72,22 @@
         tools:text="Барселона" />
 
     <ImageView
-        android:background="@drawable/ic_arrow_downward"
         android:id="@+id/download_status"
         android:layout_width="24dp"
-        android:layout_marginEnd="10dp"
         android:layout_height="24dp"
         android:layout_alignBottom="@id/placeholder"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_alignBottom="@id/placeholder"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="10dp"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/primaryText"
+        android:indeterminateTintMode="src_atop" />
 
 </RelativeLayout>

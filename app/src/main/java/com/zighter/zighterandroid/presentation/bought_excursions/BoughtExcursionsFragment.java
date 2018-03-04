@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Pair;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,6 +17,8 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus;
+import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
 import com.zighter.zighterandroid.util.recyclerview.SimpleDividerItemDecoration;
@@ -27,7 +30,9 @@ import javax.inject.Provider;
 
 import butterknife.BindView;
 
+import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.zighter.zighterandroid.presentation.bought_excursions.BoughtExcursionsAdapter.OnBoughtExcursionClickListener;
+import static com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus.DownloadStatus;
 
 public class BoughtExcursionsFragment extends BaseSupportFragment
         implements BoughtExcursionsView, OnBoughtExcursionClickListener {
@@ -94,7 +99,7 @@ public class BoughtExcursionsFragment extends BaseSupportFragment
     }
 
     @Override
-    public void showExcursions(@NonNull List<BoughtExcursion> excursions) {
+    public void showExcursions(@NonNull List<BoughtExcursionWithStatus> excursions) {
         BoughtExcursionsAdapter adapter = (BoughtExcursionsAdapter) recyclerView.getAdapter();
         adapter.setExcursions(excursions);
         adapter.notifyDataSetChanged();
@@ -103,6 +108,15 @@ public class BoughtExcursionsFragment extends BaseSupportFragment
         tryAgain.setVisibility(View.INVISIBLE);
         errorMessage.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showExcursionStatus(@NonNull String boughtExcursionUuid, @NonNull DownloadStatus downloadStatus) {
+        BoughtExcursionsAdapter adapter = (BoughtExcursionsAdapter) recyclerView.getAdapter();
+        int position = adapter.refreshExcursionStatus(boughtExcursionUuid, downloadStatus);
+        if (position != NO_POSITION) {
+            adapter.notifyItemChanged(position);
+        }
     }
 
     @Override
@@ -144,7 +158,7 @@ public class BoughtExcursionsFragment extends BaseSupportFragment
     }
 
     @Override
-    public void onBoughtExcursionClicked(@NonNull BoughtExcursion boughtExcursion) {
+    public void onBoughtExcursionClicked(@NonNull BoughtExcursionWithStatus boughtExcursionWithStatus) {
         if (getContext() == null) {
             return;
         }
@@ -153,7 +167,7 @@ public class BoughtExcursionsFragment extends BaseSupportFragment
     }
 
     @Override
-    public void onDownloadClicked(@NonNull BoughtExcursion boughtExcursion) {
-        presenter.onDownloadClicked(boughtExcursion);
+    public void onDownloadClicked(@NonNull BoughtExcursionWithStatus boughtExcursionWithStatus) {
+        presenter.onDownloadClicked(boughtExcursionWithStatus);
     }
 }

@@ -1,7 +1,6 @@
 package com.zighter.zighterandroid.data.download_excursion;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -10,15 +9,13 @@ import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
-import com.zighter.zighterandroid.data.repositories.excursion.DownloadStatus;
+import com.zighter.zighterandroid.data.job_manager.JobManagerProgressContract;
+import com.zighter.zighterandroid.data.repositories.excursion.DownloadProgress;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 
 import java.io.Serializable;
-import java.util.concurrent.CancellationException;
 
 import javax.inject.Inject;
-
-import io.reactivex.Observable;
 
 public class DownloadExcursionJob extends Job implements Serializable {
     private static final String TAG = "DownloadExcursionJob";
@@ -26,13 +23,10 @@ public class DownloadExcursionJob extends Job implements Serializable {
     private static final int PRIORITY = 10;
 
     @Inject
-    @Nullable
     ExcursionRepository excursionRepository;
     @Inject
-    @Nullable
     DownloadExcursionNotificationManager notificationManager;
     @Inject
-    @Nullable
     Context applicationContext;
 
     @NonNull
@@ -51,40 +45,40 @@ public class DownloadExcursionJob extends Job implements Serializable {
     @Override
     public void onAdded() {
         Log.d(TAG, "onAdded");
+        JobManagerProgressContract.notifyAdded(applicationContext, boughtExcursion);
     }
 
     @Override
     public void onRun() throws Throwable {
         Log.d(TAG, "onRun");
-        if (excursionRepository == null || notificationManager == null || applicationContext == null) {
-            return;
-        }
+
+        JobManagerProgressContract.notifyStarted(applicationContext, boughtExcursion);
 
         notificationManager.updateNotification(boughtExcursion, null);
 
         for (int i = 0; i < 10; ++i) {
             if (isCancelled()) {
-                throw new CancellationException();
+                notificationManager.cancelNotification();
+                JobManagerProgressContract.notifyCancelled(applicationContext, boughtExcursion);
+                return;
+            } else {
+                notificationManager.updateNotification(boughtExcursion, new DownloadProgress(DownloadProgress.Type.DATABASE, i, 10));
+                Thread.sleep(2000);
             }
-            notificationManager.updateNotification(boughtExcursion, new DownloadStatus(DownloadStatus.Type.DATABASE, i, 10));
-            Thread.sleep(2000);
         }
 
         notificationManager.cancelNotification();
 
-        DownloadExcursionProgressContract.notifySuccess(applicationContext, boughtExcursion);
+        JobManagerProgressContract.notifySuccess(applicationContext, boughtExcursion);
     }
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
         Log.d(TAG, "onCancel");
-        if (excursionRepository == null || notificationManager == null || applicationContext == null) {
-            return;
-        }
 
         notificationManager.cancelNotification();
 
-        DownloadExcursionProgressContract.notifyException(applicationContext, boughtExcursion);
+        JobManagerProgressContract.notifyException(applicationContext, boughtExcursion);
     }
 
     @Override
