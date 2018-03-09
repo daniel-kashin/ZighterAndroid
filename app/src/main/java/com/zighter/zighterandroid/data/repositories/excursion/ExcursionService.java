@@ -1,31 +1,35 @@
 package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.support.annotation.NonNull;
+import android.util.Pair;
 
-import com.zighter.zighterandroid.data.ZighterEndpoints;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.excursion.Excursion;
+import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
+import com.zighter.zighterandroid.data.repositories.ZighterEndpoints;
 import com.zighter.zighterandroid.data.repositories.common.BaseService;
-import com.zighter.zighterandroid.data.entities.excursion.ServiceExcursion;
+import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
 import com.zighter.zighterandroid.data.exception.ServerException;
+import com.zighter.zighterandroid.util.Optional;
 
 import java.io.IOException;
 import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
+import io.reactivex.functions.Function;
 import okhttp3.OkHttpClient;
 import retrofit2.HttpException;
 import retrofit2.Retrofit;
 
-public class ExcursionService extends BaseService<ExcursionContract> {
+public class ExcursionService extends BaseService<ServiceExcursionContract> {
     public ExcursionService(OkHttpClient okHttpClient) {
         super(ZighterEndpoints.BASE_URL, okHttpClient);
     }
 
     @Override
-    protected ExcursionContract createService(Retrofit retrofit) {
-        return retrofit.create(ExcursionContract.class);
+    protected ServiceExcursionContract createService(Retrofit retrofit) {
+        return retrofit.create(ServiceExcursionContract.class);
     }
 
     @NonNull
@@ -35,9 +39,22 @@ public class ExcursionService extends BaseService<ExcursionContract> {
     }
 
     @NonNull
-    Single<List<BoughtExcursion>> getBoughtExcursions() {
+    Single<List<ServiceBoughtExcursion>> getBoughtExcursions() {
         return getService().getBoughtExcursions()
                 .onErrorResumeNext(this::convertRetrofitThrowable);
+    }
+
+    @NonNull
+    Single<Pair<List<ServiceBoughtExcursion>, Exception>> getBoughtExcursionsOrException() {
+        return getBoughtExcursions()
+                .map(it -> new Pair<List<ServiceBoughtExcursion>, Exception>(it, null))
+                .onErrorResumeNext(throwable -> {
+                    if (throwable instanceof Exception) {
+                        return Single.just(new Pair<>(null, (Exception) throwable));
+                    } else {
+                        return Single.error(throwable);
+                    }
+                });
     }
 
     @NonNull

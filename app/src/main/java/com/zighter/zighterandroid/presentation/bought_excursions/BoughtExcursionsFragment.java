@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Pair;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -16,9 +15,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus;
-import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
 import com.zighter.zighterandroid.util.recyclerview.SimpleDividerItemDecoration;
@@ -32,7 +29,7 @@ import butterknife.BindView;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.zighter.zighterandroid.presentation.bought_excursions.BoughtExcursionsAdapter.OnBoughtExcursionClickListener;
-import static com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus.DownloadStatus;
+import static com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus.DownloadStatus;
 
 public class BoughtExcursionsFragment extends BaseSupportFragment
         implements BoughtExcursionsView, OnBoughtExcursionClickListener {
@@ -153,6 +150,21 @@ public class BoughtExcursionsFragment extends BaseSupportFragment
 
         progressBar.setVisibility(View.INVISIBLE);
         tryAgain.setVisibility(View.VISIBLE);
+        errorMessage.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showEmptyExcursions() {
+        if (getContext() == null) {
+            return;
+        }
+
+        errorMessage.setText(getContext().getString(R.string.empty_bought_excursions));
+        tryAgain.setOnClickListener(view -> presenter.onReloadExcursionsRequest());
+
+        progressBar.setVisibility(View.INVISIBLE);
+        tryAgain.setVisibility(View.INVISIBLE);
         errorMessage.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
     }

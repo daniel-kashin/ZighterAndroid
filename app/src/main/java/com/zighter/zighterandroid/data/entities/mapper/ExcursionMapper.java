@@ -1,17 +1,27 @@
-package com.zighter.zighterandroid.data.entities.excursion;
+package com.zighter.zighterandroid.data.entities.mapper;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
+import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.excursion.Excursion;
+import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
+import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
+import com.zighter.zighterandroid.data.entities.service.ServicePath;
+import com.zighter.zighterandroid.data.entities.service.ServiceSight;
+import com.zighter.zighterandroid.data.entities.excursion.Sight;
 import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Media;
 import com.zighter.zighterandroid.data.entities.media.Video;
+import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursion;
 import com.zighter.zighterandroid.data.exception.ServerResponseValidationException;
+import com.zighter.zighterandroid.data.file.FileHelper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ExcursionMapper {
-    private static final List<Media> DUMMY_MEDIAS = new ArrayList<>(10);
+    private static final List<Media> DUMMY_MEDIAS = new ArrayList<>(20);
     private static final String DUMMY_DESCRIPTION = "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.\n" +
             "\n" +
             "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from \"de Finibus Bonorum et Malorum\" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham."
@@ -96,5 +106,108 @@ public class ExcursionMapper {
             result.add(fromService(serviceExcursion));
         }
         return result;
+    }
+
+
+    @NonNull
+    public List<BoughtExcursion> fromServiceAndStorage(@NonNull List<ServiceBoughtExcursion> serviceBoughtExcursions,
+                                                       @Nullable List<StorageBoughtExcursion> storageBoughtExcursions,
+                                                       @NonNull FileHelper fileHelper) {
+        List<BoughtExcursion> result = new ArrayList<>();
+
+        for (ServiceBoughtExcursion serviceBoughtExcursion : serviceBoughtExcursions) {
+            ServiceBoughtExcursion boughtExcursionCopy = serviceBoughtExcursion.tryGetValid(false);
+            if (boughtExcursionCopy != null) {
+                boolean isFullySaved = isFullySaved(boughtExcursionCopy, storageBoughtExcursions);
+                result.add(fromService(serviceBoughtExcursion, isFullySaved, fileHelper));
+            }
+        }
+
+        return result;
+    }
+
+    @NonNull
+    public List<BoughtExcursion> fromStorage(@NonNull List<StorageBoughtExcursion> storageBoughtExcursions,
+                                              @NonNull FileHelper fileHelper) {
+        List<BoughtExcursion> result = new ArrayList<>(storageBoughtExcursions.size());
+
+        for (StorageBoughtExcursion storageBoughtExcursion : storageBoughtExcursions) {
+            result.add(fromStorage(storageBoughtExcursion, fileHelper));
+        }
+
+        return result;
+    }
+
+    @NonNull
+    public List<StorageBoughtExcursion> toStorage(@NonNull List<BoughtExcursion> boughtExcursions) {
+        List<StorageBoughtExcursion> result = new ArrayList<>(boughtExcursions.size());
+
+        for (BoughtExcursion boughtExcursion : boughtExcursions) {
+            result.add(toStorage(boughtExcursion));
+        }
+
+        return result;
+    }
+
+    @NonNull
+    private StorageBoughtExcursion toStorage(@NonNull BoughtExcursion boughtExcursion) {
+        String image = boughtExcursion.getImage() != null
+                ? boughtExcursion.getImage().getUrl()
+                : null;
+
+        return new StorageBoughtExcursion(boughtExcursion.getUuid(),
+                                          boughtExcursion.getName(),
+                                          boughtExcursion.getLocation(),
+                                          boughtExcursion.getOwner(),
+                                          image,
+                                          boughtExcursion.isGuideAvailable(),
+                                          boughtExcursion.isMediaAvailable(),
+                                          boughtExcursion.isRouteAvailable(),
+                                          boughtExcursion.isFullySaved());
+    }
+
+    @NonNull
+    public BoughtExcursion fromStorage(@NonNull StorageBoughtExcursion storageBoughtExcursion,
+                                        @NonNull FileHelper fileHelper) {
+        return new BoughtExcursion(storageBoughtExcursion.getUuid(),
+                                   storageBoughtExcursion.getName(),
+                                   storageBoughtExcursion.getOwner(),
+                                   storageBoughtExcursion.getLocation(),
+                                   fileHelper.getImage(storageBoughtExcursion.getImageUrl()),
+                                   storageBoughtExcursion.isGuideAvailable(),
+                                   storageBoughtExcursion.isMediaAvailable(),
+                                   storageBoughtExcursion.isRouteAvailable(),
+                                   storageBoughtExcursion.isFullySaved());
+    }
+
+    @NonNull
+    private BoughtExcursion fromService(@NonNull ServiceBoughtExcursion serviceBoughtExcursion, boolean isFullySaved, @NonNull FileHelper fileHelper) {
+        return new BoughtExcursion(serviceBoughtExcursion.getUuid(),
+                                   serviceBoughtExcursion.getName(),
+                                   serviceBoughtExcursion.getOwner(),
+                                   serviceBoughtExcursion.getLocation(),
+                                   fileHelper.getImage(serviceBoughtExcursion.getImageUrl()),
+                                   serviceBoughtExcursion.isGuideAvailable(),
+                                   serviceBoughtExcursion.isMediaAvailable(),
+                                   serviceBoughtExcursion.isRouteAvailable(),
+                                   isFullySaved);
+    }
+
+    private boolean isFullySaved(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
+                                 @Nullable List<StorageBoughtExcursion> storageBoughtExcursions) {
+        if (storageBoughtExcursions == null) {
+            return false;
+        }
+
+        for (StorageBoughtExcursion storageBoughtExcursion : storageBoughtExcursions) {
+            if (storageBoughtExcursion.getUuid().equals(serviceBoughtExcursion.getUuid())) {
+                return storageBoughtExcursion.isFullySaved() &&
+                        (!serviceBoughtExcursion.isGuideAvailable() || storageBoughtExcursion.isGuideAvailable())
+                        && (!serviceBoughtExcursion.isMediaAvailable() || storageBoughtExcursion.isMediaAvailable())
+                        && (!serviceBoughtExcursion.isRouteAvailable() || storageBoughtExcursion.isRouteAvailable());
+            }
+        }
+
+        return false;
     }
 }

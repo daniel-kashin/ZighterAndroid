@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.entities.excursion;
+package com.zighter.zighterandroid.data.entities.service;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 public class ServiceSight extends Validable<ServiceSight> {
-
     @SerializedName("id")
     private String uuid;
 
@@ -57,23 +56,23 @@ public class ServiceSight extends Validable<ServiceSight> {
     }
 
     @Nullable
-    String getType() {
+    public String getType() {
         assertValid();
         return type;
     }
 
     @NonNull
-    String getUuid() {
+    public String getUuid() {
         assertValid();
         return uuid;
     }
 
-    double getLongitude() {
+    public double getLongitude() {
         assertValid();
         return point.getLongitude();
     }
 
-    double getLatitude() {
+    public double getLatitude() {
         assertValid();
         return point.getLatitude();
     }
@@ -83,5 +82,4 @@ public class ServiceSight extends Validable<ServiceSight> {
         assertValid();
         return description;
     }
-
 }

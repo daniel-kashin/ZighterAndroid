@@ -1,6 +1,8 @@
-package com.zighter.zighterandroid.data.entities.excursion;
+package com.zighter.zighterandroid.data.entities.presentation;
 
 import android.support.annotation.NonNull;
+
+import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
 
 public class BoughtExcursionWithStatus {
 

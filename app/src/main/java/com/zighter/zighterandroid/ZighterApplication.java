@@ -2,6 +2,8 @@ package com.zighter.zighterandroid;
 
 import android.app.Application;
 
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.crash.FirebaseCrash;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.squareup.leakcanary.LeakCanary;
 import com.zighter.zighterandroid.dagger.Injector;
@@ -21,6 +23,9 @@ public class ZighterApplication extends Application {
 
         // injector
         Injector.initialize(this);
+
+        // firebase
+        FirebaseApp.initializeApp(this);
     }
 
 }

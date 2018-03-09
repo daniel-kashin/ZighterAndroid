@@ -75,6 +75,10 @@ dependencies {
     compile libraries.glideTransformations
     compile libraries.photoView
 
+    compile libraries.storio
+    compile libraries.storioAnnotations
+    annotationProcessor libraries.storioAnnotationProcessor
+
     compile(libraries.mapbox) {
         transitive=true
     }

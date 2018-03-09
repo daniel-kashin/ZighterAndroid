@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.entities.excursion;
+package com.zighter.zighterandroid.data.entities.service;
 
 import android.support.annotation.Nullable;
 
@@ -24,7 +24,7 @@ public class ServicePoint extends Validable<ServicePoint> {
 
     @Override
     @Nullable
-    ServicePoint tryGetValid(boolean copy) {
+    public ServicePoint tryGetValid(boolean copy) {
         if (isValid()) {
             return copy ? new ServicePoint(longitude, latitude) : this;
         } else {

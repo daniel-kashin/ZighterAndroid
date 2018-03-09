@@ -21,7 +21,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.ACTION_OPEN_ACTIVITY;
+import static com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationContract.ACTION_OPEN_ACTIVITY;
 
 public class BottomNavigationActivity extends BaseSupportActivity {
 

@@ -2,6 +2,9 @@ package com.zighter.zighterandroid.data.entities.excursion;
 
 import android.support.annotation.NonNull;
 
+import com.zighter.zighterandroid.data.entities.excursion.Sight;
+import com.zighter.zighterandroid.data.entities.service.ServicePath;
+
 import java.io.Serializable;
 import java.util.List;
 

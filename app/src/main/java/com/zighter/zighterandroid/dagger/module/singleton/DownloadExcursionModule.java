@@ -2,7 +2,7 @@ package com.zighter.zighterandroid.dagger.module.singleton;
 
 import android.content.Context;
 
-import com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationManager;
+import com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationManager;
 
 import javax.inject.Singleton;
 

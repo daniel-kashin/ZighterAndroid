@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.download_excursion;
+package com.zighter.zighterandroid.data.job_manager.download_excursion;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -8,19 +8,18 @@ import android.support.annotation.NonNull;
 import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
 import com.zighter.zighterandroid.presentation.bottom_navigation.BottomNavigationActivity;
 
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.ACTION_CANCEL_JOB;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.ACTION_OPEN_ACTIVITY;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.EXTRA_EXCURSION;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.REQUEST_CODE_CANCEL_JOB;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.REQUEST_CODE_OPEN_ACTIVITY;
+public class DownloadExcursionNotificationContract {
+    public static final int REQUEST_CODE_OPEN_ACTIVITY = 200;
+    public static final String ACTION_OPEN_ACTIVITY = "ACTION_OPEN_ACTIVITY";
+    public static final int REQUEST_CODE_CANCEL_JOB = 199;
+    public static final String ACTION_CANCEL_JOB = "ACTION_CANCEL_DOWNLOAD_EXCURSION_JOB";
+    public static final String EXTRA_EXCURSION = "EXTRA_BOUGHT_EXCURSION";
+    public static final int NOTIFICATION_ID = 158;
+    public static final String NOTIFICATION_CHANNEL_ID = "158";
 
-public class DownloadExcursionIntentHelper {
-    @NonNull
-    public static Intent getCancelIntent(@NonNull Context context,
-                                         @NonNull BoughtExcursion boughtExcursion) {
-        return new Intent(ACTION_CANCEL_JOB)
-                .putExtra(EXTRA_EXCURSION, boughtExcursion)
-                .setClass(context, DownloadExcursionNotificationBroadcastReceiver.class);
+    public static void cancel(@NonNull Context context,
+                              @NonNull BoughtExcursion boughtExcursion) {
+        context.sendBroadcast(getCancelIntent(context, boughtExcursion));
     }
 
     @NonNull
@@ -34,7 +33,7 @@ public class DownloadExcursionIntentHelper {
     }
 
     @NonNull
-    public static PendingIntent getOpenActivityPendingIntent(@NonNull Context context) {
+    public static PendingIntent getMainPendingIntent(@NonNull Context context) {
         Intent intent = new Intent(ACTION_OPEN_ACTIVITY);
         intent.setClass(context, BottomNavigationActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -43,5 +42,13 @@ public class DownloadExcursionIntentHelper {
                                          REQUEST_CODE_OPEN_ACTIVITY,
                                          intent,
                                          PendingIntent.FLAG_CANCEL_CURRENT);
+    }
+
+    @NonNull
+    private static Intent getCancelIntent(@NonNull Context context,
+                                          @NonNull BoughtExcursion boughtExcursion) {
+        return new Intent(ACTION_CANCEL_JOB)
+                .putExtra(EXTRA_EXCURSION, boughtExcursion)
+                .setClass(context, DownloadExcursionNotificationBroadcastReceiver.class);
     }
 }

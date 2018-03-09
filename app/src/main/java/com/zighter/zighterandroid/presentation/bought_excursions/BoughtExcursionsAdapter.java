@@ -2,7 +2,6 @@ package com.zighter.zighterandroid.presentation.bought_excursions;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +10,18 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.zighter.zighterandroid.R;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus;
+import com.zighter.zighterandroid.data.entities.media.Image;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus;
 
 import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.zighter.zighterandroid.presentation.bought_excursions.BoughtExcursionsAdapter.BoughtExcursionViewHolder;
-import static com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus.DownloadStatus;
+import static com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus.DownloadStatus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,6 +114,8 @@ public class BoughtExcursionsAdapter extends RecyclerView.Adapter<BoughtExcursio
         ImageView downloadStatusImage;
         @BindView(R.id.progress_bar)
         ProgressBar progressBar;
+        @BindView(R.id.image)
+        ImageView imageView;
 
         BoughtExcursionViewHolder(@NonNull View view) {
             super(view);
@@ -125,7 +130,8 @@ public class BoughtExcursionsAdapter extends RecyclerView.Adapter<BoughtExcursio
                 downloadStatusImage.setBackgroundResource(R.drawable.ic_arrow_download);
                 downloadStatusImage.setVisibility(View.VISIBLE);
             } else if (downloadStatus == DownloadStatus.DOWNLOADING) {
-                downloadStatusImage.setVisibility(View.INVISIBLE);
+                downloadStatusImage.setVisibility(View.VISIBLE);
+                downloadStatusImage.setBackgroundResource(R.drawable.ic_clear);
                 progressBar.setVisibility(View.VISIBLE);
             } else if (downloadStatus == DownloadStatus.DOWNLOADED) {
                 progressBar.setVisibility(View.INVISIBLE);
@@ -136,6 +142,16 @@ public class BoughtExcursionsAdapter extends RecyclerView.Adapter<BoughtExcursio
             name.setText(boughtExcursionWithStatus.getExcursion().getName());
             owner.setText(boughtExcursionWithStatus.getExcursion().getOwner());
             location.setText(boughtExcursionWithStatus.getExcursion().getLocation());
+
+            Image image = boughtExcursionWithStatus.getExcursion().getImage();
+            if (image != null) {
+                Glide.with(imageView.getContext())
+                        .load(image.getUrl())
+                        .apply(new RequestOptions()
+                                       .circleCrop()
+                                       .diskCacheStrategy(DiskCacheStrategy.DATA))
+                        .into(imageView);
+            }
         }
 
         void setOnClickListener(@NonNull View.OnClickListener listener) {

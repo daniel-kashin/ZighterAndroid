@@ -29,6 +29,8 @@ ext.versions = [
         glideTransformations   : '3.0.1',
         photoView              : '2.1.3',
 
+        storio                 : '3.0.0',
+
         mapbox                 : '5.2.0@aar'
 ]
 
@@ -39,35 +41,39 @@ ext.gradlePlugins = [
 ]
 
 ext.libraries = [
-        supportLibs          : "com.android.support:appcompat-v7:$versions.supportLibs",
-        constraintLayout     : "com.android.support.constraint:constraint-layout:$versions.constraintLayout",
-        supportAnnotations   : "com.android.support:support-annotations:$versions.supportLibs",
-        supportDesign        : "com.android.support:design:$versions.supportLibs",
-        supportRecyclerView  : "com.android.support:recyclerview-v7:$versions.supportLibs",
-        butterKnife          : "com.jakewharton:butterknife:$versions.butterKnife",
-        butterKnifeCompiler  : "com.jakewharton:butterknife-compiler:$versions.butterKnife",
+        supportLibs              : "com.android.support:appcompat-v7:$versions.supportLibs",
+        constraintLayout         : "com.android.support.constraint:constraint-layout:$versions.constraintLayout",
+        supportAnnotations       : "com.android.support:support-annotations:$versions.supportLibs",
+        supportDesign            : "com.android.support:design:$versions.supportLibs",
+        supportRecyclerView      : "com.android.support:recyclerview-v7:$versions.supportLibs",
+        butterKnife              : "com.jakewharton:butterknife:$versions.butterKnife",
+        butterKnifeCompiler      : "com.jakewharton:butterknife-compiler:$versions.butterKnife",
 
-        leakCanaryDebug      : "com.squareup.leakcanary:leakcanary-android:$versions.leakCanary",
-        leakCanaryRelease    : "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakCanary",
-        firebaseCrash        : "com.google.firebase:firebase-crash:$versions.firebaseCrash",
+        leakCanaryDebug          : "com.squareup.leakcanary:leakcanary-android:$versions.leakCanary",
+        leakCanaryRelease        : "com.squareup.leakcanary:leakcanary-android-no-op:$versions.leakCanary",
+        firebaseCrash            : "com.google.firebase:firebase-crash:$versions.firebaseCrash",
 
-        dagger               : "com.google.dagger:dagger:$versions.dagger2",
-        daggerCompiler       : "com.google.dagger:dagger-compiler:$versions.dagger2",
-        rxJava               : "io.reactivex.rxjava2:rxjava:$versions.rxJava2",
-        rxAndroid            : "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid",
-        retrofit             : "com.squareup.retrofit2:retrofit:$versions.retrofit",
-        retrofitRxAdapter    : "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit",
-        retrofitGsonConverter: "com.squareup.retrofit2:converter-gson:$versions.retrofit",
-        priorityJobQueue     : "com.birbit:android-priority-jobqueue:$versions.priorityJobQueue",
+        dagger                   : "com.google.dagger:dagger:$versions.dagger2",
+        daggerCompiler           : "com.google.dagger:dagger-compiler:$versions.dagger2",
+        rxJava                   : "io.reactivex.rxjava2:rxjava:$versions.rxJava2",
+        rxAndroid                : "io.reactivex.rxjava2:rxandroid:$versions.rxAndroid",
+        retrofit                 : "com.squareup.retrofit2:retrofit:$versions.retrofit",
+        retrofitRxAdapter        : "com.squareup.retrofit2:adapter-rxjava2:$versions.retrofit",
+        retrofitGsonConverter    : "com.squareup.retrofit2:converter-gson:$versions.retrofit",
+        priorityJobQueue         : "com.birbit:android-priority-jobqueue:$versions.priorityJobQueue",
 
-        moxy                 : "com.arello-mobile:moxy:$versions.moxy",
-        moxyCompiler         : "com.arello-mobile:moxy-compiler:$versions.moxy",
-        moxyAppCompat        : "com.arello-mobile:moxy-app-compat:$versions.moxy",
+        moxy                     : "com.arello-mobile:moxy:$versions.moxy",
+        moxyCompiler             : "com.arello-mobile:moxy-compiler:$versions.moxy",
+        moxyAppCompat            : "com.arello-mobile:moxy-app-compat:$versions.moxy",
 
-        glide                : "com.github.bumptech.glide:glide:$versions.glide",
-        glideCompiler        : "com.github.bumptech.glide:compiler:$versions.glide",
-        glideTransformations : "jp.wasabeef:glide-transformations:$versions.glideTransformations",
-        photoView            : "com.github.chrisbanes:PhotoView:$versions.photoView",
+        glide                    : "com.github.bumptech.glide:glide:$versions.glide",
+        glideCompiler            : "com.github.bumptech.glide:compiler:$versions.glide",
+        glideTransformations     : "jp.wasabeef:glide-transformations:$versions.glideTransformations",
+        photoView                : "com.github.chrisbanes:PhotoView:$versions.photoView",
 
-        mapbox               : "com.mapbox.mapboxsdk:mapbox-android-sdk:$versions.mapbox"
+        storio                   : "com.pushtorefresh.storio3:sqlite:$versions.storio",
+        storioAnnotations        : "com.pushtorefresh.storio3:sqlite-annotations:$versions.storio",
+        storioAnnotationProcessor: "com.pushtorefresh.storio3:sqlite-annotations-processor:$versions.storio",
+
+        mapbox                   : "com.mapbox.mapboxsdk:mapbox-android-sdk:$versions.mapbox"
 ]

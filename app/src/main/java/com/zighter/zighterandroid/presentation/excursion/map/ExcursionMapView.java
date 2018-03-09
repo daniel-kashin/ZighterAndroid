@@ -9,9 +9,7 @@ import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
-import com.mapbox.mapboxsdk.annotations.Marker;
 import com.zighter.zighterandroid.data.entities.excursion.Excursion;
-import com.zighter.zighterandroid.data.entities.excursion.ServiceSight;
 import com.zighter.zighterandroid.data.entities.excursion.Sight;
 
 interface ExcursionMapView extends MvpView {

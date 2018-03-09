@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.download_excursion;
+package com.zighter.zighterandroid.data.job_manager.download_excursion;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,13 +8,13 @@ import android.util.Log;
 import com.birbit.android.jobqueue.TagConstraint;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
-import com.zighter.zighterandroid.data.job_manager.JobManagerProgressContract;
+import com.zighter.zighterandroid.data.job_manager.JobManagerEventContract;
 import com.zighter.zighterandroid.data.job_manager.JobManagerWrapper;
 
 import javax.inject.Inject;
 
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.ACTION_CANCEL_JOB;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.EXTRA_EXCURSION;
+import static com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationContract.ACTION_CANCEL_JOB;
+import static com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationContract.EXTRA_EXCURSION;
 
 public class DownloadExcursionNotificationBroadcastReceiver extends BroadcastReceiver {
     @Inject
@@ -34,12 +34,11 @@ public class DownloadExcursionNotificationBroadcastReceiver extends BroadcastRec
                 BoughtExcursion boughtExcursion = (BoughtExcursion) intent.getSerializableExtra(EXTRA_EXCURSION);
                 if (boughtExcursion == null) return;
 
-                JobManagerProgressContract.notifyCancelled(context, boughtExcursion);
-
                 Injector injector = Injector.getInstance();
                 injector.getDowndloadExcursionJobComponent().inject(this);
 
-                notificationManager.cancelNotification();
+                notificationManager.cancelNotification(boughtExcursion);
+                JobManagerEventContract.notifyCancelled(context, boughtExcursion.getUuid());
                 jobManagerWrapper.getJobManager().cancelJobsInBackground(null, TagConstraint.ALL, boughtExcursion.getUuid());
 
                 break;

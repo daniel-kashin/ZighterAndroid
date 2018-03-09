@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.download_excursion;
+package com.zighter.zighterandroid.data.job_manager.download_excursion;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -10,7 +10,7 @@ import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
 import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
-import com.zighter.zighterandroid.data.job_manager.JobManagerProgressContract;
+import com.zighter.zighterandroid.data.job_manager.JobManagerEventContract;
 import com.zighter.zighterandroid.data.repositories.excursion.DownloadProgress;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 
@@ -37,6 +37,7 @@ public class DownloadExcursionJob extends Job implements Serializable {
         super(new Params(PRIORITY)
                       .singleInstanceBy(boughtExcursion.getUuid())
                       .addTags(boughtExcursion.getUuid())
+                      .groupBy(TAG)
                       .requireNetwork()
                       .persist());
 
@@ -46,19 +47,27 @@ public class DownloadExcursionJob extends Job implements Serializable {
     @Override
     public void onAdded() {
         Log.d(TAG, "onAdded");
-        JobManagerProgressContract.notifyAdded(applicationContext, boughtExcursion);
+        JobManagerEventContract.notifyAdded(applicationContext, getSingleIdWithoutPrefix());
+    }
+
+    @NonNull
+    private String getSingleIdWithoutPrefix() {
+        String id = boughtExcursion.getUuid();
+        Log.d(TAG,"getSingleIdWithoutPrefix(" + id + ")");
+        return id;
     }
 
     @Override
     public void onRun() throws Throwable {
         Log.d(TAG, "onRun");
 
-        JobManagerProgressContract.notifyStarted(applicationContext, boughtExcursion);
+        JobManagerEventContract.notifyStarted(applicationContext, getSingleIdWithoutPrefix());
 
         notificationManager.updateNotification(boughtExcursion, null);
 
         for (int i = 0; i < 10; ++i) {
             if (isCancelled()) {
+                notificationManager.cancelNotification(boughtExcursion);
                 return;
             } else {
                 notificationManager.updateNotification(boughtExcursion, new DownloadProgress(DownloadProgress.Type.DATABASE, i, 10));
@@ -66,19 +75,32 @@ public class DownloadExcursionJob extends Job implements Serializable {
             }
         }
 
-        JobManagerProgressContract.notifySuccess(applicationContext, boughtExcursion);
+        notificationManager.cancelNotification(boughtExcursion);
 
-        notificationManager.cancelNotification();
+        JobManagerEventContract.notifySuccess(applicationContext, getSingleIdWithoutPrefix());
     }
 
     @Override
     protected void onCancel(int cancelReason, @Nullable Throwable throwable) {
         Log.d(TAG, "onCancel");
 
-        if (cancelReason != CancelReason.CANCELLED_WHILE_RUNNING) {
-            JobManagerProgressContract.notifyException(applicationContext, boughtExcursion);
-
-            notificationManager.cancelNotification();
+        switch (cancelReason) {
+            case CancelReason.CANCELLED_VIA_SHOULD_RE_RUN:
+                notificationManager.cancelNotification(boughtExcursion);
+                JobManagerEventContract.notifyException(applicationContext, getSingleIdWithoutPrefix());
+                break;
+            case CancelReason.SINGLE_INSTANCE_ID_QUEUED:
+            case CancelReason.SINGLE_INSTANCE_WHILE_RUNNING:
+                int i = 0;
+                // do nothing as another instance of this job exists in memory
+                break;
+            case CancelReason.CANCELLED_WHILE_RUNNING:
+                notificationManager.cancelNotification(boughtExcursion);
+                break;
+            case CancelReason.REACHED_DEADLINE:
+            case CancelReason.REACHED_RETRY_LIMIT:
+                // not used
+                break;
         }
     }
 

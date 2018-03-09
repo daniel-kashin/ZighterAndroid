@@ -1,6 +1,5 @@
 package com.zighter.zighterandroid.dagger.module;
 
-import com.zighter.zighterandroid.dagger.scope.MediaScope;
 import com.zighter.zighterandroid.presentation.media.MediaPresenter;
 
 import javax.inject.Named;
@@ -15,7 +14,6 @@ import static com.zighter.zighterandroid.dagger.module.singleton.SchedulerModule
 @Module
 public class MediaModule {
     @Provides
-    @MediaScope
     MediaPresenter.Builder provideMediaPresenterBuilder(@Named(TAG_WORKER) Scheduler worker,
                                                         @Named(TAG_UI) Scheduler ui) {
         return new MediaPresenter.Builder(worker, ui);

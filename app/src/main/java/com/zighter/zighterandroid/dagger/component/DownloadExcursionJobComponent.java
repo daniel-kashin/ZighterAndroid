@@ -1,8 +1,8 @@
 package com.zighter.zighterandroid.dagger.component;
 
 import com.zighter.zighterandroid.dagger.scope.DownloadExcursionJobScope;
-import com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationBroadcastReceiver;
-import com.zighter.zighterandroid.data.download_excursion.DownloadExcursionJob;
+import com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationBroadcastReceiver;
+import com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionJob;
 
 import dagger.Subcomponent;
 

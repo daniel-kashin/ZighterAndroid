@@ -3,6 +3,9 @@ package com.zighter.zighterandroid.data.entities.excursion;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.zighter.zighterandroid.data.entities.service.ServicePath;
+import com.zighter.zighterandroid.data.entities.service.ServicePoint;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -32,20 +35,20 @@ public class Excursion implements Serializable {
     private int maxMapZoom;
     private int minMapZoom;
 
-    Excursion(@NonNull String uuid,
-                      @Nullable String name,
-                      @Nullable String lastUpdateDatetime,
-                      @Nullable String createDatetime,
-                      int pubStatus,
-                      double price,
-                      @Nullable String currency,
-                      int userUuid,
-                      @NonNull List<Sight> sights,
-                      @NonNull List<ServicePath> paths,
-                      @Nullable ServicePoint westNorthMapBound,
-                      @Nullable ServicePoint eastSouthMapBound,
-                      int maxMapZoom,
-                      int minMapZoom) {
+    public Excursion(@NonNull String uuid,
+                     @Nullable String name,
+                     @Nullable String lastUpdateDatetime,
+                     @Nullable String createDatetime,
+                     int pubStatus,
+                     double price,
+                     @Nullable String currency,
+                     int userUuid,
+                     @NonNull List<Sight> sights,
+                     @NonNull List<ServicePath> paths,
+                     @Nullable ServicePoint westNorthMapBound,
+                     @Nullable ServicePoint eastSouthMapBound,
+                     int maxMapZoom,
+                     int minMapZoom) {
         this.uuid = uuid;
         this.name = name;
         this.lastUpdateDatetime = lastUpdateDatetime;

@@ -1,18 +1,15 @@
 package com.zighter.zighterandroid.presentation.bought_excursions;
 
 import android.support.annotation.NonNull;
-import android.util.Pair;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus;
-import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus;
 
 import java.util.List;
-import static com.zighter.zighterandroid.data.entities.excursion.BoughtExcursionWithStatus.DownloadStatus;
+import static com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus.DownloadStatus;
 
 interface BoughtExcursionsView extends MvpView {
     @StateStrategyType(SingleStateStrategy.class)
@@ -29,4 +26,7 @@ interface BoughtExcursionsView extends MvpView {
 
     @StateStrategyType(SingleStateStrategy.class)
     void showServerException();
+
+    @StateStrategyType(SingleStateStrategy.class)
+    void showEmptyExcursions();
 }

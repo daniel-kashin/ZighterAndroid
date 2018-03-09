@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.entities.excursion;
+package com.zighter.zighterandroid.data.entities.service;
 
 import android.support.annotation.NonNull;
 
@@ -20,12 +20,7 @@ public class ServiceRoute extends Validable<ServiceRoute> {
     }
 
     @Override
-    boolean isValid() {
-        // TODO
-        //if ((paths == null || paths.size() == 0) && (sights == null || sights.size() == 0)) {
-        //    return false;
-        //}
-
+    public boolean isValid() {
         if (paths != null) {
             for (ServicePath path : paths) {
                 if (path == null || !path.isValid()) return false;
@@ -40,12 +35,7 @@ public class ServiceRoute extends Validable<ServiceRoute> {
     }
 
     @Override
-    ServiceRoute tryGetValid(boolean copy) {
-        // TODO
-        //if ((paths == null || paths.size() == 0) && (sights == null || sights.size() == 0)) {
-        //    return null;
-        //}
-
+    public ServiceRoute tryGetValid(boolean copy) {
         List<ServicePath> pathsCopy = new ArrayList<>();
         if (paths != null) {
             for (ServicePath path : paths) {
@@ -59,11 +49,6 @@ public class ServiceRoute extends Validable<ServiceRoute> {
                 if (sight != null && sight.isValid()) sightsCopy.add(sight);
             }
         }
-
-        // TODO
-        //if (pathsCopy.size() == 0 || sightsCopy.size() == 0) {
-        //    return null;
-        //}
 
         if (!copy) {
             return this;

@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.entities.excursion;
+package com.zighter.zighterandroid.data.entities.service;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-
 
 public class ServiceExcursion extends Validable<ServiceExcursion> {
     private static final int DEFAULT_MIN_MAP_ZOOM = 8;
@@ -75,78 +74,78 @@ public class ServiceExcursion extends Validable<ServiceExcursion> {
     }
 
     @NonNull
-    String getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
     @Nullable
-    String getName() {
+    public String getName() {
         return name;
     }
 
     @Nullable
-    String getLastUpdateDatetime() {
+    public String getLastUpdateDatetime() {
         return lastUpdateDatetime;
     }
 
     @Nullable
-    String getCreateDatetime() {
+    public String getCreateDatetime() {
         return createDatetime;
     }
 
-    int getPubStatus() {
+    public int getPubStatus() {
         return pubStatus;
     }
 
-    double getPrice() {
+    public double getPrice() {
         return price;
     }
 
     @Nullable
-    String getCurrency() {
+    public String getCurrency() {
         return currency;
     }
 
-    int getUserUuid() {
+    public int getUserUuid() {
         return userUuid;
     }
 
-    int getPathSize() {
+    public int getPathSize() {
         return route.getPathSize();
     }
 
-    int getSightSize() {
+    public int getSightSize() {
         return route.getSightSize();
     }
 
     @NonNull
-    ServicePath getPathAt(int index) {
+    public ServicePath getPathAt(int index) {
         return route.getPathAt(index);
     }
 
     @NonNull
-    ServiceSight getSightAt(int index) {
+    public ServiceSight getSightAt(int index) {
         return route.getSightAt(index);
     }
 
     @Nullable
-    ServicePoint getWestNorthMapBound() {
+    public ServicePoint getWestNorthMapBound() {
         return westNorthMapBound;
     }
 
     @Nullable
-    ServicePoint getEastSouthMapBound() {
+    public ServicePoint getEastSouthMapBound() {
         return eastSouthMapBound;
     }
 
-    int getMinMapZoom() {
+    public int getMinMapZoom() {
         return //mapZoomList != null && mapZoomList.size() >= 1 && mapZoomList.get(0) >= DEFAULT_MIN_MAP_ZOOM
                 // ? mapZoomList.get(0)
                 // :
                 DEFAULT_MIN_MAP_ZOOM;
     }
 
-    int getMaxMapZoom() {
+    public int getMaxMapZoom() {
         return //mapZoomList != null && mapZoomList.size() >= 2 && mapZoomList.get(1) <= DEFAULT_MAX_MAP_ZOOM
                 // ? mapZoomList.get(1)
                 // :
@@ -154,7 +153,7 @@ public class ServiceExcursion extends Validable<ServiceExcursion> {
     }
 
     @Override
-    boolean isValid() {
+    public boolean isValid() {
         return userUuid != 0
                 && uuid != null
                 && !uuid.equals("")
@@ -164,7 +163,7 @@ public class ServiceExcursion extends Validable<ServiceExcursion> {
 
     @Override
     @Nullable
-    ServiceExcursion tryGetValid(boolean copy) {
+    public ServiceExcursion tryGetValid(boolean copy) {
         if (route == null
                 || userUuid == 0
                 || uuid == null

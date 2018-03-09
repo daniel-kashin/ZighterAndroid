@@ -1,7 +1,10 @@
 package com.zighter.zighterandroid.dagger.module.singleton;
 
-import com.birbit.android.jobqueue.JobManager;
-import com.zighter.zighterandroid.data.entities.excursion.ExcursionMapper;
+import android.content.Context;
+
+import com.pushtorefresh.storio3.sqlite.StorIOSQLite;
+import com.zighter.zighterandroid.data.entities.mapper.ExcursionMapper;
+import com.zighter.zighterandroid.data.file.FileHelper;
 import com.zighter.zighterandroid.data.job_manager.JobManagerWrapper;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionService;
@@ -14,7 +17,7 @@ import dagger.Provides;
 import okhttp3.OkHttpClient;
 
 @Module
-public class PathsModule {
+public class ExcursionModule {
     @Singleton
     @Provides
     ExcursionService providePathsService(OkHttpClient okHttpClient) {
@@ -23,8 +26,8 @@ public class PathsModule {
 
     @Singleton
     @Provides
-    ExcursionStorage providePathsStorage() {
-        return new ExcursionStorage();
+    ExcursionStorage providePathsStorage(StorIOSQLite storIOSQLite) {
+        return new ExcursionStorage(storIOSQLite);
     }
 
     @Singleton
@@ -35,10 +38,17 @@ public class PathsModule {
 
     @Singleton
     @Provides
-    ExcursionRepository provideExcursionRepository(ExcursionService excursionService,
+    ExcursionRepository provideExcursionRepository(Context context,
+                                                   ExcursionService excursionService,
                                                    ExcursionStorage excursionStorage,
                                                    ExcursionMapper excursionMapper,
-                                                   JobManagerWrapper jobManager) {
-        return new ExcursionRepository(excursionService, excursionStorage, excursionMapper, jobManager);
+                                                   JobManagerWrapper jobManager,
+                                                   FileHelper fileHelper) {
+        return new ExcursionRepository(context,
+                                       excursionService,
+                                       excursionStorage,
+                                       excursionMapper,
+                                       jobManager,
+                                       fileHelper);
     }
 }

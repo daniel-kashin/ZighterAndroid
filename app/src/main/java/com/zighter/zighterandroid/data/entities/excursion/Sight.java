@@ -25,13 +25,13 @@ public class Sight implements Serializable {
     @NonNull
     private List<Media> medias;
 
-    Sight(@NonNull String uuid,
-          double longitude,
-          double latitude,
-          @Nullable String name,
-          @Nullable String type,
-          @Nullable String description,
-          @NonNull List<Media> medias) {
+    public Sight(@NonNull String uuid,
+                 double longitude,
+                 double latitude,
+                 @Nullable String name,
+                 @Nullable String type,
+                 @Nullable String description,
+                 @NonNull List<Media> medias) {
         this.uuid = uuid;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -103,7 +103,7 @@ public class Sight implements Serializable {
     }
 
     @Nullable
-    public <T extends  Media> T getFirstMedia(Class<T> mediaClass) {
+    public <T extends Media> T getFirstMedia(Class<T> mediaClass) {
         if (!hasMedia()) {
             return null;
         }

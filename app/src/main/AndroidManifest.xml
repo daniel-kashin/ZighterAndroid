@@ -18,7 +18,7 @@
 
         <activity android:name=".presentation.bottom_navigation.BottomNavigationActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.event.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
@@ -31,7 +31,7 @@
         <activity android:name=".presentation.media.MediaActivity" />
 
         <receiver
-            android:name=".data.download_excursion.DownloadExcursionNotificationBroadcastReceiver"
+            android:name=".data.job_manager.download_excursion.DownloadExcursionNotificationBroadcastReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="ACTION_CANCEL_JOB" />

@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.entities.excursion;
+package com.zighter.zighterandroid.data.entities.service;
 
 import android.support.annotation.Nullable;
 
@@ -38,7 +38,7 @@ public class ServicePath extends Validable<ServicePath> {
     }
 
     @Override
-    boolean isValid() {
+    public boolean isValid() {
         if (uuid == 0
                 //|| endpoints == null || endpoints.size() != 2
                 //|| endpointIds == null || endpointIds.size() != 2
@@ -61,7 +61,7 @@ public class ServicePath extends Validable<ServicePath> {
 
     @Override
     @Nullable
-    ServicePath tryGetValid(boolean copy) {
+    public ServicePath tryGetValid(boolean copy) {
         if (uuid == 0
                 //|| endpoints == null || endpoints.size() != 2
                 //|| endpointIds == null || endpointIds.size() != 2

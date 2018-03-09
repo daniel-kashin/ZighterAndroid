@@ -1,23 +1,20 @@
-package com.zighter.zighterandroid.data.download_excursion;
+package com.zighter.zighterandroid.data.job_manager.download_excursion;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationManagerCompat;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
 import com.zighter.zighterandroid.data.repositories.excursion.DownloadProgress;
 
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionIntentHelper.getCancelPendingIntent;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionIntentHelper.getOpenActivityPendingIntent;
-import static com.zighter.zighterandroid.data.download_excursion.DownloadExcursionNotificationContract.NOTIFICATION_CHANNEL_ID;
+import static com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationContract.NOTIFICATION_CHANNEL_ID;
+import static com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationContract.getCancelPendingIntent;
+import static com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationContract.getMainPendingIntent;
 
 public class DownloadExcursionNotificationManager {
     @NonNull
@@ -37,7 +34,7 @@ public class DownloadExcursionNotificationManager {
                 .Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(boughtExcursion.getName())
                 .setContentText(boughtExcursion.getOwner())
-                .setContentIntent(getOpenActivityPendingIntent(applicationContext))
+                .setContentIntent(getMainPendingIntent(applicationContext))
                 .addAction(0, applicationContext.getString(R.string.cancel), getCancelPendingIntent(applicationContext, boughtExcursion))
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_my_location_black)
@@ -49,12 +46,12 @@ public class DownloadExcursionNotificationManager {
             builder.setProgress(1, 0, true);
         }
 
-        notificationManager.notify(DownloadExcursionNotificationContract.NOTIFICATION_ID, builder.build());
+        notificationManager.notify(boughtExcursion.getUuid(), DownloadExcursionNotificationContract.NOTIFICATION_ID, builder.build());
     }
 
-    void cancelNotification() {
+    void cancelNotification(@NonNull BoughtExcursion boughtExcursion) {
         NotificationManager notificationManager = getNotificationManager(applicationContext);
-        notificationManager.cancel(DownloadExcursionNotificationContract.NOTIFICATION_ID);
+        notificationManager.cancel(boughtExcursion.getUuid(), DownloadExcursionNotificationContract.NOTIFICATION_ID);
     }
 
     @NonNull
