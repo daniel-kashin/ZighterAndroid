@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="AnchorBottomSheetBehavior_Layout">
-        <attr name="behavior_anchorOffset" format="dimension" />
-        <attr name="behavior_defaultState" format="enum">
-            <enum name="expanded" value="3" />
-            <enum name="collapsed" value="4" />
-            <enum name="hidden" value="5" />
-            <enum name="anchored" value="6" />
+    <declare-styleable title="AnchorBottomSheetBehavior_Layout">
+        <attr title="behavior_anchorOffset" format="dimension" />
+        <attr title="behavior_defaultState" format="enum">
+            <enum title="expanded" value="3" />
+            <enum title="collapsed" value="4" />
+            <enum title="hidden" value="5" />
+            <enum title="anchored" value="6" />
         </attr>
     </declare-styleable>
 </resources>

@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus;
 import com.zighter.zighterandroid.data.exception.BaseException;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
@@ -19,7 +19,6 @@ import static com.zighter.zighterandroid.data.entities.presentation.BoughtExcurs
 
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 
 @InjectViewState
 public class BoughtExcursionsPresenter extends BasePresenter<BoughtExcursionsView> {

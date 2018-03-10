@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.arellomobile.mvp.InjectViewState;
-import com.zighter.zighterandroid.data.entities.excursion.Sight;
+import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.exception.BaseException;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
 import com.zighter.zighterandroid.data.exception.ServerException;

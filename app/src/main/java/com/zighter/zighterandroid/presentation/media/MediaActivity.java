@@ -23,7 +23,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
-import com.zighter.zighterandroid.data.entities.excursion.Sight;
+import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.media.adapter.FullscreenMediaAdapter;

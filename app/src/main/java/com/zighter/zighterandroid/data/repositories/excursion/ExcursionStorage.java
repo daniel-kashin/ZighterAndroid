@@ -4,27 +4,241 @@ import android.support.annotation.NonNull;
 
 import com.pushtorefresh.storio3.sqlite.StorIOSQLite;
 import com.pushtorefresh.storio3.sqlite.operations.delete.DeleteResult;
+import com.pushtorefresh.storio3.sqlite.operations.put.PutResult;
 import com.pushtorefresh.storio3.sqlite.operations.put.PutResults;
 import com.pushtorefresh.storio3.sqlite.queries.DeleteQuery;
 import com.pushtorefresh.storio3.sqlite.queries.Query;
 import com.zighter.zighterandroid.data.database.StorageBoughtExcursionContract;
+import com.zighter.zighterandroid.data.database.StorageExcursionContract;
+import com.zighter.zighterandroid.data.database.StorageMediaContract;
+import com.zighter.zighterandroid.data.database.StoragePathContract;
+import com.zighter.zighterandroid.data.database.StoragePointContract;
+import com.zighter.zighterandroid.data.database.StorageSightContract;
+import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursion;
+import com.zighter.zighterandroid.data.entities.storage.StorageExcursion;
+import com.zighter.zighterandroid.data.entities.storage.StoragePath;
+import com.zighter.zighterandroid.data.entities.storage.StoragePoint;
+import com.zighter.zighterandroid.data.entities.storage.StorageMedia;
+import com.zighter.zighterandroid.data.entities.storage.StorageSight;
 import com.zighter.zighterandroid.data.repositories.common.BaseStorage;
 import com.zighter.zighterandroid.util.Optional;
 
 import java.util.List;
 
 import io.reactivex.Single;
-import retrofit2.http.DELETE;
 
+@SuppressWarnings("UnusedReturnValue")
 public class ExcursionStorage extends BaseStorage {
 
     public ExcursionStorage(@NonNull StorIOSQLite storIOSQLite) {
         super(storIOSQLite);
     }
 
+    void beginTransaction() {
+        getSqLite().lowLevel().beginTransaction();
+    }
+
+    void endTransaction() {
+        getSqLite().lowLevel().endTransaction();
+    }
+
+    void setTransactionSuccessful() {
+        getSqLite().lowLevel().setTransactionSuccessful();
+    }
+
     @NonNull
-    public Single<Optional<List<StorageBoughtExcursion>>> getBoughtExcursions() {
+    Single<Optional<StorageExcursion>> getExcursion(@NonNull String excursionUuid) {
+        return Single.fromCallable(() -> {
+            return Optional.Companion.of(
+                    getSqLite().get()
+                            .object(StorageExcursion.class)
+                            .withQuery(Query.builder()
+                                               .table(StorageExcursionContract.TABLE_NAME)
+                                               .where(StorageExcursionContract.COLUMN_UUID + " = ?")
+                                               .whereArgs(excursionUuid)
+                                               .build())
+                            .prepare()
+                            .executeAsBlocking()
+            );
+        });
+    }
+
+    Single<PutResult> saveExcursion(@NonNull StorageExcursion storageExcursion) {
+        return Single.fromCallable(() -> {
+            return getSqLite().put()
+                    .object(storageExcursion)
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<Optional<List<StorageSight>>> getSights(@NonNull String excursionUuid) {
+        return Single.fromCallable(() -> {
+            return Optional.Companion.of(
+                    getSqLite().get()
+                            .listOfObjects(StorageSight.class)
+                            .withQuery(Query.builder()
+                                               .table(StorageSightContract.TABLE_NAME)
+                                               .where(StorageSightContract.COLUMN_EXCURSION_UUID + " = ?")
+                                               .whereArgs(excursionUuid)
+                                               .build())
+                            .prepare()
+                            .executeAsBlocking()
+            );
+        });
+    }
+
+    @NonNull
+    Single<PutResult> saveSight(@NonNull StorageSight storageSight) {
+        return Single.fromCallable(() -> {
+            return getSqLite().put()
+                    .object(storageSight)
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<DeleteResult> deleteSights(@NonNull String excursionUuid) {
+        return Single.fromCallable(() -> {
+            return getSqLite().delete()
+                    .byQuery(DeleteQuery.builder()
+                                     .table(StorageSightContract.TABLE_NAME)
+                                     .where(StorageSightContract.COLUMN_EXCURSION_UUID + " = ?")
+                                     .whereArgs(excursionUuid)
+                                     .build())
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<Optional<List<StorageMedia>>> getMedias(@NonNull String sightUuid) {
+        return Single.fromCallable(() -> {
+            return Optional.Companion.of(
+                    getSqLite().get()
+                            .listOfObjects(StorageMedia.class)
+                            .withQuery(Query.builder()
+                                               .table(StorageMediaContract.TABLE_NAME)
+                                               .where(StorageMediaContract.COLUMN_SIGHT_UUID + " = ?")
+                                               .whereArgs(sightUuid)
+                                               .build())
+                            .prepare()
+                            .executeAsBlocking()
+            );
+        });
+    }
+
+    @NonNull
+    Single<PutResults<StorageMedia>> saveMedias(@NonNull List<StorageMedia> storageMedia) {
+        return Single.fromCallable(() -> {
+            return getSqLite().put()
+                    .objects(storageMedia)
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<DeleteResult> deleteMedias(@NonNull String sightUuid) {
+        return Single.fromCallable(() -> {
+            return getSqLite().delete()
+                    .byQuery(DeleteQuery.builder()
+                                     .table(StorageMediaContract.TABLE_NAME)
+                                     .where(StorageMediaContract.COLUMN_SIGHT_UUID + " = ?")
+                                     .whereArgs(sightUuid)
+                                     .build())
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<Optional<List<StoragePath>>> getPaths(@NonNull String excursionUuid) {
+        return Single.fromCallable(() -> {
+            return Optional.Companion.of(
+                    getSqLite().get()
+                            .listOfObjects(StoragePath.class)
+                            .withQuery(Query.builder()
+                                               .table(StoragePathContract.TABLE_NAME)
+                                               .where(StoragePathContract.COLUMN_EXCURSION_UUID + " = ?")
+                                               .whereArgs(excursionUuid)
+                                               .build())
+                            .prepare()
+                            .executeAsBlocking()
+            );
+        });
+    }
+
+    @NonNull
+    Single<PutResult> savePath(@NonNull StoragePath storagePath) {
+        return Single.fromCallable(() -> {
+            return getSqLite().put()
+                    .object(storagePath)
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<DeleteResult> deletePaths(@NonNull String excursionUuid) {
+        return Single.fromCallable(() -> {
+            return getSqLite().delete()
+                    .byQuery(DeleteQuery.builder()
+                                     .table(StoragePathContract.TABLE_NAME)
+                                     .where(StoragePathContract.COLUMN_EXCURSION_UUID + " = ?")
+                                     .whereArgs(excursionUuid)
+                                     .build())
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<Optional<List<StoragePoint>>> getPoints(@NonNull String pathUuid) {
+        return Single.fromCallable(() -> {
+            return Optional.Companion.of(
+                    getSqLite().get()
+                            .listOfObjects(StoragePoint.class)
+                            .withQuery(Query.builder()
+                                               .table(StoragePointContract.TABLE_NAME)
+                                               .where(StoragePointContract.COLUMN_PATH_UUID + " = ?")
+                                               .whereArgs(pathUuid)
+                                               .build())
+                            .prepare()
+                            .executeAsBlocking()
+            );
+        });
+    }
+
+    @NonNull
+    Single<PutResults<StoragePoint>> savePoints(@NonNull List<StoragePoint> points) {
+        return Single.fromCallable(() -> {
+            return getSqLite().put()
+                    .objects(points)
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<DeleteResult> deletePoints(@NonNull String pathUuid) {
+        return Single.fromCallable(() -> {
+            return getSqLite().delete()
+                    .byQuery(DeleteQuery.builder()
+                                     .table(StoragePointContract.TABLE_NAME)
+                                     .where(StoragePointContract.COLUMN_PATH_UUID + " = ?")
+                                     .whereArgs(pathUuid)
+                                     .build())
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<Optional<List<StorageBoughtExcursion>>> getBoughtExcursions() {
         return Single.fromCallable(() -> {
             return Optional.Companion.of(
                     getSqLite().get()
@@ -39,7 +253,7 @@ public class ExcursionStorage extends BaseStorage {
     }
 
     @NonNull
-    public Single<PutResults<StorageBoughtExcursion>> saveBoughtExcursions(@NonNull List<StorageBoughtExcursion> excursions) {
+    Single<PutResults<StorageBoughtExcursion>> saveBoughtExcursions(@NonNull List<StorageBoughtExcursion> excursions) {
         return Single.fromCallable(() -> {
             return getSqLite().put()
                     .objects(excursions)
@@ -49,11 +263,10 @@ public class ExcursionStorage extends BaseStorage {
     }
 
     @NonNull
-    public Single<DeleteResult> deleteBoughtExcursions() {
+    Single<DeleteResult> deleteBoughtExcursions() {
         return Single.fromCallable(() -> {
             return getSqLite().delete()
-                    .byQuery(DeleteQuery
-                                     .builder()
+                    .byQuery(DeleteQuery.builder()
                                      .table(StorageBoughtExcursionContract.TABLE_NAME)
                                      .build())
                     .prepare()

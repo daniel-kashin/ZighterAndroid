@@ -3,13 +3,13 @@ package com.zighter.zighterandroid.data.entities.mapper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
-import com.zighter.zighterandroid.data.entities.excursion.Excursion;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.presentation.Excursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServicePath;
 import com.zighter.zighterandroid.data.entities.service.ServiceSight;
-import com.zighter.zighterandroid.data.entities.excursion.Sight;
+import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Media;
 import com.zighter.zighterandroid.data.entities.media.Video;
@@ -59,7 +59,7 @@ public class ExcursionMapper {
     public Excursion fromService(@NonNull ServiceExcursion serviceExcursion)
             throws ServerResponseValidationException {
 
-        serviceExcursion.tryGetValidOrThrowException();
+        serviceExcursion = serviceExcursion.tryGetValidOrThrowException();
 
         int sightSize = serviceExcursion.getSightSize();
         List<Sight> sights = new ArrayList<>(sightSize);
@@ -83,12 +83,6 @@ public class ExcursionMapper {
 
         return new Excursion(serviceExcursion.getUuid(),
                              serviceExcursion.getName(),
-                             serviceExcursion.getLastUpdateDatetime(),
-                             serviceExcursion.getCreateDatetime(),
-                             serviceExcursion.getPubStatus(),
-                             serviceExcursion.getPrice(),
-                             serviceExcursion.getCurrency(),
-                             serviceExcursion.getUserUuid(),
                              sights,
                              paths,
                              serviceExcursion.getWestNorthMapBound(),
@@ -96,18 +90,6 @@ public class ExcursionMapper {
                              serviceExcursion.getMaxMapZoom(),
                              serviceExcursion.getMinMapZoom());
     }
-
-    @NonNull
-    public List<Excursion> fromService(@NonNull List<ServiceExcursion> serviceExcursions)
-            throws ServerResponseValidationException {
-
-        List<Excursion> result = new ArrayList<>(serviceExcursions.size());
-        for (ServiceExcursion serviceExcursion : serviceExcursions) {
-            result.add(fromService(serviceExcursion));
-        }
-        return result;
-    }
-
 
     @NonNull
     public List<BoughtExcursion> fromServiceAndStorage(@NonNull List<ServiceBoughtExcursion> serviceBoughtExcursions,

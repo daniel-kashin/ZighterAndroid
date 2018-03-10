@@ -12,7 +12,7 @@ public class ServicePoint extends Validable<ServicePoint> {
     @SerializedName("lat")
     private double latitude;
 
-    private ServicePoint(double longitude, double latitude) {
+    public ServicePoint(double longitude, double latitude) {
         this.longitude = longitude;
         this.latitude = latitude;
     }

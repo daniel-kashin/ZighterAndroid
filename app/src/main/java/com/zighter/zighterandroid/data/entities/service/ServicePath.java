@@ -1,5 +1,6 @@
 package com.zighter.zighterandroid.data.entities.service;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
@@ -11,14 +12,15 @@ import java.util.List;
 public class ServicePath extends Validable<ServicePath> {
 
     @SerializedName("id")
-    private int uuid;
+    private String uuid;
 
     // TODO
     //@SerializedName("")
     //private String description;
 
-    @SerializedName("type")
-    private String type;
+    // TODO
+    //@SerializedName("type")
+    //private String type;
 
     //@SerializedName("endpoint")
     //private List<ServicePoint> endpoints;
@@ -29,20 +31,22 @@ public class ServicePath extends Validable<ServicePath> {
     @SerializedName("points")
     private List<ServicePoint> points;
 
-    private ServicePath(int uuid, String type,
+    public ServicePath(@NonNull String uuid,
+                        //String type,
                         //List<ServicePoint> endpoints,
                         //List<Integer> endpointIds,
-                        List<ServicePoint> points) {
+                        @NonNull List<ServicePoint> points) {
         this.uuid = uuid;
-        this.type = type;
+        this.points = points;
+        //this.type = type;
     }
 
     @Override
     public boolean isValid() {
-        if (uuid == 0
+        if (uuid == null
                 //|| endpoints == null || endpoints.size() != 2
                 //|| endpointIds == null || endpointIds.size() != 2
-                || points == null || points.size() < 1
+                || points == null || points.size() < 2
             //|| endpointIds.get(0) >= points.size()
             //|| endpointIds.get(1) >= points.size()
                 ) {
@@ -62,7 +66,7 @@ public class ServicePath extends Validable<ServicePath> {
     @Override
     @Nullable
     public ServicePath tryGetValid(boolean copy) {
-        if (uuid == 0
+        if (uuid == null
                 //|| endpoints == null || endpoints.size() != 2
                 //|| endpointIds == null || endpointIds.size() != 2
                 || points == null || points.size() < 2) {
@@ -93,19 +97,20 @@ public class ServicePath extends Validable<ServicePath> {
         }
 
         return new ServicePath(uuid,
-                               type,
+                               //type,
                                //endpointsCopy,
                                //    endpointIdsCopy,
                                pointsCopy);
     }
 
-    public int getUuid() {
+    @NonNull
+    public String getUuid() {
         return uuid;
     }
 
-    public String getType() {
-        return type;
-    }
+    //public String getTypeName() {
+    //    return type;
+    //}
 
     public int getPointSize() {
         return points.size();

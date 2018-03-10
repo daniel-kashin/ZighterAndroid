@@ -57,28 +57,6 @@ public class StorageBoughtExcursion {
     StorageBoughtExcursion() {
     }
 
-    StorageBoughtExcursion(Long id,
-                           @NonNull String uuid,
-                           @NonNull String name,
-                           @NonNull String location,
-                           @NonNull String owner,
-                           @Nullable String imageUrl,
-                           boolean isGuideAvailable,
-                           boolean isMediaAvailable,
-                           boolean isRouteAvailable,
-                           boolean isFullySaved) {
-        this.id = id;
-        this.uuid = uuid;
-        this.name = name;
-        this.location = location;
-        this.imageUrl = imageUrl;
-        this.isGuideAvailable = isGuideAvailable;
-        this.isMediaAvailable = isMediaAvailable;
-        this.isRouteAvailable = isRouteAvailable;
-        this.isFullySaved = isFullySaved;
-        this.owner = owner;
-    }
-
     public StorageBoughtExcursion(@NonNull String uuid,
                                   @NonNull String name,
                                   @NonNull String location,
@@ -88,7 +66,15 @@ public class StorageBoughtExcursion {
                                   boolean isMediaAvailable,
                                   boolean isRouteAvailable,
                                   boolean isFullySaved) {
-        this(null, uuid, name, location, owner, imageUrl, isGuideAvailable, isMediaAvailable, isRouteAvailable, isFullySaved);
+        this.uuid = uuid;
+        this.name = name;
+        this.location = location;
+        this.imageUrl = imageUrl;
+        this.isGuideAvailable = isGuideAvailable;
+        this.isMediaAvailable = isMediaAvailable;
+        this.isRouteAvailable = isRouteAvailable;
+        this.isFullySaved = isFullySaved;
+        this.owner = owner;
     }
 
     public long getId() {

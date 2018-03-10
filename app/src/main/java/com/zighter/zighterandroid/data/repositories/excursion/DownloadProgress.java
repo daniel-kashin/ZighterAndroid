@@ -8,6 +8,12 @@ public class DownloadProgress {
     private final int currentPosition;
     private final int count;
 
+    public DownloadProgress(@NonNull Type type) {
+        this.type = type;
+        this.count = 0;
+        this.currentPosition = -1;
+    }
+
     public DownloadProgress(@NonNull Type type, int currentPosition, int count) {
         this.type = type;
         this.currentPosition = currentPosition;

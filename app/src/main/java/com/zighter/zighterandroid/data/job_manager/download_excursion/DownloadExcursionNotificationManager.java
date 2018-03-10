@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
 import com.zighter.zighterandroid.R;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
 import com.zighter.zighterandroid.data.repositories.excursion.DownloadProgress;
 
 import static com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationContract.NOTIFICATION_CHANNEL_ID;
@@ -37,7 +37,7 @@ public class DownloadExcursionNotificationManager {
                 .setContentIntent(getMainPendingIntent(applicationContext))
                 .addAction(0, applicationContext.getString(R.string.cancel), getCancelPendingIntent(applicationContext, boughtExcursion))
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_my_location_black)
+                .setSmallIcon(R.drawable.ic_file_download_black)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
         if (downloadProgress != null && downloadProgress.getCount() != 0) {

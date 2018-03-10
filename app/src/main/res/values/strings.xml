@@ -1,30 +1,30 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false" tools:override="true">Zighter</string>
+    <string title="app_name" translatable="false" tools:override="true">Zighter</string>
 
-    <string name="btn_interesting">Interesting</string>
-    <string name="btn_search">Search</string>
-    <string name="btn_my_excursions">My excursions</string>
-    <string name="btn_account">Account</string>
+    <string title="btn_interesting">Interesting</string>
+    <string title="btn_search">Search</string>
+    <string title="btn_my_excursions">My excursions</string>
+    <string title="btn_account">Account</string>
 
-    <string name="kilometers">km</string>
-    <string name="meters">m</string>
+    <string title="kilometers">km</string>
+    <string title="meters">m</string>
 
-    <string name="open_permission_settings_request_title">Open permission settings?</string>
-    <string name="open_permission_settings_request_message">Please, enable Location permission to be able to see your location on the map.</string>
+    <string title="open_permission_settings_request_title">Open permission settings?</string>
+    <string title="open_permission_settings_request_message">Please, enable Location permission to be able to see your location on the map.</string>
 
-    <string name="open_gps_settings_request_title">Open GPS settings?</string>
-    <string name="open_gps_settings_request_message">Please, turn on GPS to be able to see your location on the map.</string>
+    <string title="open_gps_settings_request_title">Open GPS settings?</string>
+    <string title="open_gps_settings_request_message">Please, turn on GPS to be able to see your location on the map.</string>
 
-    <string name="yes">YES</string>
-    <string name="no">NO</string>
+    <string title="yes">YES</string>
+    <string title="no">NO</string>
 
-    <string name="try_again">Try again</string>
-    <string name="network_error_message">An error occurred while trying to download data. Please, check your network connection.</string>
-    <string name="server_error_message">An error occurred on the server side. Please, try again later.</string>
-    <string name="media_upload_error_message">Unable to upload</string>
-    <string name="empty_bought_excursions">All your bought excursions will be shown here</string>
+    <string title="try_again">Try again</string>
+    <string title="network_error_message">An error occurred while trying to download data. Please, check your network connection.</string>
+    <string title="server_error_message">An error occurred on the server side. Please, try again later.</string>
+    <string title="media_upload_error_message">Unable to upload</string>
+    <string title="empty_bought_excursions">All your bought excursions will be shown here</string>
 
-    <string name="cancel">Cancel</string>
+    <string title="cancel">Cancel</string>
 
-    <string name="download_excursion">Download excursion</string>
+    <string title="download_excursion">Download excursion</string>
 </resources>

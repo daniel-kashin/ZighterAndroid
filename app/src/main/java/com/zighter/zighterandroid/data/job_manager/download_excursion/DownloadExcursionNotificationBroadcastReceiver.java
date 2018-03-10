@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.birbit.android.jobqueue.TagConstraint;
 import com.zighter.zighterandroid.dagger.Injector;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
 import com.zighter.zighterandroid.data.job_manager.JobManagerEventContract;
 import com.zighter.zighterandroid.data.job_manager.JobManagerWrapper;
 

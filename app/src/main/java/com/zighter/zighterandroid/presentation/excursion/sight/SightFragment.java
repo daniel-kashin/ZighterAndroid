@@ -21,7 +21,7 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.bumptech.glide.request.RequestOptions;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
-import com.zighter.zighterandroid.data.entities.excursion.Sight;
+import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;

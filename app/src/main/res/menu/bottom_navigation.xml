@@ -3,17 +3,17 @@
     <item
         android:id="@+id/action_interesting"
         android:icon="@drawable/ic_interesting_black"
-        android:name="@string/btn_interesting" />
+        android:title="@string/btn_interesting" />
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_search_black"
-        android:name="@string/btn_search" />
+        android:title="@string/btn_search" />
     <item
         android:id="@+id/action_my_excursions"
         android:icon="@drawable/ic_favorite_black"
-        android:name="@string/btn_my_excursions" />
+        android:title="@string/btn_my_excursions" />
     <item
         android:id="@+id/action_account"
         android:icon="@drawable/ic_account_black"
-        android:name="@string/btn_account" />
+        android:title="@string/btn_account" />
 </menu>

@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.arellomobile.mvp.InjectViewState;
-import com.zighter.zighterandroid.data.entities.excursion.Sight;
+import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.presentation.common.BasePresenter;
 
@@ -53,7 +53,7 @@ public class MediaPresenter extends BasePresenter<MediaView> {
             DrawableMedia media = mediaList.get(currentPosition);
             boolean isDescriptionShown = media.getDescription() != null && !media.getDescription().isEmpty();
             if (isDescriptionShown) {
-                getViewState().showMediaDescription(media.getName(), media.getDescription());
+                getViewState().showMediaDescription(media.getTitle(), media.getDescription());
             }
         }
     }

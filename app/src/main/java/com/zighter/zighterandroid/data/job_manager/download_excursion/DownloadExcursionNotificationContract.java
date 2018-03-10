@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
 import com.zighter.zighterandroid.presentation.bottom_navigation.BottomNavigationActivity;
 
 public class DownloadExcursionNotificationContract {

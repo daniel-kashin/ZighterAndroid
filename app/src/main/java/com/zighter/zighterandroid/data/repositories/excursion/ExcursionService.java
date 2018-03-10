@@ -3,21 +3,18 @@ package com.zighter.zighterandroid.data.repositories.excursion;
 import android.support.annotation.NonNull;
 import android.util.Pair;
 
-import com.zighter.zighterandroid.data.entities.excursion.Excursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.repositories.ZighterEndpoints;
 import com.zighter.zighterandroid.data.repositories.common.BaseService;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
 import com.zighter.zighterandroid.data.exception.ServerException;
-import com.zighter.zighterandroid.util.Optional;
 
 import java.io.IOException;
 import java.util.List;
 
 import io.reactivex.Single;
 import io.reactivex.SingleSource;
-import io.reactivex.functions.Function;
 import okhttp3.OkHttpClient;
 import retrofit2.HttpException;
 import retrofit2.Retrofit;
@@ -33,8 +30,8 @@ public class ExcursionService extends BaseService<ServiceExcursionContract> {
     }
 
     @NonNull
-    Single<ServiceExcursion> getExcursion() {
-        return getService().getExcursion()
+    Single<ServiceExcursion> getExcursion(@NonNull String uuid) {
+        return getService().getExcursion(uuid)
                 .onErrorResumeNext(this::convertRetrofitThrowable);
     }
 

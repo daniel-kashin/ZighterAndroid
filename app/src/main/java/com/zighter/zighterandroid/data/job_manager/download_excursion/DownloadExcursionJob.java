@@ -9,7 +9,7 @@ import com.birbit.android.jobqueue.CancelReason;
 import com.birbit.android.jobqueue.Job;
 import com.birbit.android.jobqueue.Params;
 import com.birbit.android.jobqueue.RetryConstraint;
-import com.zighter.zighterandroid.data.entities.excursion.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
 import com.zighter.zighterandroid.data.job_manager.JobManagerEventContract;
 import com.zighter.zighterandroid.data.repositories.excursion.DownloadProgress;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;

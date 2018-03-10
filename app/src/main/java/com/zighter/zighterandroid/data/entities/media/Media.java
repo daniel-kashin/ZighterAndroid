@@ -13,17 +13,17 @@ public class Media implements Serializable {
     @Nullable
     private final String path;
     @Nullable
-    private final String name;
+    private final String title;
     @Nullable
     private final String description;
 
     public Media(@NonNull String url,
                  @Nullable String path,
-                 @Nullable String name,
+                 @Nullable String title,
                  @Nullable String description) {
         this.url = url;
         this.path = path;
-        this.name = name;
+        this.title = title;
         this.description = description;
     }
 
@@ -38,8 +38,8 @@ public class Media implements Serializable {
     }
 
     @Nullable
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
     @Nullable

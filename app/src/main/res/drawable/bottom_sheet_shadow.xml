@@ -5,7 +5,7 @@
     <gradient
         android:startColor="#997e7e7e"
         android:endColor="#0000"
-        android:type="linear"
+        android:typeName="linear"
         android:angle="90"> <!-- Change this value to have the correct shadow angle, must be multiple from 45 -->
     </gradient>
 

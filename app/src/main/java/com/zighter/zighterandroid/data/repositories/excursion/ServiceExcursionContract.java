@@ -20,8 +20,8 @@ import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.JSON
 import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.ROUTE;
 
 interface ServiceExcursionContract {
-    @GET(ROUTE + JSON_LIST_UNDERLINE + "/8")
-    Single<ServiceExcursion> getExcursion();
+    @GET(ROUTE + JSON_LIST_UNDERLINE + "/{uuid}")
+    Single<ServiceExcursion> getExcursion(@NonNull @Path("number") String uuid);
 
     @GET(HOME + CLIENT_EXCURSIONS + "/1" + JSON_LIST)
     Single<List<ServiceBoughtExcursion>> getBoughtExcursions();

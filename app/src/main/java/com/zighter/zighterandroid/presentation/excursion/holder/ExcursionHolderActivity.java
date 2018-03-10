@@ -13,7 +13,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.zighter.zighterandroid.R;
-import com.zighter.zighterandroid.data.entities.excursion.Sight;
+import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment;
 import com.zighter.zighterandroid.presentation.excursion.sight.SightFragment;

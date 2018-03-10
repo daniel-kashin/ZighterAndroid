@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 public class ServiceSight extends Validable<ServiceSight> {
     @SerializedName("id")
     private String uuid;
@@ -21,10 +23,19 @@ public class ServiceSight extends Validable<ServiceSight> {
     @SerializedName("type")
     private String type;
 
+    @SerializedName("images")
+    private List<ServiceImage> images;
+
+    @SerializedName("video")
+    private List<ServiceVideo> videos;
+
+    @SerializedName("audio")
+    private List<ServiceAudio> audios;
+
     private ServiceSight(@NonNull String uuid,
                          @NonNull ServicePoint point,
-                         @Nullable String name,
-                         @Nullable String type,
+                         @NonNull String name,
+                         @NonNull String type,
                          @Nullable String description) {
         this.uuid = uuid;
         this.point = point;
@@ -49,13 +60,13 @@ public class ServiceSight extends Validable<ServiceSight> {
         }
     }
 
-    @Nullable
+    @NonNull
     public String getName() {
         assertValid();
         return name;
     }
 
-    @Nullable
+    @NonNull
     public String getType() {
         assertValid();
         return type;

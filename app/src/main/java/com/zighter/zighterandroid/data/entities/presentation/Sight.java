@@ -1,11 +1,9 @@
-package com.zighter.zighterandroid.data.entities.excursion;
+package com.zighter.zighterandroid.data.entities.presentation;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Media;
-import com.zighter.zighterandroid.data.entities.media.Video;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -18,9 +16,9 @@ public class Sight implements Serializable {
     private double latitude;
     @Nullable
     private String description;
-    @Nullable
+    @NonNull
     private String name;
-    @Nullable
+    @NonNull
     private String type;
     @NonNull
     private List<Media> medias;
@@ -28,8 +26,8 @@ public class Sight implements Serializable {
     public Sight(@NonNull String uuid,
                  double longitude,
                  double latitude,
-                 @Nullable String name,
-                 @Nullable String type,
+                 @NonNull String name,
+                 @NonNull String type,
                  @Nullable String description,
                  @NonNull List<Media> medias) {
         this.uuid = uuid;
@@ -38,14 +36,15 @@ public class Sight implements Serializable {
         this.name = name;
         this.type = type;
         this.medias = medias;
+        this.description = description;
     }
 
-    @Nullable
+    @NonNull
     public String getName() {
         return name;
     }
 
-    @Nullable
+    @NonNull
     public String getType() {
         return type;
     }

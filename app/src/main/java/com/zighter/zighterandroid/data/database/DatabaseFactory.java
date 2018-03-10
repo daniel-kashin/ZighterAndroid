@@ -7,8 +7,8 @@ import com.pushtorefresh.storio3.sqlite.SQLiteTypeMapping;
 import com.pushtorefresh.storio3.sqlite.StorIOSQLite;
 import com.pushtorefresh.storio3.sqlite.impl.DefaultStorIOSQLite;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursion;
-import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursionGetResolver;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursionStorIOSQLiteDeleteResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursionStorIOSQLiteGetResolver;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursionStorIOSQLitePutResolver;
 
 public class DatabaseFactory {
@@ -21,7 +21,7 @@ public class DatabaseFactory {
                 .addTypeMapping(StorageBoughtExcursion.class,
                                 SQLiteTypeMapping.<StorageBoughtExcursion>builder()
                                         .putResolver(new StorageBoughtExcursionStorIOSQLitePutResolver())
-                                        .getResolver(new StorageBoughtExcursionGetResolver())
+                                        .getResolver(new StorageBoughtExcursionStorIOSQLiteGetResolver())
                                         .deleteResolver(new StorageBoughtExcursionStorIOSQLiteDeleteResolver())
                                         .build())
                 .build();
