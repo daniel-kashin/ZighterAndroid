@@ -100,8 +100,10 @@ public class ExcursionMapper {
         for (ServiceBoughtExcursion serviceBoughtExcursion : serviceBoughtExcursions) {
             ServiceBoughtExcursion boughtExcursionCopy = serviceBoughtExcursion.tryGetValid(false);
             if (boughtExcursionCopy != null) {
-                boolean isFullySaved = isFullySaved(boughtExcursionCopy, storageBoughtExcursions);
-                result.add(fromService(serviceBoughtExcursion, isFullySaved, fileHelper));
+                boolean isGuideSaved = isGuideSaved(boughtExcursionCopy, storageBoughtExcursions);
+                boolean isMediaSaved = isMediaSaved(boughtExcursionCopy, storageBoughtExcursions);
+                boolean isRouteSaved = isRouteSaved(boughtExcursionCopy, storageBoughtExcursions);
+                result.add(fromService(serviceBoughtExcursion, isGuideSaved, isMediaSaved, isRouteSaved, fileHelper));
             }
         }
 
@@ -110,7 +112,7 @@ public class ExcursionMapper {
 
     @NonNull
     public List<BoughtExcursion> fromStorage(@NonNull List<StorageBoughtExcursion> storageBoughtExcursions,
-                                              @NonNull FileHelper fileHelper) {
+                                             @NonNull FileHelper fileHelper) {
         List<BoughtExcursion> result = new ArrayList<>(storageBoughtExcursions.size());
 
         for (StorageBoughtExcursion storageBoughtExcursion : storageBoughtExcursions) {
@@ -145,12 +147,14 @@ public class ExcursionMapper {
                                           boughtExcursion.isGuideAvailable(),
                                           boughtExcursion.isMediaAvailable(),
                                           boughtExcursion.isRouteAvailable(),
-                                          boughtExcursion.isFullySaved());
+                                          boughtExcursion.isRouteSaved(),
+                                          boughtExcursion.isGuideSaved(),
+                                          boughtExcursion.isMediaSaved());
     }
 
     @NonNull
     public BoughtExcursion fromStorage(@NonNull StorageBoughtExcursion storageBoughtExcursion,
-                                        @NonNull FileHelper fileHelper) {
+                                       @NonNull FileHelper fileHelper) {
         return new BoughtExcursion(storageBoughtExcursion.getUuid(),
                                    storageBoughtExcursion.getName(),
                                    storageBoughtExcursion.getOwner(),
@@ -159,11 +163,17 @@ public class ExcursionMapper {
                                    storageBoughtExcursion.isGuideAvailable(),
                                    storageBoughtExcursion.isMediaAvailable(),
                                    storageBoughtExcursion.isRouteAvailable(),
-                                   storageBoughtExcursion.isFullySaved());
+                                   storageBoughtExcursion.isGuideSaved(),
+                                   storageBoughtExcursion.isMediaSaved(),
+                                   storageBoughtExcursion.isRouteSaved());
     }
 
     @NonNull
-    private BoughtExcursion fromService(@NonNull ServiceBoughtExcursion serviceBoughtExcursion, boolean isFullySaved, @NonNull FileHelper fileHelper) {
+    private BoughtExcursion fromService(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
+                                        boolean isGuideSaved,
+                                        boolean isMediaSaved,
+                                        boolean isRouteSaved,
+                                        @NonNull FileHelper fileHelper) {
         return new BoughtExcursion(serviceBoughtExcursion.getUuid(),
                                    serviceBoughtExcursion.getName(),
                                    serviceBoughtExcursion.getOwner(),
@@ -172,10 +182,12 @@ public class ExcursionMapper {
                                    serviceBoughtExcursion.isGuideAvailable(),
                                    serviceBoughtExcursion.isMediaAvailable(),
                                    serviceBoughtExcursion.isRouteAvailable(),
-                                   isFullySaved);
+                                   isGuideSaved,
+                                   isMediaSaved,
+                                   isRouteSaved);
     }
 
-    private boolean isFullySaved(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
+    private boolean isGuideSaved(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
                                  @Nullable List<StorageBoughtExcursion> storageBoughtExcursions) {
         if (storageBoughtExcursions == null) {
             return false;
@@ -183,10 +195,37 @@ public class ExcursionMapper {
 
         for (StorageBoughtExcursion storageBoughtExcursion : storageBoughtExcursions) {
             if (storageBoughtExcursion.getUuid().equals(serviceBoughtExcursion.getUuid())) {
-                return storageBoughtExcursion.isFullySaved() &&
-                        (!serviceBoughtExcursion.isGuideAvailable() || storageBoughtExcursion.isGuideAvailable())
-                        && (!serviceBoughtExcursion.isMediaAvailable() || storageBoughtExcursion.isMediaAvailable())
-                        && (!serviceBoughtExcursion.isRouteAvailable() || storageBoughtExcursion.isRouteAvailable());
+                return storageBoughtExcursion.isGuideSaved();
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isMediaSaved(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
+                                 @Nullable List<StorageBoughtExcursion> storageBoughtExcursions) {
+        if (storageBoughtExcursions == null) {
+            return false;
+        }
+
+        for (StorageBoughtExcursion storageBoughtExcursion : storageBoughtExcursions) {
+            if (storageBoughtExcursion.getUuid().equals(serviceBoughtExcursion.getUuid())) {
+                return storageBoughtExcursion.isMediaSaved();
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isRouteSaved(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
+                                 @Nullable List<StorageBoughtExcursion> storageBoughtExcursions) {
+        if (storageBoughtExcursions == null) {
+            return false;
+        }
+
+        for (StorageBoughtExcursion storageBoughtExcursion : storageBoughtExcursions) {
+            if (storageBoughtExcursion.getUuid().equals(serviceBoughtExcursion.getUuid())) {
+                return storageBoughtExcursion.isRouteSaved();
             }
         }
 

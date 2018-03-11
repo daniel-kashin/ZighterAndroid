@@ -1,6 +1,7 @@
 package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.pushtorefresh.storio3.sqlite.StorIOSQLite;
 import com.pushtorefresh.storio3.sqlite.operations.delete.DeleteResult;
@@ -15,6 +16,7 @@ import com.zighter.zighterandroid.data.database.StorageMediaContract;
 import com.zighter.zighterandroid.data.database.StoragePathContract;
 import com.zighter.zighterandroid.data.database.StoragePointContract;
 import com.zighter.zighterandroid.data.database.StorageSightContract;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageExcursion;
@@ -227,6 +229,35 @@ public class ExcursionStorage extends BaseStorage {
                                      .build())
                     .prepare()
                     .executeAsBlocking();
+        });
+    }
+
+    @NonNull
+    Single<Optional<StorageBoughtExcursion>> getBoughtExcursion(@NonNull String excursionUuid) {
+        return Single.fromCallable(() -> {
+            return Optional.Companion.of(
+                    getSqLite().get()
+                            .object(StorageBoughtExcursion.class)
+                            .withQuery(Query.builder()
+                                               .table(StorageBoughtExcursionContract.TABLE_NAME)
+                                               .where(StorageBoughtExcursionContract.COLUMN_UUID + " = ?")
+                                               .whereArgs(excursionUuid)
+                                               .build())
+                            .prepare()
+                            .executeAsBlocking()
+            );
+        });
+    }
+
+    @NonNull
+    Single<Optional<PutResult>> saveBoughtExcursion(@NonNull StorageBoughtExcursion boughtExcursion) {
+        return Single.fromCallable(() -> {
+            return Optional.Companion.of(
+                    getSqLite().put()
+                            .object(boughtExcursion)
+                            .prepare()
+                            .executeAsBlocking()
+            );
         });
     }
 

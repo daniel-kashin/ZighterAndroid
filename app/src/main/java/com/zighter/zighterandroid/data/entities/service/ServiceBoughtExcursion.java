@@ -84,7 +84,9 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
     }
 
     public boolean isRouteAvailable() {
-        return isRouteAvailable != null && toBoolean(isRouteAvailable);
+       // TODO: wait for server logic
+        return true;
+        //return isRouteAvailable != null && toBoolean(isRouteAvailable);
     }
 
     public boolean isMediaAvailable() {

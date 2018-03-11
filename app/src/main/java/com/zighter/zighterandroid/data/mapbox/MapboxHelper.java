@@ -1,6 +1,7 @@
 package com.zighter.zighterandroid.data.mapbox;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -16,6 +17,8 @@ import com.zighter.zighterandroid.data.entities.presentation.Excursion;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 
 public class MapboxHelper {
@@ -69,41 +72,13 @@ public class MapboxHelper {
     public static void createOfflineRegion(@NonNull Context context,
                                            @NonNull Excursion excursion,
                                            @NonNull MapboxRegionCreateListener listener) {
-
         OfflineTilePyramidRegionDefinition definition = MapboxHelper.getDefinition(context, excursion);
         byte[] metadata = MapboxHelper.getMetadata(excursion);
         if (metadata == null) {
-            listener.onComplete();
+            listener.onError();
             return;
         }
-
-        if (listener.isDisposed()) {
-            listener.onComplete();
-            return;
-        }
-
         OfflineManager offlineManager = OfflineManager.getInstance(context);
-        offlineManager.listOfflineRegions(new OfflineManager.ListOfflineRegionsCallback() {
-            @Override
-            public void onList(OfflineRegion[] offlineRegions) {
-                if (offlineRegions.length != 0) {
-                    for (OfflineRegion offlineRegion : offlineRegions) {
-                        if (listener.isDisposed()) {
-                            listener.onComplete();
-                            return;
-                        }
-
-                        if (metadataEquals(offlineRegion.getMetadata(), metadata)) {
-                            offlineRegion.delete(new EmptyOfflineRegionDeleteCallback());
-                        }
-                    }
-                }
-
-            }
-
-            @Override public void onError(String error) {}
-        });
-
         handleCreateOfflineRegion(offlineManager, definition, metadata, listener);
     }
 
@@ -112,7 +87,6 @@ public class MapboxHelper {
                                                   @NonNull byte[] metadata,
                                                   @NonNull MapboxRegionCreateListener listener) {
         if (listener.isDisposed()) {
-            listener.onComplete();
             return;
         }
 
@@ -121,33 +95,31 @@ public class MapboxHelper {
 
             @Override
             public void onCreate(OfflineRegion offlineRegion) {
-                offlineRegion.setDownloadState(OfflineRegion.STATE_ACTIVE);
+                offlineRegion.setDeliverInactiveMessages(false);
                 offlineRegion.setObserver(new OfflineRegion.OfflineRegionObserver() {
                     @Override
                     public void onStatusChanged(OfflineRegionStatus status) {
-                        if (listener.isDisposed()) {
-                            offlineRegion.setObserver(null);
-                            offlineRegion.setDownloadState(OfflineRegion.STATE_INACTIVE);
-                            return;
-                        }
+                        if (!listener.isDisposed()) {
+                            if (status.isComplete()) {
+                                listener.onComplete();
+                            } else {
+                                int percentage = status.getRequiredResourceCount() >= 0
+                                        ? (int) (100.0 * status.getCompletedResourceCount() / status.getRequiredResourceCount()) :
+                                        0;
 
-                        if (status.isComplete()) {
-                            listener.onComplete();
+                                if (percentage >= 100) {
+                                    percentage = 99;
+                                } else if (percentage < 0) {
+                                    percentage = 0;
+                                }
+
+                                if (percentage != previousPercentage) {
+                                    previousPercentage = percentage;
+                                    listener.onProgressChanged(percentage, 100);
+                                }
+                            }
                         } else {
-                            int percentage = status.getRequiredResourceCount() >= 0
-                                    ? (int) (100.0 * status.getCompletedResourceCount() / status.getRequiredResourceCount()) :
-                                    0;
-
-                            if (percentage >= 100) {
-                                percentage = 99;
-                            } else if (percentage < 0) {
-                                percentage = 0;
-                            }
-
-                            if (percentage != previousPercentage) {
-                                previousPercentage = percentage;
-                                listener.onProgressChanged(percentage, 100);
-                            }
+                            offlineRegion.setObserver(null);
                         }
                     }
 
@@ -165,6 +137,7 @@ public class MapboxHelper {
                         listener.onError();
                     }
                 });
+                offlineRegion.setDownloadState(OfflineRegion.STATE_ACTIVE);
             }
 
             @Override

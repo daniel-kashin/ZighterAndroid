@@ -18,6 +18,7 @@ import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepositor
 import com.zighter.zighterandroid.util.Optional;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
@@ -78,45 +79,36 @@ public class DownloadExcursionJob extends Job implements Serializable {
         notificationManager.updateNotification(boughtExcursion, null);
 
         excursionRepository.downloadExcursion(boughtExcursion.getUuid())
-                .sample(1500, TimeUnit.MILLISECONDS)
-                .blockingSubscribe(new Consumer<DownloadProgress>() {
-                    private final Object lock = new Object();
-                    private volatile DownloadProgress latest = null;
-
-                    @Override
-                    public void accept(DownloadProgress downloadProgress) throws Exception {
-                        if (isCancelled()) {
-                            Log.d(TAG, "Observer.onNext(CANCELLED)");
-                            throw new CancellationException();
-                        } else {
-                            Log.d(TAG, "Observer.onNext");
-                            synchronized (lock) {
-                                if (downloadProgress != latest) {
-                                    latest = downloadProgress;
-                                    notificationManager.updateNotification(boughtExcursion, downloadProgress);
-                                }
-                            }
-                        }
+                .buffer(1500, TimeUnit.MILLISECONDS)
+                .blockingSubscribe(list -> {
+                    if (isCancelled()) {
+                        throw new CancellationException();
+                    }
+                    if (list != null && !list.isEmpty()) {
+                        Log.d(TAG, "Observer.onNext");
+                        notificationManager.updateNotification(boughtExcursion, list.get(list.size() - 1));
                     }
                 }, throwable -> {
-                    if (isCancelled()) {
-                        Log.d(TAG, "Observer.onError(CANCELLED)");
-                        notificationManager.cancelNotification(boughtExcursion);
-                    } else {
-                        Log.d(TAG, "Observer.onError");
-                        notificationManager.cancelNotification(boughtExcursion);
-                        JobManagerEventContract.notifyException(applicationContext, getSingleIdWithoutPrefix());
-                    }
+                    onObserverTerminated(false);
                 }, () -> {
-                    if (isCancelled()) {
-                        Log.d(TAG, "Observer.onSuccess(CANCELLED)");
-                        notificationManager.cancelNotification(boughtExcursion);
-                    } else {
-                        Log.d(TAG, "Observer.onSuccess");
-                        notificationManager.cancelNotification(boughtExcursion);
-                        JobManagerEventContract.notifySuccess(applicationContext, getSingleIdWithoutPrefix());
-                    }
+                    onObserverTerminated(true);
                 });
+    }
+
+    private void onObserverTerminated(boolean success) {
+        String action = success ? "Observer.onSuccess" : "Observer.onError";
+        if (isCancelled()) {
+            Log.d(TAG, action + "(CANCELLED)");
+            notificationManager.cancelNotification(boughtExcursion);
+        } else {
+            Log.d(TAG, action);
+            notificationManager.cancelNotification(boughtExcursion);
+            if (success) {
+                JobManagerEventContract.notifySuccess(applicationContext, getSingleIdWithoutPrefix());
+            } else {
+                JobManagerEventContract.notifyException(applicationContext, getSingleIdWithoutPrefix());
+            }
+        }
     }
 
     @Override

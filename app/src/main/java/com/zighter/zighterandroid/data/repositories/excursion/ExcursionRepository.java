@@ -2,6 +2,7 @@ package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 
@@ -38,6 +39,7 @@ import com.zighter.zighterandroid.util.Optional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.Executor;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -129,7 +131,7 @@ public class ExcursionRepository {
                         DownloadStatus downloadStatus;
                         if (jobManagerWrapper.isAdded(boughtExcursion.getUuid())) {
                             downloadStatus = DownloadStatus.DOWNLOADING;
-                        } else if (boughtExcursion.isFullySaved()) {
+                        } else if (boughtExcursion.isSavedAllAvailable()) {
                             downloadStatus = DownloadStatus.DOWNLOADED;
                         } else {
                             downloadStatus = DownloadStatus.IDLE;
@@ -164,48 +166,74 @@ public class ExcursionRepository {
                     return;
                 }
 
-                Excursion excursion = getExcursion(excursionUuid).blockingGet();
+                StorageBoughtExcursion fromStorage = excursionStorage
+                        .getBoughtExcursion(excursionUuid)
+                        .blockingGet()
+                        .get();
 
-                // download map
-                source.onNext(new DownloadProgress(DownloadProgress.Type.MAP));
-                if (source.isDisposed()) {
+                if (fromStorage == null) {
+                    source.onError(new IllegalStateException());
                     return;
                 }
 
-                if (source.isDisposed()) {
-                    return;
-                }
+                // TODO: download guide
 
-                MapboxHelper.createOfflineRegion(applicationContext, excursion, new MapboxHelper.MapboxRegionCreateListener() {
-                    private static final String TAG = "MapboxCreateListener";
-                    private volatile boolean disposedHandled = false;
+                if (fromStorage.isRouteAvailable() && !fromStorage.isRouteSaved()) {
+                    Excursion excursion = getExcursion(excursionUuid).blockingGet();
 
-                    @Override
-                    public boolean isDisposed() {
-                        return source.isDisposed();
+                    // download map
+                    source.onNext(new DownloadProgress(DownloadProgress.Type.MAP));
+                    if (source.isDisposed()) {
+                        return;
                     }
 
-                    @Override
-                    public void onProgressChanged(int currentPosition, int requiredCount) {
-                        Log.d(TAG, "onProgressChanged(" + currentPosition + "/" + requiredCount + ")");
-                        source.onNext(new DownloadProgress(DownloadProgress.Type.MAP, currentPosition, requiredCount));
-                    }
+                    MapboxHelper.createOfflineRegion(applicationContext, excursion, new MapboxHelper.MapboxRegionCreateListener() {
+                        private static final String TAG = "MapboxCreateListener";
+                        private final Object lock = new Object();
 
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete");
-                        // download media
-                        source.onComplete();
-                    }
-
-                    @Override
-                    public void onError() {
-                        Log.d(TAG, "onError");
-                        if (!source.isDisposed()) {
-                            source.onError(new NetworkUnavailableException(null));
+                        @Override
+                        public boolean isDisposed() {
+                            synchronized (lock) {
+                                return source.isDisposed();
+                            }
                         }
-                    }
-                });
+
+                        @Override
+                        public synchronized void onProgressChanged(int currentPosition, int requiredCount) {
+                            synchronized (lock) {
+                                Log.d(TAG, "onProgressChanged(" + currentPosition + "/" + requiredCount + ")");
+                                source.onNext(new DownloadProgress(DownloadProgress.Type.MAP, currentPosition, requiredCount));
+                            }
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            synchronized (lock) {
+                                Log.d(TAG, "onComplete");
+                                // TODO: download media
+
+                                source.onNext(new DownloadProgress(DownloadProgress.Type.JSON));
+
+                                fromStorage.setRouteSaved(true);
+                                excursionStorage.saveBoughtExcursion(fromStorage).blockingGet();
+
+                                source.onComplete();
+                            }
+                        }
+
+                        @Override
+                        public void onError() {
+                            synchronized (lock) {
+                                Log.d(TAG, "onError");
+                                if (!source.isDisposed()) {
+                                    source.onError(new NetworkUnavailableException(null));
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    source.onComplete();
+                }
             } catch (Throwable t) {
                 source.onError(t);
             }

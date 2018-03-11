@@ -12,7 +12,9 @@ public class StorageBoughtExcursionContract {
     public static final String COLUMN_IS_GUIDE_AVAILABLE = "is_guide_available";
     public static final String COLUMN_IS_MEDIA_AVAILABLE = "is_media_available";
     public static final String COLUMN_IS_ROUTE_AVAILABLE = "is_route_available";
-    public static final String COLUMN_IS_FULLY_SAVED = "is_fully_saved";
+    public static final String COLUMN_IS_GUIDE_SAVED = "is_guide_saved";
+    public static final String COLUMN_IS_ROUTE_SAVED = "is_route_saved";
+    public static final String COLUMN_IS_MEDIA_SAVED = "is_media_saved";
 
     static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
             + COLUMN_ID + " INTEGER NON NULL PRIMARY KEY, "
@@ -24,7 +26,9 @@ public class StorageBoughtExcursionContract {
             + COLUMN_IS_GUIDE_AVAILABLE + " INTEGER NON NULL, "
             + COLUMN_IS_MEDIA_AVAILABLE + " INTEGER NON NULL, "
             + COLUMN_IS_ROUTE_AVAILABLE + " INTEGER NON NULL, "
-            + COLUMN_IS_FULLY_SAVED + " INTEGER NON NULL "
+            + COLUMN_IS_GUIDE_SAVED + " INTEGER NON NULL, "
+            + COLUMN_IS_ROUTE_SAVED + " INTEGER NON NULL, "
+            + COLUMN_IS_MEDIA_SAVED + " INTEGER NON NULL "
             + ");";
 
     static final String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;

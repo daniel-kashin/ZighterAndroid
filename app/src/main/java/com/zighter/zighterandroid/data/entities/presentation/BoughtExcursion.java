@@ -23,7 +23,9 @@ public class BoughtExcursion implements Serializable {
     private boolean isRouteAvailable;
     private boolean isMediaAvailable;
     private boolean isGuideAvailable;
-    private boolean isFullySaved;
+    private boolean isGuideSaved;
+    private boolean isMediaSaved;
+    private boolean isRouteSaved;
 
     public BoughtExcursion(@NonNull String uuid,
                            @NonNull String name,
@@ -33,7 +35,9 @@ public class BoughtExcursion implements Serializable {
                            boolean isGuideAvailable,
                            boolean isMediaAvailable,
                            boolean isRouteAvailable,
-                           boolean isFullySaved) {
+                           boolean isGuideSaved,
+                           boolean isMediaSaved,
+                           boolean isRouteSaved) {
         this.uuid = uuid;
         this.name = name;
         this.owner = owner;
@@ -42,7 +46,9 @@ public class BoughtExcursion implements Serializable {
         this.isGuideAvailable = isGuideAvailable;
         this.isRouteAvailable = isRouteAvailable;
         this.isMediaAvailable = isMediaAvailable;
-        this.isFullySaved = isFullySaved;
+        this.isGuideSaved = isGuideSaved;
+        this.isMediaSaved = isMediaSaved;
+        this.isRouteSaved = isRouteSaved;
     }
 
     @NonNull
@@ -82,7 +88,19 @@ public class BoughtExcursion implements Serializable {
         return isGuideAvailable;
     }
 
-    public boolean isFullySaved() {
-        return isFullySaved;
+    public boolean isGuideSaved() {
+        return isGuideSaved;
+    }
+
+    public boolean isMediaSaved() {
+        return isMediaSaved;
+    }
+
+    public boolean isRouteSaved() {
+        return isRouteSaved;
+    }
+
+    public boolean isSavedAllAvailable() {
+        return (!isRouteAvailable || isRouteSaved) && (!isGuideAvailable || isGuideSaved) && (!isMediaAvailable || isMediaSaved);
     }
 }
