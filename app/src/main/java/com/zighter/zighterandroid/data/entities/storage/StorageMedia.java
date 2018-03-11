@@ -9,11 +9,14 @@ import com.zighter.zighterandroid.data.database.StorageMediaContract;
 
 @StorIOSQLiteType(table = StorageMediaContract.TABLE_NAME)
 public class StorageMedia {
-    @StorIOSQLiteColumn(name = StorageMediaContract.COLUMN_ID)
-    Long id;
+    @StorIOSQLiteColumn(name = StorageMediaContract.COLUMN_ID, key = true)
+    Long id = null;
 
     @StorIOSQLiteColumn(name = StorageMediaContract.COLUMN_SIGHT_UUID)
     String sightUuid;
+
+    @StorIOSQLiteColumn(name = StorageMediaContract.COLUMN_EXCURSION_UUID)
+    String excursionUuid;
 
     @StorIOSQLiteColumn(name = StorageMediaContract.COLUMN_TITLE)
     String title;
@@ -32,11 +35,13 @@ public class StorageMedia {
 
     public StorageMedia(@NonNull String url,
                         @NonNull String sightUuid,
+                        @NonNull String excursionUuid,
                         @NonNull Type type,
                         @Nullable String title,
                         @Nullable String description) {
         this.url = url;
         this.sightUuid = sightUuid;
+        this.excursionUuid = excursionUuid;
         this.typeName = type.name();
         this.title = title;
         this.description = description;
@@ -45,6 +50,11 @@ public class StorageMedia {
     @NonNull
     public String getUrl() {
         return url;
+    }
+
+    @NonNull
+    public String getExcursionUuid() {
+        return excursionUuid;
     }
 
     @NonNull

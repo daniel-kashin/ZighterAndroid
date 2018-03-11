@@ -38,7 +38,7 @@ import static android.graphics.Typeface.BOLD;
 
 public class SightFragment extends BaseSupportFragment implements SightView,
         LocationListenerHolder.OnLocationChangeListener, LocationPermissionListener {
-    private static final String KEY_SIGHT = "SIGHT";
+    private static final String KEY_SIGHT = "MEDIA";
 
     public static SightFragment newInstance(@NonNull Sight sight) {
         SightFragment sightFragment = new SightFragment();

@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 
 import com.birbit.android.jobqueue.JobManager;
 import com.birbit.android.jobqueue.config.Configuration;
-import com.zighter.zighterandroid.dagger.JobDependencyInjector;
 import com.zighter.zighterandroid.data.job_manager.JobManagerWrapper;
 
 import javax.inject.Singleton;
@@ -24,7 +23,6 @@ public class AppModule {
         this.context = context.getApplicationContext();
 
         Configuration configuration = new Configuration.Builder(context)
-                .injector(new JobDependencyInjector())
                 .build();
 
         jobManagerWrapper = new JobManagerWrapper(new JobManager(configuration));

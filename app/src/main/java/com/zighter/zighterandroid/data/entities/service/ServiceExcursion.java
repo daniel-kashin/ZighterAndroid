@@ -8,8 +8,8 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class ServiceExcursion extends Validable<ServiceExcursion> {
-    public static final int DEFAULT_MIN_MAP_ZOOM = 8;
-    public static final int DEFAULT_MAX_MAP_ZOOM = 18;
+    public static final int DEFAULT_MIN_MAP_ZOOM = 9;
+    public static final int DEFAULT_MAX_MAP_ZOOM = 17;
 
     @SerializedName("id")
     private String uuid;

@@ -12,7 +12,7 @@ import java.util.List;
 @StorIOSQLiteType(table = StoragePathContract.TABLE_NAME)
 public class StoragePath {
     @StorIOSQLiteColumn(name = StoragePathContract.COLUMN_ID, key = true)
-    Long id;
+    Long id = null;
 
     @StorIOSQLiteColumn(name = StoragePathContract.COLUMN_UUID)
     String uuid;

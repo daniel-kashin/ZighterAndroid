@@ -4,11 +4,13 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.pushtorefresh.storio3.sqlite.annotations.StorIOSQLiteColumn;
+import com.pushtorefresh.storio3.sqlite.annotations.StorIOSQLiteType;
 import com.zighter.zighterandroid.data.database.StorageSightContract;
 
+@StorIOSQLiteType(table = StorageSightContract.TABLE_NAME)
 public class StorageSight {
-    @StorIOSQLiteColumn(name = StorageSightContract.COLUMN_ID)
-    Long id;
+    @StorIOSQLiteColumn(name = StorageSightContract.COLUMN_ID, key = true)
+    Long id = null;
 
     @StorIOSQLiteColumn(name = StorageSightContract.COLUMN_UUID)
     String uuid;

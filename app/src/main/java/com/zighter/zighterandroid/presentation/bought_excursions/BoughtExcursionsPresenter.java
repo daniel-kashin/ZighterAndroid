@@ -82,6 +82,7 @@ public class BoughtExcursionsPresenter extends BasePresenter<BoughtExcursionsVie
                             getViewState().showServerException();
                         }
                     } else {
+                        getViewState().showUnhandledException();
                         handleThrowable(throwable, TAG);
                     }
                 });

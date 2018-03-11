@@ -13,10 +13,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        mapbox:mapbox_cameraZoomMax="15"
-        mapbox:mapbox_cameraZoomMin="20"
-        mapbox:mapbox_styleUrl="mapbox://styles/mapbox/streets-v10"
-        mapbox:mapbox_cameraZoom="17" />
+        mapbox:mapbox_cameraZoomMax="9"
+        mapbox:mapbox_cameraZoomMin="17"
+        mapbox:mapbox_cameraZoom="11" />
 
     <ProgressBar
         android:id="@+id/progress_bar"

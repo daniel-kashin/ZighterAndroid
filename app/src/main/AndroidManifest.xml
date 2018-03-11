@@ -2,13 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zighter.zighterandroid">
 
-    <uses-permission android:title="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:title="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:title="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:title="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:title=".ZighterApplication"
+        android:name=".ZighterApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -16,25 +16,28 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:title=".presentation.bottom_navigation.BottomNavigationActivity">
+        <activity
+            android:name=".presentation.bottom_navigation.BottomNavigationActivity"
+            android:label="Zighter"
+            android:enabled="true">
             <intent-filter>
-                <action android:title="android.intent.event.MAIN" />
-                <category android:title="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
-                <action android:title="ACTION_OPEN_ACTIVITY" />
+                <action android:name="ACTION_OPEN_ACTIVITY" />
             </intent-filter>
         </activity>
 
-        <activity android:title=".presentation.excursion.holder.ExcursionHolderActivity" />
+        <activity android:name=".presentation.excursion.holder.ExcursionHolderActivity" />
 
-        <activity android:title=".presentation.media.MediaActivity" />
+        <activity android:name=".presentation.media.MediaActivity" />
 
         <receiver
-            android:title=".data.job_manager.download_excursion.DownloadExcursionNotificationBroadcastReceiver"
+            android:name=".data.job_manager.download_excursion.DownloadExcursionNotificationBroadcastReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:title="ACTION_CANCEL_JOB" />
+                <action android:name="ACTION_CANCEL_JOB" />
             </intent-filter>
         </receiver>
 

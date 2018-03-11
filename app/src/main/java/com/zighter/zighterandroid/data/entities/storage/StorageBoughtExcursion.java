@@ -24,7 +24,7 @@ import static com.zighter.zighterandroid.data.database.StorageBoughtExcursionCon
 @StorIOSQLiteType(table = StorageBoughtExcursionContract.TABLE_NAME)
 public class StorageBoughtExcursion {
     @StorIOSQLiteColumn(name = COLUMN_ID, key = true)
-    Long id;
+    Long id = null;
 
     @StorIOSQLiteColumn(name = COLUMN_UUID)
     String uuid;

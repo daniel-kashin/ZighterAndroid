@@ -29,4 +29,7 @@ interface BoughtExcursionsView extends MvpView {
 
     @StateStrategyType(SingleStateStrategy.class)
     void showEmptyExcursions();
+
+    @StateStrategyType(SingleStateStrategy.class)
+    void showUnhandledException();
 }

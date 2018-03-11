@@ -10,6 +10,26 @@ import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursionStorIOSQLiteDeleteResolver;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursionStorIOSQLiteGetResolver;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursionStorIOSQLitePutResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageExcursion;
+import com.zighter.zighterandroid.data.entities.storage.StorageExcursionStorIOSQLiteDeleteResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageExcursionStorIOSQLiteGetResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageExcursionStorIOSQLitePutResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageMedia;
+import com.zighter.zighterandroid.data.entities.storage.StorageMediaStorIOSQLiteDeleteResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageMediaStorIOSQLiteGetResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageMediaStorIOSQLitePutResolver;
+import com.zighter.zighterandroid.data.entities.storage.StoragePath;
+import com.zighter.zighterandroid.data.entities.storage.StoragePathStorIOSQLiteDeleteResolver;
+import com.zighter.zighterandroid.data.entities.storage.StoragePathStorIOSQLiteGetResolver;
+import com.zighter.zighterandroid.data.entities.storage.StoragePathStorIOSQLitePutResolver;
+import com.zighter.zighterandroid.data.entities.storage.StoragePoint;
+import com.zighter.zighterandroid.data.entities.storage.StoragePointStorIOSQLiteDeleteResolver;
+import com.zighter.zighterandroid.data.entities.storage.StoragePointStorIOSQLiteGetResolver;
+import com.zighter.zighterandroid.data.entities.storage.StoragePointStorIOSQLitePutResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageSight;
+import com.zighter.zighterandroid.data.entities.storage.StorageSightStorIOSQLiteDeleteResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageSightStorIOSQLiteGetResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageSightStorIOSQLitePutResolver;
 
 public class DatabaseFactory {
     private DatabaseFactory() {
@@ -23,6 +43,36 @@ public class DatabaseFactory {
                                         .putResolver(new StorageBoughtExcursionStorIOSQLitePutResolver())
                                         .getResolver(new StorageBoughtExcursionStorIOSQLiteGetResolver())
                                         .deleteResolver(new StorageBoughtExcursionStorIOSQLiteDeleteResolver())
+                                        .build())
+                .addTypeMapping(StorageExcursion.class,
+                                SQLiteTypeMapping.<StorageExcursion>builder()
+                                        .putResolver(new StorageExcursionStorIOSQLitePutResolver())
+                                        .getResolver(new StorageExcursionStorIOSQLiteGetResolver())
+                                        .deleteResolver(new StorageExcursionStorIOSQLiteDeleteResolver())
+                                        .build())
+                .addTypeMapping(StorageMedia.class,
+                                SQLiteTypeMapping.<StorageMedia>builder()
+                                        .putResolver(new StorageMediaStorIOSQLitePutResolver())
+                                        .getResolver(new StorageMediaStorIOSQLiteGetResolver())
+                                        .deleteResolver(new StorageMediaStorIOSQLiteDeleteResolver())
+                                        .build())
+                .addTypeMapping(StoragePath.class,
+                                SQLiteTypeMapping.<StoragePath>builder()
+                                        .putResolver(new StoragePathStorIOSQLitePutResolver())
+                                        .getResolver(new StoragePathStorIOSQLiteGetResolver())
+                                        .deleteResolver(new StoragePathStorIOSQLiteDeleteResolver())
+                                        .build())
+                .addTypeMapping(StoragePoint.class,
+                                SQLiteTypeMapping.<StoragePoint>builder()
+                                        .putResolver(new StoragePointStorIOSQLitePutResolver())
+                                        .getResolver(new StoragePointStorIOSQLiteGetResolver())
+                                        .deleteResolver(new StoragePointStorIOSQLiteDeleteResolver())
+                                        .build())
+                .addTypeMapping(StorageSight.class,
+                                SQLiteTypeMapping.<StorageSight>builder()
+                                        .putResolver(new StorageSightStorIOSQLitePutResolver())
+                                        .getResolver(new StorageSightStorIOSQLiteGetResolver())
+                                        .deleteResolver(new StorageSightStorIOSQLiteDeleteResolver())
                                         .build())
                 .build();
     }

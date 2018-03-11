@@ -1,6 +1,7 @@
 package com.zighter.zighterandroid.presentation.excursion.holder;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
@@ -30,6 +32,13 @@ import static com.zighter.zighterandroid.util.AnchorBottomSheetBehavior.STATE_SE
 public class ExcursionHolderActivity extends BaseSupportActivity {
     private static final String TAG = "ExcursionHolderActivity";
     private static final String KEY_BOTTOM_SHEET_VISIBLE = "KEY_BOTTOM_SHEET_VISIBLE";
+    private static final String KEY_EXCURSION_UUID = "KEY_EXCURSION_UUID";
+
+    public static void start(@NonNull Context context, @NonNull String excursionUuid) {
+        Intent intent = new Intent(context, ExcursionHolderActivity.class);
+        intent.putExtra(KEY_EXCURSION_UUID, excursionUuid);
+        context.startActivity(intent);
+    }
 
     private AnchorBottomSheetBehavior<NestedScrollView> bottomSheetBehavior;
 
@@ -54,12 +63,34 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (getSupportFragmentManager().findFragmentById(R.id.excursion_map_fragment_holder) == null) {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.excursion_map_fragment_holder, ExcursionMapFragment.newInstance(getExcursionUuid()))
+                    .commitNow();
+        }
+
         initializeBottomSheet();
         if (getSupportFragmentManager().findFragmentById(R.id.bottom_sheet_fragment_container) == null) {
             hideBottomSheet();
         } else {
             showBottomSheet();
         }
+    }
+
+    @NonNull
+    private String getExcursionUuid() {
+        if (getIntent() == null) {
+            throw new IllegalStateException();
+        }
+
+        String excursionUuid = getIntent().getStringExtra(KEY_EXCURSION_UUID);
+        if (excursionUuid == null) {
+            throw new IllegalStateException();
+        }
+
+        return excursionUuid;
     }
 
     @Override
@@ -233,7 +264,7 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
 
     @Nullable
     private ExcursionMapFragment getExcursionMapFragment() {
-        Fragment excursionMapFragment = getSupportFragmentManager().findFragmentById(R.id.excursion_map_fragment);
+        Fragment excursionMapFragment = getSupportFragmentManager().findFragmentById(R.id.excursion_map_fragment_holder);
         if (excursionMapFragment != null) {
             if (!(excursionMapFragment instanceof ExcursionMapFragment)) {
                 throw new IllegalStateException("Excursion map fragment must be an instance of ExcursionMapFragment");

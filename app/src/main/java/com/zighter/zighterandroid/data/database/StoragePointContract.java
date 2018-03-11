@@ -7,10 +7,12 @@ public class StoragePointContract {
     public static final String COLUMN_LONGITUDE = "longitude";
     public static final String COLUMN_LATITUDE = "latitude";
     public static final String COLUMN_PATH_UUID = "path_uuid";
+    public static final String COLUMN_EXCURSION_UUID = "excursion_uuid";
 
     static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
             + COLUMN_ID + " INTEGER NON NULL PRIMARY KEY, "
             + COLUMN_PATH_UUID + " TEXT NON NULL, "
+            + COLUMN_EXCURSION_UUID + " TEXT NON NULL, "
             + COLUMN_LONGITUDE + " REAL NON NULL, "
             + COLUMN_LATITUDE + " REAL NON NULL "
             + ");";

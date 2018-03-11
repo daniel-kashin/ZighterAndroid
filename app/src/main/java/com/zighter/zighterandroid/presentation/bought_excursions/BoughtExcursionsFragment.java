@@ -155,6 +155,21 @@ public class BoughtExcursionsFragment extends BaseSupportFragment
     }
 
     @Override
+    public void showUnhandledException() {
+        if (getContext() == null) {
+            return;
+        }
+
+        errorMessage.setText(getContext().getString(R.string.unhandled_error_message));
+        tryAgain.setOnClickListener(view -> presenter.onReloadExcursionsRequest());
+
+        progressBar.setVisibility(View.INVISIBLE);
+        tryAgain.setVisibility(View.VISIBLE);
+        errorMessage.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
     public void showEmptyExcursions() {
         if (getContext() == null) {
             return;
@@ -175,7 +190,7 @@ public class BoughtExcursionsFragment extends BaseSupportFragment
             return;
         }
 
-        getContext().startActivity(new Intent(getContext(), ExcursionHolderActivity.class));
+        ExcursionHolderActivity.start(getContext(), boughtExcursionWithStatus.getExcursion().getUuid());
     }
 
     @Override

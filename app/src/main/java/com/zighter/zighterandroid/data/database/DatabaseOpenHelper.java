@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "ZIGHTER_DATABASE";
-    private static final int DATABASE_VERSION = 11;
+    private static final int DATABASE_VERSION = 20;
 
     DatabaseOpenHelper(@NonNull Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -16,13 +16,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(StorageBoughtExcursionContract.SQL_CREATE_TABLE);
-        db.execSQL(StoragePointContract.SQL_CREATE_TABLE);
-        db.execSQL(StoragePathContract.SQL_CREATE_TABLE);
-        db.execSQL(StorageAudioContract.SQL_CREATE_TABLE);
-        db.execSQL(StorageMediaContract.SQL_CREATE_TABLE);
-        db.execSQL(StorageImageContract.SQL_CREATE_TABLE);
-        db.execSQL(StoragePathContract.SQL_CREATE_TABLE);
         db.execSQL(StorageExcursionContract.SQL_CREATE_TABLE);
+        db.execSQL(StorageMediaContract.SQL_CREATE_TABLE);
+        db.execSQL(StoragePathContract.SQL_CREATE_TABLE);
+        db.execSQL(StoragePointContract.SQL_CREATE_TABLE);
+        db.execSQL(StorageSightContract.SQL_CREATE_TABLE);
     }
 
     @Override
@@ -32,13 +30,11 @@ public class DatabaseOpenHelper extends SQLiteOpenHelper {
     }
 
     private void onDelete(SQLiteDatabase db) {
-        db.execSQL(StorageBoughtExcursionContract.SQL_DELETE_TABLE);
-        db.execSQL(StoragePointContract.SQL_DELETE_TABLE);
-        db.execSQL(StoragePathContract.SQL_DELETE_TABLE);
-        db.execSQL(StorageAudioContract.SQL_DELETE_TABLE);
-        db.execSQL(StorageMediaContract.SQL_DELETE_TABLE);
-        db.execSQL(StorageImageContract.SQL_DELETE_TABLE);
-        db.execSQL(StoragePathContract.SQL_DELETE_TABLE);
         db.execSQL(StorageExcursionContract.SQL_DELETE_TABLE);
+        db.execSQL(StorageBoughtExcursionContract.SQL_DELETE_TABLE);
+        db.execSQL(StorageMediaContract.SQL_DELETE_TABLE);
+        db.execSQL(StoragePathContract.SQL_DELETE_TABLE);
+        db.execSQL(StoragePointContract.SQL_DELETE_TABLE);
+        db.execSQL(StorageSightContract.SQL_DELETE_TABLE);
     }
 }

@@ -25,6 +25,9 @@ interface ExcursionMapView extends MvpView {
     @StateStrategyType(SingleStateStrategy.class)
     void showServerException();
 
+    @StateStrategyType(SingleStateStrategy.class)
+    void showUnhandledException();
+
     @StateStrategyType(AddToEndSingleStrategy.class)
     void showSightSelection(@Nullable Sight sight);
 

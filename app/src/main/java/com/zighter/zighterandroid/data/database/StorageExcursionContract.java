@@ -15,7 +15,7 @@ public class StorageExcursionContract {
 
     static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
             + COLUMN_ID + " INTEGER NON NULL PRIMARY KEY, "
-            + COLUMN_UUID + " TEXT NON NULL PRIMARY KEY ON CONFLICT REPLACE, "
+            + COLUMN_UUID + " TEXT NON NULL UNIQUE ON CONFLICT REPLACE, "
             + COLUMN_NAME + " TEXT NON NULL, "
             + COLUMN_WEST_BOUND + " REAL NON NULL, "
             + COLUMN_EAST_BOUND + " REAL NON NULL, "

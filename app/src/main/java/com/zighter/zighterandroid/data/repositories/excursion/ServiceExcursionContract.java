@@ -21,7 +21,7 @@ import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.ROUT
 
 interface ServiceExcursionContract {
     @GET(ROUTE + JSON_LIST_UNDERLINE + "/{uuid}")
-    Single<ServiceExcursion> getExcursion(@NonNull @Path("number") String uuid);
+    Single<ServiceExcursion> getExcursion(@NonNull @Path("uuid") String uuid);
 
     @GET(HOME + CLIENT_EXCURSIONS + "/1" + JSON_LIST)
     Single<List<ServiceBoughtExcursion>> getBoughtExcursions();

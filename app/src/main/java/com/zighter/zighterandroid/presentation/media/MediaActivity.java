@@ -47,7 +47,7 @@ public class MediaActivity extends BaseSupportActivity
         OnFullscreenMediaClickListener,
         FullscreenMediaAdapter.OnMediaUploadListener {
 
-    private static final String KEY_SIGHT = "SIGHT";
+    private static final String KEY_SIGHT = "MEDIA";
 
     private static final String KEY_ANIMATION_TOOLBAR = "KEY_ANIMATION_TOOLBAR";
     private static final String KEY_ANIMATION_FOOTER = "KEY_ANIMATION_FOOTER";

@@ -24,12 +24,16 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
 
     @NonNull
     private final ExcursionRepository excursionRepository;
+    @NonNull
+    private final String excursionUuid;
 
     public ExcursionMapPresenter(@NonNull ExcursionRepository excursionRepository,
                                  @NonNull Scheduler worker,
-                                 @NonNull Scheduler ui) {
+                                 @NonNull Scheduler ui,
+                                 @NonNull String excursionUuid) {
         super(worker, ui);
         this.excursionRepository = excursionRepository;
+        this.excursionUuid = excursionUuid;
     }
 
     @Override
@@ -40,7 +44,7 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
 
     void onReloadExcursionRequest() {
         getViewState().showLoading();
-        excursionRepository.getExcursion()
+        excursionRepository.getExcursion(excursionUuid)
                 .compose(applySchedulersSingle())
                 .subscribe(excursion -> {
                     getViewState().showExcursion(excursion);
@@ -52,6 +56,7 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
                             getViewState().showServerException();
                         }
                     } else {
+                        getViewState().showUnhandledException();
                         handleThrowable(throwable, TAG);
                     }
                 });
@@ -77,5 +82,39 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
 
     void onSightClicked(@Nullable Sight sight) {
         getViewState().showSightSelection(sight);
+    }
+
+    public static class Builder {
+        @NonNull
+        private final ExcursionRepository excursionRepository;
+        @NonNull
+        private final Scheduler worker;
+        @NonNull
+        private final Scheduler ui;
+        @Nullable
+        private String excursionUuid;
+
+        public Builder(@NonNull ExcursionRepository excursionRepository,
+                       @NonNull Scheduler worker,
+                       @NonNull Scheduler ui) {
+            this.excursionRepository = excursionRepository;
+            this.worker = worker;
+            this.ui = ui;
+        }
+
+        @NonNull
+        public Builder excursionUuid(@NonNull String excursionUuid) {
+            this.excursionUuid = excursionUuid;
+            return this;
+        }
+
+        @NonNull
+        public ExcursionMapPresenter build() {
+            if (excursionUuid == null) {
+                throw new IllegalStateException();
+            }
+            return new ExcursionMapPresenter(excursionRepository, worker, ui, excursionUuid);
+        }
+
     }
 }

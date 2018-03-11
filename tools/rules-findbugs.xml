@@ -2,22 +2,22 @@
 
     <!-- Do not check auto-generated resources classes -->
     <Match>
-        <Class title="~.*R\$.*"/>
+        <Class name="~.*R\$.*"/>
     </Match>
 
     <!-- Do not check auto-generated manifest classes -->
     <Match>
-        <Class title="~.*Manifest\$.*"/>
+        <Class name="~.*Manifest\$.*"/>
     </Match>
 
     <!-- Do not check auto-generated classes (Dagger puts $ into class names) -->
     <Match>
-        <Class title="~.*Dagger*.*"/>
+        <Class name="~.*Dagger*.*"/>
     </Match>
 
     <!-- Do not check for non-initialized fields in tests because usually we initialize them in @Before -->
     <Match>
-        <Class title="~.*Test"/>
+        <Class name="~.*Test"/>
         <Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"
             typeName="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR"/>
     </Match>
@@ -25,18 +25,18 @@
     <!-- Ignore UPM in lambdas from Retrolambda, FindBugs does not correctly understand them -->
     <Match>
         <Bug code="UPM"/>
-        <Class title="~.*\$\$Lambda\$.*"/>
+        <Class name="~.*\$\$Lambda\$.*"/>
     </Match>
 
     <!-- Ignore Butterknife auto-generated classes -->
     <Match>
-        <Class title="~.*\$\$ViewBinder*"/>
+        <Class name="~.*\$\$ViewBinder*"/>
     </Match>
     <Match>
-        <Class title="~.*\$\$ViewBinder\$InnerUnbinder*"/>
+        <Class name="~.*\$\$ViewBinder\$InnerUnbinder*"/>
     </Match>
     <Match>
-        <Class title="~.*ViewBinding\$.*" />
+        <Class name="~.*ViewBinding\$.*" />
     </Match>
 
 </FindBugsFilter>

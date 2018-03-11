@@ -39,7 +39,7 @@ public class DownloadExcursionNotificationBroadcastReceiver extends BroadcastRec
 
                 notificationManager.cancelNotification(boughtExcursion);
                 JobManagerEventContract.notifyCancelled(context, boughtExcursion.getUuid());
-                jobManagerWrapper.getJobManager().cancelJobsInBackground(null, TagConstraint.ALL, boughtExcursion.getUuid());
+                jobManagerWrapper.getJobManager().cancelJobsInBackground(null, TagConstraint.ANY, boughtExcursion.getUuid());
 
                 break;
             }

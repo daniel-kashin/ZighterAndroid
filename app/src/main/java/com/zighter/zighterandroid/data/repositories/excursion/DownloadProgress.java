@@ -34,8 +34,8 @@ public class DownloadProgress {
     }
 
     public enum Type {
-        DATABASE,
+        JSON,
         MAP,
-        SIGHT
+        MEDIA
     }
 }

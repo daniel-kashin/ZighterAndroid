@@ -14,13 +14,14 @@ public class StorageSightContract {
 
     static final String SQL_CREATE_TABLE = "CREATE TABLE " + TABLE_NAME + "("
             + COLUMN_ID + " INTEGER NON NULL PRIMARY KEY, "
-            + COLUMN_UUID + " TEXT NON NULL UNIQUE ON CONFLICT REPLACE, "
+            + COLUMN_UUID + " TEXT NON NULL, "
             + COLUMN_EXCURSION_UUID + " TEXT NON NULL, "
             + COLUMN_DESCRIPTION + " TEXT, "
             + COLUMN_LONGITUDE + " REAL NON NULL, "
             + COLUMN_LATITUDE + " REAL NON NULL, "
             + COLUMN_NAME + " TEXT NON NULL, "
-            + COLUMN_TYPE + " TEXT NON NULL "
+            + COLUMN_TYPE + " TEXT NON NULL, "
+            + "UNIQUE(" + COLUMN_UUID + ", " + COLUMN_EXCURSION_UUID + ") ON CONFLICT REPLACE "
             + ");";
 
     static final String SQL_DELETE_TABLE = "DROP TABLE IF EXISTS " + TABLE_NAME;

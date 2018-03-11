@@ -3,6 +3,7 @@ package com.zighter.zighterandroid.data.job_manager.download_excursion;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,17 +34,32 @@ public class DownloadExcursionNotificationManager {
         NotificationCompat.Builder builder = new NotificationCompat
                 .Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
                 .setContentTitle(boughtExcursion.getName())
-                .setContentText(boughtExcursion.getOwner())
                 .setContentIntent(getMainPendingIntent(applicationContext))
                 .addAction(0, applicationContext.getString(R.string.cancel), getCancelPendingIntent(applicationContext, boughtExcursion))
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_file_download_black)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
 
-        if (downloadProgress != null && downloadProgress.getCount() != 0) {
-            builder.setProgress(downloadProgress.getCount(), downloadProgress.getCurrentPosition() + 1, false);
-        } else {
+        if (downloadProgress == null) {
+            builder.setContentText(applicationContext.getString(R.string.loading));
             builder.setProgress(1, 0, true);
+        } else {
+            DownloadProgress.Type type = downloadProgress.getType();
+            if (type == DownloadProgress.Type.MAP) {
+                builder.setContentText(applicationContext.getString(R.string.loading_map));
+            } else if (type == DownloadProgress.Type.JSON) {
+                builder.setContentText(applicationContext.getString(R.string.loading_json));
+            } else if (type == DownloadProgress.Type.MEDIA) {
+                builder.setContentText(applicationContext.getString(R.string.loading_media));
+            } else {
+                builder.setContentText(applicationContext.getString(R.string.loading));
+            }
+
+            if (downloadProgress.getCount() == 0) {
+                builder.setProgress(1, 0, true);
+            } else {
+                builder.setProgress(downloadProgress.getCount(), downloadProgress.getCurrentPosition() + 1, false);
+            }
         }
 
         notificationManager.notify(boughtExcursion.getUuid(), DownloadExcursionNotificationContract.NOTIFICATION_ID, builder.build());

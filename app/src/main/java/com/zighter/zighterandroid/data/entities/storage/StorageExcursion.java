@@ -10,11 +10,10 @@ import com.zighter.zighterandroid.data.database.StorageExcursionContract;
 
 @StorIOSQLiteType(table = StorageExcursionContract.TABLE_NAME)
 public class StorageExcursion {
-
     @StorIOSQLiteColumn(name = StorageExcursionContract.COLUMN_ID, key = true)
-    Long id;
+    Long id = null;
 
-    @SerializedName(value = StorageExcursionContract.COLUMN_UUID)
+    @StorIOSQLiteColumn(name = StorageExcursionContract.COLUMN_UUID)
     String uuid;
 
     @StorIOSQLiteColumn(name = StorageExcursionContract.COLUMN_NAME)

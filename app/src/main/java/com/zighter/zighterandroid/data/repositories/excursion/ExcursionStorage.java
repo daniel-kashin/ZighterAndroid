@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import com.pushtorefresh.storio3.sqlite.StorIOSQLite;
 import com.pushtorefresh.storio3.sqlite.operations.delete.DeleteResult;
+import com.pushtorefresh.storio3.sqlite.operations.delete.DeleteResults;
 import com.pushtorefresh.storio3.sqlite.operations.put.PutResult;
 import com.pushtorefresh.storio3.sqlite.operations.put.PutResults;
 import com.pushtorefresh.storio3.sqlite.queries.DeleteQuery;
@@ -35,32 +36,20 @@ public class ExcursionStorage extends BaseStorage {
         super(storIOSQLite);
     }
 
-    void beginTransaction() {
-        getSqLite().lowLevel().beginTransaction();
-    }
-
-    void endTransaction() {
-        getSqLite().lowLevel().endTransaction();
-    }
-
-    void setTransactionSuccessful() {
-        getSqLite().lowLevel().setTransactionSuccessful();
-    }
-
     @NonNull
     Single<Optional<StorageExcursion>> getExcursion(@NonNull String excursionUuid) {
         return Single.fromCallable(() -> {
-            return Optional.Companion.of(
-                    getSqLite().get()
-                            .object(StorageExcursion.class)
-                            .withQuery(Query.builder()
-                                               .table(StorageExcursionContract.TABLE_NAME)
-                                               .where(StorageExcursionContract.COLUMN_UUID + " = ?")
-                                               .whereArgs(excursionUuid)
-                                               .build())
-                            .prepare()
-                            .executeAsBlocking()
-            );
+            StorageExcursion storageExcursion = getSqLite().get()
+                    .object(StorageExcursion.class)
+                    .withQuery(Query.builder()
+                                       .table(StorageExcursionContract.TABLE_NAME)
+                                       .where(StorageExcursionContract.COLUMN_UUID + " = ?")
+                                       .whereArgs(excursionUuid)
+                                       .build())
+                    .prepare()
+                    .executeAsBlocking();
+
+            return Optional.Companion.of(storageExcursion);
         });
     }
 
@@ -115,15 +104,16 @@ public class ExcursionStorage extends BaseStorage {
     }
 
     @NonNull
-    Single<Optional<List<StorageMedia>>> getMedias(@NonNull String sightUuid) {
+    Single<Optional<List<StorageMedia>>> getMedias(@NonNull String sightUuid, @NonNull String excursionUuid) {
         return Single.fromCallable(() -> {
             return Optional.Companion.of(
                     getSqLite().get()
                             .listOfObjects(StorageMedia.class)
                             .withQuery(Query.builder()
                                                .table(StorageMediaContract.TABLE_NAME)
-                                               .where(StorageMediaContract.COLUMN_SIGHT_UUID + " = ?")
-                                               .whereArgs(sightUuid)
+                                               .where(StorageMediaContract.COLUMN_SIGHT_UUID + " = ? AND "
+                                                              + StorageMediaContract.COLUMN_EXCURSION_UUID + " = ?")
+                                               .whereArgs(sightUuid, excursionUuid)
                                                .build())
                             .prepare()
                             .executeAsBlocking()
@@ -142,13 +132,14 @@ public class ExcursionStorage extends BaseStorage {
     }
 
     @NonNull
-    Single<DeleteResult> deleteMedias(@NonNull String sightUuid) {
+    Single<DeleteResult> deleteMedias(@NonNull String sightUuid, @NonNull String excursionUuid) {
         return Single.fromCallable(() -> {
             return getSqLite().delete()
                     .byQuery(DeleteQuery.builder()
                                      .table(StorageMediaContract.TABLE_NAME)
-                                     .where(StorageMediaContract.COLUMN_SIGHT_UUID + " = ?")
-                                     .whereArgs(sightUuid)
+                                     .where(StorageMediaContract.COLUMN_SIGHT_UUID + " = ? AND "
+                                                    + StorageMediaContract.COLUMN_EXCURSION_UUID + " = ?")
+                                     .whereArgs(sightUuid, excursionUuid)
                                      .build())
                     .prepare()
                     .executeAsBlocking();
@@ -197,15 +188,16 @@ public class ExcursionStorage extends BaseStorage {
     }
 
     @NonNull
-    Single<Optional<List<StoragePoint>>> getPoints(@NonNull String pathUuid) {
+    Single<Optional<List<StoragePoint>>> getPoints(@NonNull String pathUuid, @NonNull String excursionUuid) {
         return Single.fromCallable(() -> {
             return Optional.Companion.of(
                     getSqLite().get()
                             .listOfObjects(StoragePoint.class)
                             .withQuery(Query.builder()
                                                .table(StoragePointContract.TABLE_NAME)
-                                               .where(StoragePointContract.COLUMN_PATH_UUID + " = ?")
-                                               .whereArgs(pathUuid)
+                                               .where(StoragePointContract.COLUMN_PATH_UUID + " = ? AND "
+                                                              + StoragePointContract.COLUMN_EXCURSION_UUID + " = ?")
+                                               .whereArgs(pathUuid, excursionUuid)
                                                .build())
                             .prepare()
                             .executeAsBlocking()
@@ -224,13 +216,14 @@ public class ExcursionStorage extends BaseStorage {
     }
 
     @NonNull
-    Single<DeleteResult> deletePoints(@NonNull String pathUuid) {
+    Single<DeleteResult> deletePoints(@NonNull String pathUuid, @NonNull String excursionUuid) {
         return Single.fromCallable(() -> {
             return getSqLite().delete()
                     .byQuery(DeleteQuery.builder()
                                      .table(StoragePointContract.TABLE_NAME)
-                                     .where(StoragePointContract.COLUMN_PATH_UUID + " = ?")
-                                     .whereArgs(pathUuid)
+                                     .where(StoragePointContract.COLUMN_PATH_UUID + " = ? AND "
+                                                    + StoragePointContract.COLUMN_EXCURSION_UUID + " = ?")
+                                     .whereArgs(pathUuid, excursionUuid)
                                      .build())
                     .prepare()
                     .executeAsBlocking();

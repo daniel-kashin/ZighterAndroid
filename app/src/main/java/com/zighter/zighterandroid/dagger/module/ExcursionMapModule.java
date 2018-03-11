@@ -15,9 +15,9 @@ import static com.zighter.zighterandroid.dagger.module.singleton.SchedulerModule
 @Module
 public class ExcursionMapModule {
     @Provides
-    ExcursionMapPresenter provideNavigationPresenter(ExcursionRepository excursionRepository,
+    ExcursionMapPresenter.Builder provideNavigationPresenter(ExcursionRepository excursionRepository,
                                                      @Named(TAG_WORKER) Scheduler worker,
                                                      @Named(TAG_UI) Scheduler ui) {
-        return new ExcursionMapPresenter(excursionRepository, worker, ui);
+        return new ExcursionMapPresenter.Builder(excursionRepository, worker, ui);
     }
 }

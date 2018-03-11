@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <fragment
-        android:id="@+id/excursion_map_fragment"
-        android:title="com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment"
+    <FrameLayout
+        android:id="@+id/excursion_map_fragment_holder"
+        android:name="com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

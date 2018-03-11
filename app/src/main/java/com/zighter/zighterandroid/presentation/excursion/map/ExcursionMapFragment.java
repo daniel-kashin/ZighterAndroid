@@ -23,6 +23,7 @@ import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.constants.MapboxConstants;
+import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
@@ -55,19 +56,39 @@ import butterknife.BindView;
 public class ExcursionMapFragment extends BaseSupportFragment implements ExcursionMapView,
         LocationListenerHolder.OnLocationChangeListener, LocationPermissionListener {
     private static final String TAG = "ExcursionMapFragment";
+    private static final String KEY_EXCURSION_UUID = "KEY_EXCURSION_UUID";
+
+    @NonNull
+    public static ExcursionMapFragment newInstance(@NonNull String excursionUuid) {
+        ExcursionMapFragment excursionMapFragment = new ExcursionMapFragment();
+
+        Bundle arguments = new Bundle();
+        arguments.putString(KEY_EXCURSION_UUID, excursionUuid);
+        excursionMapFragment.setArguments(arguments);
+
+        return excursionMapFragment;
+    }
 
     @InjectPresenter
     ExcursionMapPresenter presenter;
 
     @ProvidePresenter
     public ExcursionMapPresenter providePresenter() {
-        return presenterProvider.get();
+        if (excursionUuid == null) {
+            throw new IllegalStateException();
+        }
+
+        return presenterBuilderProvider.get()
+                .excursionUuid(excursionUuid)
+                .build();
     }
 
     @Inject
-    Provider<ExcursionMapPresenter> presenterProvider;
+    Provider<ExcursionMapPresenter.Builder> presenterBuilderProvider;
     @Inject
     LocationListenerHolder locationListenerHolder;
+    @Nullable
+    private String excursionUuid = null;
 
     @Override
     protected void onInjectDependencies() {
@@ -103,6 +124,20 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         return R.layout.fragment_excursion_map;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        Bundle arguments = getArguments();
+        if (arguments == null || !arguments.containsKey(KEY_EXCURSION_UUID)) {
+            throw new IllegalStateException();
+        } else {
+            excursionUuid = arguments.getString(KEY_EXCURSION_UUID);
+            if (excursionUuid == null) {
+                throw new IllegalStateException();
+            }
+        }
+
+        super.onCreate(savedInstanceState);
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -286,6 +321,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
             if (getContext() == null) return;
 
+            mapboxMap.setStyleUrl(Style.MAPBOX_STREETS);
+
             this.mapboxMapToSaveInstanceState = mapboxMap;
 
             // add sights
@@ -338,10 +375,28 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             if (cameraPositionFromSavedInstanceState != null) {
                 mapboxMap.setCameraPosition(cameraPositionFromSavedInstanceState);
             } else {
-                mapboxMap.moveCamera(mapboxMapInner -> new CameraPosition.Builder()
-                        .target(new LatLng(excursion.getSightAt(0).getLatitude(),
-                                           excursion.getSightAt(0).getLongitude()))
-                        .build());
+                LatLng latLng;
+                if (excursion.getSightSize() != 0) {
+                    latLng = new LatLng(excursion.getSightAt(0).getLatitude(),
+                                        excursion.getSightAt(0).getLongitude());
+                } else if (excursion.getPathSize() != 0) {
+                    ServicePath path = excursion.getPathAt(0);
+                    if (path.getPointSize() != 0) {
+                        latLng = new LatLng(path.getPointAt(0).getLatitude(),
+                                            path.getPointAt(0).getLongitude());
+                    } else {
+                        latLng = null;
+                    }
+                } else {
+                    latLng = null;
+                }
+
+                if (latLng != null) {
+                    mapboxMap.moveCamera(mapboxMapInner -> new CameraPosition.Builder()
+                            .target(latLng)
+                            .zoom(13)
+                            .build());
+                }
             }
 
             mapboxMap.setOnMarkerClickListener(marker -> {
@@ -374,6 +429,20 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         hideLoading();
 
         errorMessage.setText(getContext().getString(R.string.network_error_message));
+        tryAgain.setOnClickListener(view -> presenter.onReloadExcursionRequest());
+        errorMessage.setVisibility(View.VISIBLE);
+        tryAgain.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showUnhandledException() {
+        if (getContext() == null) {
+            return;
+        }
+
+        hideLoading();
+
+        errorMessage.setText(getContext().getString(R.string.unhandled_error_message));
         tryAgain.setOnClickListener(view -> presenter.onReloadExcursionRequest());
         errorMessage.setVisibility(View.VISIBLE);
         tryAgain.setVisibility(View.VISIBLE);
