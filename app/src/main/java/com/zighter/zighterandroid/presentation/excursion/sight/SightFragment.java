@@ -90,6 +90,18 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     TextView mediaCountView;
     @BindView(R.id.media_count_circle)
     ImageView mediaCountCircle;
+    @BindView(R.id.sight_location)
+    TextView sightLocation;
+    @BindView(R.id.website_saparator)
+    View webviewSeparator;
+    @BindView(R.id.timetable_saparator)
+    View timetableSeparator;
+    @BindView(R.id.sight_timetable)
+    TextView sightTimetable;
+    @BindView(R.id.sight_website)
+    TextView sightWebsite;
+    @BindView(R.id.sight_phone)
+    TextView sightPhone;
 
     @Nullable
     private Sight sight;
@@ -113,8 +125,25 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initializeView();
+    }
+
+    private void initializeView() {
+        sightName.setVisibility(View.GONE);
+        sightDistance.setVisibility(View.GONE);
+        rootView.setVisibility(View.GONE);
+        sightDescription.setVisibility(View.GONE);
+        mediaThumbnailBackground.setVisibility(View.GONE);
+        mediaCountView.setVisibility(View.GONE);
+        mediaCountCircle.setVisibility(View.GONE);
+        sightLocation.setVisibility(View.GONE);
+        webviewSeparator.setVisibility(View.GONE);
+        timetableSeparator.setVisibility(View.GONE);
+        sightTimetable.setVisibility(View.GONE);
+        sightWebsite.setVisibility(View.GONE);
+        sightPhone.setVisibility(View.GONE);
     }
 
     @Override
@@ -158,7 +187,50 @@ public class SightFragment extends BaseSupportFragment implements SightView,
         if (getContext() == null) return;
 
         sightName.setText(sight.getName());
-        sightDescription.setText(sight.getDescription());
+
+        String address = sight.getAddress();
+        if (address == null) {
+            sightDescription.setVisibility(View.GONE);
+        } else {
+            sightDescription.setVisibility(View.VISIBLE);
+            sightLocation.setText(address);
+        }
+
+        String phone = sight.getPhone();
+        if (phone == null) {
+            sightPhone.setVisibility(View.GONE);
+        } else {
+            sightPhone.setVisibility(View.VISIBLE);
+            sightPhone.setText(phone);
+        }
+
+        String website = sight.getWebsite();
+        if (website == null) {
+            sightWebsite.setVisibility(View.GONE);
+        } else {
+            sightWebsite.setVisibility(View.VISIBLE);
+            sightWebsite.setText(website);
+        }
+
+        webviewSeparator.setVisibility((phone != null || website != null) ? View.VISIBLE : View.GONE);
+
+        String timetable = sight.getTimetable();
+        if (timetable == null) {
+            sightTimetable.setVisibility(View.GONE);
+            timetableSeparator.setVisibility(View.GONE);
+        } else {
+            sightTimetable.setVisibility(View.VISIBLE);
+            sightTimetable.setText(timetable);
+            timetableSeparator.setVisibility(View.VISIBLE);
+        }
+
+        String description = sight.getDescription();
+        if (description == null) {
+            sightDescription.setVisibility(View.GONE);
+        } else {
+            sightDescription.setVisibility(View.VISIBLE);
+            sightDescription.setText(description);
+        }
 
         int mediaCount = sight.getMediaCount(DrawableMedia.class);
         if (mediaCount == 0) {
@@ -190,18 +262,9 @@ public class SightFragment extends BaseSupportFragment implements SightView,
                 mediaThumbnailBackground.setBackground(placeholder);
             }
 
-            mediaThumbnailBackground.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Context context = SightFragment.this.getContext();
-                    Sight sight = SightFragment.this.sight;
-
-                    if (context != null) {
-                        if (sight == null) {
-                            throw new IllegalStateException();
-                        }
-                        MediaActivity.start(context, sight);
-                    }
+            mediaThumbnailBackground.setOnClickListener(view -> {
+                if (SightFragment.this.getContext() != null) {
+                    MediaActivity.start(SightFragment.this.getContext(), sight);
                 }
             });
         }

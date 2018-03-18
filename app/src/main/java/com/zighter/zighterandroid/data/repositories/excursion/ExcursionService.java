@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Pair;
 
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
+import com.zighter.zighterandroid.data.network.ServiceExcursionContract;
 import com.zighter.zighterandroid.data.repositories.ZighterEndpoints;
 import com.zighter.zighterandroid.data.repositories.common.BaseService;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;

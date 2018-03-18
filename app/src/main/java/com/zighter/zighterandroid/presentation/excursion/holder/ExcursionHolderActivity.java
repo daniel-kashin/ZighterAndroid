@@ -10,17 +10,26 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.NestedScrollView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.zighter.zighterandroid.R;
+import com.zighter.zighterandroid.data.entities.media.Image;
+import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.presentation.Excursion;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment;
 import com.zighter.zighterandroid.presentation.excursion.sight.SightFragment;
+import com.zighter.zighterandroid.presentation.guide.GuideActivity;
 import com.zighter.zighterandroid.util.AnchorBottomSheetBehavior;
 import com.zighter.zighterandroid.util.LocationSettingsHelper;
+
+import java.io.Serializable;
 
 import butterknife.BindView;
 
@@ -32,21 +41,27 @@ import static com.zighter.zighterandroid.util.AnchorBottomSheetBehavior.STATE_SE
 public class ExcursionHolderActivity extends BaseSupportActivity {
     private static final String TAG = "ExcursionHolderActivity";
     private static final String KEY_BOTTOM_SHEET_VISIBLE = "KEY_BOTTOM_SHEET_VISIBLE";
-    private static final String KEY_EXCURSION_UUID = "KEY_EXCURSION_UUID";
+    private static final String KEY_BOUGHT_EXCURSION = "KEY_BOUGHT_EXCURSION";
 
-    public static void start(@NonNull Context context, @NonNull String excursionUuid) {
+    public static void start(@NonNull Context context, @NonNull BoughtExcursion boughtExcursion) {
         Intent intent = new Intent(context, ExcursionHolderActivity.class);
-        intent.putExtra(KEY_EXCURSION_UUID, excursionUuid);
+        intent.putExtra(KEY_BOUGHT_EXCURSION, (Serializable) boughtExcursion);
         context.startActivity(intent);
     }
-
-    private AnchorBottomSheetBehavior<NestedScrollView> bottomSheetBehavior;
 
     @BindView(R.id.bottom_sheet)
     NestedScrollView bottomSheet;
     @BindView(R.id.root_view)
     CoordinatorLayout rootView;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.toolbar_title)
+    TextView toolbarTitle;
+    @BindView(R.id.icon_guide)
+    ImageView iconGuide;
 
+    private AnchorBottomSheetBehavior<NestedScrollView> bottomSheetBehavior;
+    private BoughtExcursion boughtExcursion;
     private boolean locationPermissionNeedsRefresh = false;
     private boolean showBottomSheetAfterHide = false;
 
@@ -64,13 +79,15 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        initializeBoughtExcursion();
         if (getSupportFragmentManager().findFragmentById(R.id.excursion_map_fragment_holder) == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.excursion_map_fragment_holder, ExcursionMapFragment.newInstance(getExcursionUuid()))
+                    .replace(R.id.excursion_map_fragment_holder, ExcursionMapFragment.newInstance(boughtExcursion.getUuid()))
                     .commitNow();
         }
 
+        initializeToolbar();
         initializeBottomSheet();
         if (getSupportFragmentManager().findFragmentById(R.id.bottom_sheet_fragment_container) == null) {
             hideBottomSheet();
@@ -79,18 +96,36 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
         }
     }
 
-    @NonNull
-    private String getExcursionUuid() {
+    private void initializeToolbar() {
+        setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        toolbarTitle.setText(boughtExcursion.getName());
+
+        if (boughtExcursion.isGuideAvailable()) {
+            iconGuide.setVisibility(View.VISIBLE);
+        } else {
+            iconGuide.setVisibility(View.GONE);
+            iconGuide.setOnClickListener(view -> {
+                GuideActivity.start(ExcursionHolderActivity.this);
+            });
+        }
+    }
+
+    private void initializeBoughtExcursion() {
         if (getIntent() == null) {
             throw new IllegalStateException();
         }
 
-        String excursionUuid = getIntent().getStringExtra(KEY_EXCURSION_UUID);
-        if (excursionUuid == null) {
-            throw new IllegalStateException();
+        BoughtExcursion boughtExcursion = (BoughtExcursion) getIntent().getSerializableExtra(KEY_BOUGHT_EXCURSION);
+        if (boughtExcursion == null) {
+            // TODO
+            //throw new IllegalStateException();
+            boughtExcursion = new BoughtExcursion("1", "Экскурсия", "", "", new Image("https://mfiles.alphacoders.com/680/680627.jpg", null, null, null), true, true, true, true, true, true);
         }
 
-        return excursionUuid;
+        this.boughtExcursion = boughtExcursion;
     }
 
     @Override
@@ -134,6 +169,15 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
                 onRequestLocationPermissionResult(isLocationPermissionGranted, true, true);
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     public boolean onSightSelected(@NonNull Sight sight) {

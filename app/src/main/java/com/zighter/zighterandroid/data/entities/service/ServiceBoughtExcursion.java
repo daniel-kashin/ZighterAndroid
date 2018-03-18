@@ -78,9 +78,9 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
         return owner;
     }
 
-    @Nullable
+    @NonNull
     public String getImageUrl() {
-        return imageUrl == null ? null : ZighterEndpoints.BASE_URL + imageUrl;
+        return ZighterEndpoints.BASE_URL + imageUrl;
     }
 
     public boolean isRouteAvailable() {
@@ -94,14 +94,16 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
     }
 
     public boolean isGuideAvailable() {
-        return isGuideAvailable != null && toBoolean(isGuideAvailable);
+        // TODO: wait for server logic
+        return true;
+        //return isGuideAvailable != null && toBoolean(isGuideAvailable);
     }
 
     @Override
     public boolean isValid() {
         // TODO: uncomment
         return //(isRouteAvailable() || isGuideAvailable() || isMediaAvailable()) &&
-                uuid != null && name != null && location != null && owner != null;
+                uuid != null && name != null && location != null && owner != null && imageUrl != null;
     }
 
     @Nullable

@@ -86,10 +86,6 @@ public class StorageBoughtExcursion {
         this.owner = owner;
     }
 
-    public long getId() {
-        return id != null ? id : -1;
-    }
-
     @NonNull
     public String getUuid() {
         return uuid;

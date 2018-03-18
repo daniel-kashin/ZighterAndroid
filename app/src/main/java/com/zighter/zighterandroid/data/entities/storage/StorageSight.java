@@ -33,6 +33,18 @@ public class StorageSight {
     @StorIOSQLiteColumn(name = StorageSightContract.COLUMN_TYPE)
     String type;
 
+    @StorIOSQLiteColumn(name = StorageSightContract.COLUMN_TIMETABLE)
+    String timetable;
+
+    @StorIOSQLiteColumn(name = StorageSightContract.COLUMN_PHONE)
+    String phone;
+
+    @StorIOSQLiteColumn(name = StorageSightContract.COLUMN_ADDRESS)
+    String address;
+
+    @StorIOSQLiteColumn(name = StorageSightContract.COLUMN_WEBSITE)
+    String website;
+
     StorageSight() {
     }
 
@@ -42,7 +54,11 @@ public class StorageSight {
                         @NonNull String type,
                         @Nullable String description,
                         double longitude,
-                        double latitude) {
+                        double latitude,
+                        @Nullable String timetable,
+                        @Nullable String phone,
+                        @Nullable String address,
+                        @Nullable String website) {
         this.uuid = uuid;
         this.excursionUuid = excursionUuid;
         this.name = name;
@@ -50,6 +66,10 @@ public class StorageSight {
         this.description = description;
         this.longitude = longitude;
         this.latitude = latitude;
+        this.timetable = timetable;
+        this.phone = phone;
+        this.address = address;
+        this.website = website;
     }
 
     @NonNull
@@ -88,5 +108,25 @@ public class StorageSight {
     @NonNull
     public String getExcursionUuid() {
         return excursionUuid;
+    }
+
+    @Nullable
+    public String getTimetable() {
+        return timetable;
+    }
+
+    @Nullable
+    public String getPhone() {
+        return phone;
+    }
+
+    @Nullable
+    public String getAddress() {
+        return address;
+    }
+
+    @Nullable
+    public String getWebsite() {
+        return website;
     }
 }

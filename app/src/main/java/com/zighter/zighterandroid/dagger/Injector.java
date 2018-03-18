@@ -11,6 +11,7 @@ import com.zighter.zighterandroid.dagger.component.DaggerAppComponent;
 import com.zighter.zighterandroid.dagger.component.DownloadExcursionJobComponent;
 import com.zighter.zighterandroid.dagger.component.ExcursionMapComponent;
 import com.zighter.zighterandroid.dagger.component.MediaComponent;
+import com.zighter.zighterandroid.dagger.component.SearchComponent;
 import com.zighter.zighterandroid.dagger.component.SightComponent;
 import com.zighter.zighterandroid.dagger.module.singleton.AppModule;
 
@@ -52,6 +53,8 @@ public class Injector {
     private WeakReference<BoughtExcursionsComponent> boughtExcursionsComponentWeakReference;
     @NonNull
     private WeakReference<DownloadExcursionJobComponent> downloadExcursionJobComponentWeakReference;
+    @NonNull
+    private WeakReference<SearchComponent> searchComponentWeakReference;
 
     @UiThread
     private Injector(@NonNull Context context) {
@@ -63,6 +66,7 @@ public class Injector {
         mediaComponentWeakReference = new WeakReference<>(null);
         boughtExcursionsComponentWeakReference = new WeakReference<>(null);
         downloadExcursionJobComponentWeakReference = new WeakReference<>(null);
+        searchComponentWeakReference = new WeakReference<SearchComponent>(null);
     }
 
     @NonNull
@@ -108,5 +112,14 @@ public class Injector {
             downloadExcursionJobComponentWeakReference = new WeakReference<>(appComponent.plusDownloadExcursionJobComponent());
         }
         return downloadExcursionJobComponentWeakReference.get();
+    }
+
+    @NonNull
+    @UiThread
+    public SearchComponent getSearchComponent() {
+        if (searchComponentWeakReference.get() == null) {
+            searchComponentWeakReference = new WeakReference<SearchComponent>(appComponent.plusSearchComponent());
+        }
+        return searchComponentWeakReference.get();
     }
 }

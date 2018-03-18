@@ -143,6 +143,11 @@ public class ExcursionRepository {
     }
 
     @NonNull
+    public Single<List<Object>> searchExcursions(@NonNull String searchRequest) {
+        return Single.just(new ArrayList<>());
+    }
+
+    @NonNull
     public Observable<Pair<String, Event>> subscribeOnDownloadExcursionEvents() {
         return jobManagerWrapper.subscribeOnJobEvents();
     }
@@ -275,7 +280,11 @@ public class ExcursionRepository {
                                              storageSight.getName(),
                                              storageSight.getType(),
                                              storageSight.getDescription(),
-                                             medias));
+                                             medias,
+                                             storageSight.getTimetable(),
+                                             storageSight.getPhone(),
+                                             storageSight.getAddress(),
+                                             storageSight.getWebsite()));
                     }
                 }
 
@@ -365,7 +374,11 @@ public class ExcursionRepository {
                                                                              sight.getType(),
                                                                              sight.getDescription(),
                                                                              sight.getLongitude(),
-                                                                             sight.getLatitude())).blockingGet();
+                                                                             sight.getLatitude(),
+                                                                             sight.getTimetable(),
+                                                                             sight.getPhone(),
+                                                                             sight.getAddress(),
+                                                                             sight.getWebsite())).blockingGet();
             }
 
             // save excursion

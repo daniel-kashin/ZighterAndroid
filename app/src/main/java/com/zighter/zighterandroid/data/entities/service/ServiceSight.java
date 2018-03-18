@@ -32,6 +32,18 @@ public class ServiceSight extends Validable<ServiceSight> {
     @SerializedName("audio")
     private List<ServiceAudio> audios;
 
+    @SerializedName("timetable")
+    private String timetable;
+
+    @SerializedName("address")
+    private String address;
+
+    @SerializedName("phone")
+    private String phone;
+
+    @SerializedName("webSite")
+    private String website;
+
     private ServiceSight(@NonNull String uuid,
                          @NonNull ServicePoint point,
                          @NonNull String name,
@@ -41,6 +53,7 @@ public class ServiceSight extends Validable<ServiceSight> {
         this.point = point;
         this.name = name;
         this.type = type;
+        this.description = description;
     }
 
     @Override
@@ -92,5 +105,25 @@ public class ServiceSight extends Validable<ServiceSight> {
     public String getDescription() {
         assertValid();
         return description;
+    }
+
+    @Nullable
+    public String getTimetable() {
+        return timetable;
+    }
+
+    @Nullable
+    public String getPhone() {
+        return phone;
+    }
+
+    @Nullable
+    public String getAddress() {
+        return address;
+    }
+
+    @Nullable
+    public String getWebsite() {
+        return website;
     }
 }

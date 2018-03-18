@@ -37,4 +37,6 @@ public interface AppComponent {
     BoughtExcursionsComponent plusBoughtExcursionsComponent();
 
     DownloadExcursionJobComponent plusDownloadExcursionJobComponent();
+
+    SearchComponent plusSearchComponent();
 }

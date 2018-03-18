@@ -22,7 +22,7 @@ public class StorageBoughtExcursionContract {
             + COLUMN_NAME + " TEXT NON NULL, "
             + COLUMN_LOCATION + " TEXT NON NULL, "
             + COLUMN_OWNER + " TEXT NON NULL, "
-            + COLUMN_IMAGE_URL + " TEXT, "
+            + COLUMN_IMAGE_URL + " TEXT NON NULL, "
             + COLUMN_IS_GUIDE_AVAILABLE + " INTEGER NON NULL, "
             + COLUMN_IS_MEDIA_AVAILABLE + " INTEGER NON NULL, "
             + COLUMN_IS_ROUTE_AVAILABLE + " INTEGER NON NULL, "

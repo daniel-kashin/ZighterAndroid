@@ -27,6 +27,7 @@ import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.storage.FileSource;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.presentation.Excursion;
@@ -87,8 +88,6 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     Provider<ExcursionMapPresenter.Builder> presenterBuilderProvider;
     @Inject
     LocationListenerHolder locationListenerHolder;
-    @Nullable
-    private String excursionUuid = null;
 
     @Override
     protected void onInjectDependencies() {
@@ -118,6 +117,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     private MapboxMap mapboxMapToSaveInstanceState;
     @Nullable
     private CameraPosition cameraPositionFromSavedInstanceState;
+    @Nullable
+    private String excursionUuid = null;
 
     @Override
     protected int getLayoutId() {
@@ -147,14 +148,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         }
     }
 
-    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initializeViews();
         map.onCreate(savedInstanceState);

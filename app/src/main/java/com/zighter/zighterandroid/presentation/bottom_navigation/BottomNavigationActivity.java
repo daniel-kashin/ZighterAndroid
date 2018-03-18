@@ -11,6 +11,7 @@ import com.zighter.zighterandroid.presentation.account.AccountFragment;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment;
 import com.zighter.zighterandroid.presentation.bought_excursions.BoughtExcursionsFragment;
+import com.zighter.zighterandroid.presentation.search.SearchFragment;
 
 import java.util.concurrent.TimeUnit;
 
@@ -66,18 +67,11 @@ public class BottomNavigationActivity extends BaseSupportActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        if (showTabDisposable != null) {
-            showTabDisposable.dispose();
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         if (showTabDisposable != null) {
             showTabDisposable.dispose();
+            showTabDisposable = null;
         }
     }
 
@@ -86,7 +80,6 @@ public class BottomNavigationActivity extends BaseSupportActivity {
             switch (item.getItemId()) {
                 case R.id.action_my_excursions:
                 case R.id.action_account:
-                case R.id.action_interesting:
                 case R.id.action_search:
                     openFragment(item.getItemId());
                     return true;
@@ -108,9 +101,14 @@ public class BottomNavigationActivity extends BaseSupportActivity {
                 } else {
                     return;
                 }
-            case R.id.action_account:
-            case R.id.action_interesting:
             case R.id.action_search:
+                if (!(topFragment instanceof SearchFragment)) {
+                    fragmentToOpen = SearchFragment.newInstance();
+                    break;
+                } else {
+                    return;
+                }
+            case R.id.action_account:
                 if (!(topFragment instanceof AccountFragment)) {
                     fragmentToOpen = AccountFragment.newInstance();
                     break;
@@ -124,7 +122,8 @@ public class BottomNavigationActivity extends BaseSupportActivity {
         if (showTabDisposable != null) {
             showTabDisposable.dispose();
         }
-        showTabDisposable = Completable.timer(200, TimeUnit.MILLISECONDS)
+        showTabDisposable = Completable
+                .timer(200, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(() -> getSupportFragmentManager()
@@ -133,6 +132,4 @@ public class BottomNavigationActivity extends BaseSupportActivity {
                         .commit()
                 );
     }
-
-
 }

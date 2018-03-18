@@ -18,6 +18,7 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        android:elevation="8dp"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/hintText"
@@ -39,6 +40,7 @@
                 android:layout_toStartOf="@+id/icon_text"
                 android:layout_alignParentStart="true"
                 android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
@@ -50,6 +52,7 @@
                 tools:text="Title"
                 android:textSize="20sp"
                 android:textStyle="bold"
+                android:layout_marginEnd="10dp"
                 android:gravity="center_vertical"
                 android:layout_toStartOf="@+id/icon_text"
                 android:layout_alignParentStart="true"

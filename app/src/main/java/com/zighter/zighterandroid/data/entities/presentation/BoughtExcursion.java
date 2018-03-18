@@ -18,7 +18,7 @@ public class BoughtExcursion implements Serializable {
     private String owner;
     @NonNull
     private String location;
-    @Nullable
+    @NonNull
     private Image image;
     private boolean isRouteAvailable;
     private boolean isMediaAvailable;
@@ -31,7 +31,7 @@ public class BoughtExcursion implements Serializable {
                            @NonNull String name,
                            @NonNull String owner,
                            @NonNull String location,
-                           @Nullable Image image,
+                           @NonNull Image image,
                            boolean isGuideAvailable,
                            boolean isMediaAvailable,
                            boolean isRouteAvailable,
@@ -71,7 +71,7 @@ public class BoughtExcursion implements Serializable {
         return owner;
     }
 
-    @Nullable
+    @NonNull
     public Image getImage() {
         return image;
     }

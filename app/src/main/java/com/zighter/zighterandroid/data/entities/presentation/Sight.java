@@ -3,6 +3,7 @@ package com.zighter.zighterandroid.data.entities.presentation;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.gson.annotations.SerializedName;
 import com.zighter.zighterandroid.data.entities.media.Media;
 
 import java.io.Serializable;
@@ -22,6 +23,14 @@ public class Sight implements Serializable {
     private String type;
     @NonNull
     private List<Media> medias;
+    @Nullable
+    private String timetable;
+    @Nullable
+    private String address;
+    @Nullable
+    private String phone;
+    @Nullable
+    private String website;
 
     public Sight(@NonNull String uuid,
                  double longitude,
@@ -29,7 +38,11 @@ public class Sight implements Serializable {
                  @NonNull String name,
                  @NonNull String type,
                  @Nullable String description,
-                 @NonNull List<Media> medias) {
+                 @NonNull List<Media> medias,
+                 @Nullable String timetable,
+                 @Nullable String phone,
+                 @Nullable String address,
+                 @Nullable String website) {
         this.uuid = uuid;
         this.longitude = longitude;
         this.latitude = latitude;
@@ -37,6 +50,10 @@ public class Sight implements Serializable {
         this.type = type;
         this.medias = medias;
         this.description = description;
+        this.timetable = timetable;
+        this.phone = phone;
+        this.address = address;
+        this.website = website;
     }
 
     @NonNull
@@ -115,6 +132,26 @@ public class Sight implements Serializable {
             }
         }
         return first;
+    }
+
+    @Nullable
+    public String getTimetable() {
+        return timetable;
+    }
+
+    @Nullable
+    public String getPhone() {
+        return phone;
+    }
+
+    @Nullable
+    public String getAddress() {
+        return address;
+    }
+
+    @Nullable
+    public String getWebsite() {
+        return website;
     }
 
     @Override

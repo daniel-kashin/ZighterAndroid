@@ -71,7 +71,11 @@ public class ExcursionMapper {
                                     serviceSight.getName(),
                                     serviceSight.getType(),
                                     serviceSight.getDescription(),
-                                    DUMMY_MEDIAS);
+                                    DUMMY_MEDIAS,
+                                    serviceSight.getTimetable(),
+                                    serviceSight.getPhone(),
+                                    serviceSight.getAddress(),
+                                    serviceSight.getWebsite());
             sights.add(sight);
         }
 

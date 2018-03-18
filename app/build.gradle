@@ -58,7 +58,7 @@ dependencies {
     annotationProcessor libraries.daggerCompiler
 
     compile libraries.rxJava
-    compile libraries.rxAndroid
+    compile libraries.rxBinding
 
     compile libraries.retrofit
     compile libraries.retrofitRxAdapter

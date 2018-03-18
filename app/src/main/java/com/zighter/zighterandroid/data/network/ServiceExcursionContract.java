@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.data.repositories.excursion;
+package com.zighter.zighterandroid.data.network;
 
 import android.support.annotation.NonNull;
 
@@ -19,7 +19,7 @@ import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.JSON
 import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.JSON_LIST_UNDERLINE;
 import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.ROUTE;
 
-interface ServiceExcursionContract {
+public interface ServiceExcursionContract {
     @GET(ROUTE + JSON_LIST_UNDERLINE + "/{uuid}")
     Single<ServiceExcursion> getExcursion(@NonNull @Path("uuid") String uuid);
 

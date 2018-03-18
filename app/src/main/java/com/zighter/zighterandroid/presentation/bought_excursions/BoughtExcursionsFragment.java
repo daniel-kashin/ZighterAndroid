@@ -73,7 +73,7 @@ public class BoughtExcursionsFragment extends BaseSupportFragment
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         initializeView();
     }
@@ -190,7 +190,7 @@ public class BoughtExcursionsFragment extends BaseSupportFragment
             return;
         }
 
-        ExcursionHolderActivity.start(getContext(), boughtExcursionWithStatus.getExcursion().getUuid());
+        ExcursionHolderActivity.start(getContext(), boughtExcursionWithStatus.getExcursion());
     }
 
     @Override

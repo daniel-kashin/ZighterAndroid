@@ -18,8 +18,12 @@
 
         <activity
             android:name=".presentation.bottom_navigation.BottomNavigationActivity"
-            android:label="Zighter"
-            android:enabled="true">
+            android:enabled="true"
+            android:label="Zighter">
+
+        </activity>
+
+        <activity android:name=".presentation.excursion.holder.ExcursionHolderActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -29,9 +33,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".presentation.excursion.holder.ExcursionHolderActivity" />
-
         <activity android:name=".presentation.media.MediaActivity" />
+
+        <activity android:name=".presentation.guide.GuideActivity" />
 
         <receiver
             android:name=".data.job_manager.download_excursion.DownloadExcursionNotificationBroadcastReceiver"

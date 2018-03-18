@@ -33,4 +33,8 @@
     <string name="cancel">Cancel</string>
 
     <string name="download_excursion">Download excursion</string>
+
+    <string name="search_excursions">Search request</string>
+    <string name="type_search_excursions">Type your request to search for excursions</string>
+    <string name="nothing_was_found">There were found nothing. Please, try to change your request</string>
 </resources>
