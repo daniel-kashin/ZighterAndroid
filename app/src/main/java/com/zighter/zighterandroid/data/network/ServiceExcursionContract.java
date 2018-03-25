@@ -2,30 +2,55 @@ package com.zighter.zighterandroid.data.network;
 
 import android.support.annotation.NonNull;
 
+import com.zighter.zighterandroid.data.entities.service.ServiceAuthorizationData;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
+import com.zighter.zighterandroid.data.entities.service.ServiceGuide;
+import com.zighter.zighterandroid.data.entities.service.ServiceToken;
 
 import java.util.List;
 
 import io.reactivex.Single;
-import okhttp3.ResponseBody;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
-import retrofit2.http.Query;
 
-import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.CLIENT_EXCURSIONS;
-import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.HOME;
+import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.API;
+import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.CLIENT_COLLECTION;
+import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.GUIDES;
 import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.JSON_LIST;
-import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.JSON_LIST_UNDERLINE;
-import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.ROUTE;
+import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.ROUTES;
+import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.SLASH;
+import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.TOKEN_AUTH;
+import static com.zighter.zighterandroid.data.repositories.ZighterEndpoints.V1;
 
 public interface ServiceExcursionContract {
-    @GET(ROUTE + JSON_LIST_UNDERLINE + "/{uuid}")
-    Single<ServiceExcursion> getExcursion(@NonNull @Path("uuid") String uuid);
+    @GET(API + V1 + ROUTES + "/{uuid}")
+    Single<ServiceExcursion> getExcursion(@NonNull
+                                          @Path("uuid") String uuid,
 
-    @GET(HOME + CLIENT_EXCURSIONS + "/1" + JSON_LIST)
-    Single<List<ServiceBoughtExcursion>> getBoughtExcursions();
+                                          @NonNull
+                                          @Header("Authorization") String token);
 
-    @GET("{url}")
-    Single<ResponseBody> downloadFile(@NonNull @Path("url") String url);
+    @GET(API + V1 + GUIDES + "/{uuid}")
+    Single<ServiceGuide> getGuide(@NonNull
+                                  @Path("uuid") String uuid,
+
+                                  @NonNull
+                                  @Header("Authorization") String token);
+
+    @GET(API + V1 + CLIENT_COLLECTION)
+    Single<List<ServiceBoughtExcursion>> getBoughtExcursions(@NonNull
+                                                             @Header("Authorization") String token);
+
+    @Headers({
+            "Accept: application/json",
+            "Content-type: application/json"
+    })
+    @POST(API + V1 + TOKEN_AUTH + SLASH)
+    Single<ServiceToken> login(@NonNull
+                               @Body ServiceAuthorizationData data);
 }

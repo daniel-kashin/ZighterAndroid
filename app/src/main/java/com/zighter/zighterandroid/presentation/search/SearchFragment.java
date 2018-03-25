@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -20,6 +21,7 @@ import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus;
 import com.zighter.zighterandroid.presentation.bought_excursions.BoughtExcursionsAdapter;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
+import com.zighter.zighterandroid.presentation.login.LoginActivity;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -29,10 +31,13 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
+import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 
 public class SearchFragment extends BaseSupportFragment implements SearchView {
+    private static final String TAG = "SearchFragment";
+
     @NonNull
     public static SearchFragment newInstance() {
         return new SearchFragment();
@@ -88,16 +93,18 @@ public class SearchFragment extends BaseSupportFragment implements SearchView {
 
         RxTextView.textChanges(toolbarSearch)
                 .map(editable -> editable.toString().trim())
-                .flatMap(string -> {
+                .doOnNext(string -> {
                     if (string.isEmpty()) {
-                        return Observable.just(string);
-                    } else {
-                        return Observable.just(string)
-                                .debounce(500, TimeUnit.MILLISECONDS)
-                                .observeOn(AndroidSchedulers.mainThread());
+                        presenter.onSearchTyped(string);
                     }
                 })
-                .subscribe(string -> presenter.onSearchTyped(string));
+                .debounce(500, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(string -> {
+                    if (!string.isEmpty()) {
+                        presenter.onSearchTyped(string);
+                    }
+                });
 
         RxView.clicks(iconClear)
                 .subscribe(it -> toolbarSearch.setText(null));
@@ -111,6 +118,15 @@ public class SearchFragment extends BaseSupportFragment implements SearchView {
         tryAgain.setVisibility(View.INVISIBLE);
         errorMessage.setVisibility(View.VISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void showNotAuthorizedException() {
+        if (getContext() == null) {
+            return;
+        }
+
+        LoginActivity.start(getContext());
     }
 
     @Override

@@ -105,11 +105,11 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
 
         if (boughtExcursion.isGuideAvailable()) {
             iconGuide.setVisibility(View.VISIBLE);
+            iconGuide.setOnClickListener(view -> {
+                GuideActivity.start(ExcursionHolderActivity.this, boughtExcursion.getUuid());
+            });
         } else {
             iconGuide.setVisibility(View.GONE);
-            iconGuide.setOnClickListener(view -> {
-                GuideActivity.start(ExcursionHolderActivity.this);
-            });
         }
     }
 

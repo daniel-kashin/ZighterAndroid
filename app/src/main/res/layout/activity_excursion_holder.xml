@@ -13,10 +13,10 @@
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
-            android:elevation="8dp"
-            android:background="@android:color/white"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/white"
+            android:elevation="8dp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -56,8 +56,7 @@
             android:name="com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            />
+            android:layout_weight="1" />
 
     </LinearLayout>
 
@@ -75,9 +74,9 @@
         android:background="@android:color/white"
         android:fitsSystemWindows="true"
         android:orientation="vertical"
-        app:behavior_anchorOffset="200dp"
+        app:behavior_anchorOffset="205dp"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="80dp"
+        app:behavior_peekHeight="92dp"
         app:layout_behavior="com.zighter.zighterandroid.util.AnchorBottomSheetBehavior">
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"

@@ -11,6 +11,7 @@ import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWith
 import com.zighter.zighterandroid.data.exception.BaseException;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
 import com.zighter.zighterandroid.data.exception.ServerException;
+import com.zighter.zighterandroid.data.exception.ServerNotAuthorizedException;
 import com.zighter.zighterandroid.data.job_manager.JobManagerEventsBroadcastReceiver;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.presentation.common.BasePresenter;
@@ -79,7 +80,11 @@ public class BoughtExcursionsPresenter extends BasePresenter<BoughtExcursionsVie
                         if (throwable instanceof NetworkUnavailableException) {
                             getViewState().showNetworkUnavailable();
                         } else if (throwable instanceof ServerException) {
-                            getViewState().showServerException();
+                            if (throwable instanceof ServerNotAuthorizedException) {
+                                getViewState().showNotAuthorizedException();
+                            } else {
+                                getViewState().showServerException();
+                            }
                         }
                     } else {
                         getViewState().showUnhandledException();

@@ -186,13 +186,16 @@ public class SightFragment extends BaseSupportFragment implements SightView,
     public void showSight(@NonNull Sight sight, @Nullable ImageViewLoader imageViewLoader) {
         if (getContext() == null) return;
 
+        rootView.setVisibility(View.VISIBLE);
+
         sightName.setText(sight.getName());
+        sightName.setVisibility(View.VISIBLE);
 
         String address = sight.getAddress();
         if (address == null) {
-            sightDescription.setVisibility(View.GONE);
+            sightLocation.setVisibility(View.GONE);
         } else {
-            sightDescription.setVisibility(View.VISIBLE);
+            sightLocation.setVisibility(View.VISIBLE);
             sightLocation.setText(address);
         }
 
@@ -272,17 +275,19 @@ public class SightFragment extends BaseSupportFragment implements SightView,
 
     @Override
     public void showCurrentDistance(Integer distanceInMeters) {
-        if (getContext() != null) {
-            if (distanceInMeters == null) {
-                sightDistance.setTextColor(ContextCompat.getColor(getContext(), R.color.hintText));
-            } else {
-                String distance = distanceInMeters > 1000
-                        ? distanceInMeters / 1000 + " " + getString(R.string.kilometers)
-                        : distanceInMeters + " " + getString(R.string.meters);
-                sightDistance.setText(distance);
-
-                sightDistance.setTextColor(ContextCompat.getColor(getContext(), R.color.secondaryText));
-            }
+        if (getContext() == null) {
+            return;
         }
+
+        if (distanceInMeters == null) {
+            sightDistance.setTextColor(ContextCompat.getColor(getContext(), R.color.hintText));
+        } else {
+            String distance = distanceInMeters > 1000
+                    ? distanceInMeters / 1000 + " " + getString(R.string.kilometers)
+                    : distanceInMeters + " " + getString(R.string.meters);
+            sightDistance.setText(distance);
+            sightDistance.setTextColor(ContextCompat.getColor(getContext(), R.color.secondaryText));
+        }
+        sightDistance.setVisibility(View.VISIBLE);
     }
 }

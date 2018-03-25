@@ -14,6 +14,10 @@ import com.zighter.zighterandroid.data.entities.storage.StorageExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageExcursionStorIOSQLiteDeleteResolver;
 import com.zighter.zighterandroid.data.entities.storage.StorageExcursionStorIOSQLiteGetResolver;
 import com.zighter.zighterandroid.data.entities.storage.StorageExcursionStorIOSQLitePutResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageGuide;
+import com.zighter.zighterandroid.data.entities.storage.StorageGuideStorIOSQLiteDeleteResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageGuideStorIOSQLiteGetResolver;
+import com.zighter.zighterandroid.data.entities.storage.StorageGuideStorIOSQLitePutResolver;
 import com.zighter.zighterandroid.data.entities.storage.StorageMedia;
 import com.zighter.zighterandroid.data.entities.storage.StorageMediaStorIOSQLiteDeleteResolver;
 import com.zighter.zighterandroid.data.entities.storage.StorageMediaStorIOSQLiteGetResolver;
@@ -73,6 +77,12 @@ public class DatabaseFactory {
                                         .putResolver(new StorageSightStorIOSQLitePutResolver())
                                         .getResolver(new StorageSightStorIOSQLiteGetResolver())
                                         .deleteResolver(new StorageSightStorIOSQLiteDeleteResolver())
+                                        .build())
+                .addTypeMapping(StorageGuide.class,
+                                SQLiteTypeMapping.<StorageGuide>builder()
+                                        .putResolver(new StorageGuideStorIOSQLitePutResolver())
+                                        .getResolver(new StorageGuideStorIOSQLiteGetResolver())
+                                        .deleteResolver(new StorageGuideStorIOSQLiteDeleteResolver())
                                         .build())
                 .build();
     }

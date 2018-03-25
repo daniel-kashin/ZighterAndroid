@@ -10,10 +10,13 @@ import com.zighter.zighterandroid.dagger.component.BoughtExcursionsComponent;
 import com.zighter.zighterandroid.dagger.component.DaggerAppComponent;
 import com.zighter.zighterandroid.dagger.component.DownloadExcursionJobComponent;
 import com.zighter.zighterandroid.dagger.component.ExcursionMapComponent;
+import com.zighter.zighterandroid.dagger.component.GuideComponent;
+import com.zighter.zighterandroid.dagger.component.LoginComponent;
 import com.zighter.zighterandroid.dagger.component.MediaComponent;
 import com.zighter.zighterandroid.dagger.component.SearchComponent;
 import com.zighter.zighterandroid.dagger.component.SightComponent;
 import com.zighter.zighterandroid.dagger.module.singleton.AppModule;
+import com.zighter.zighterandroid.presentation.login.LoginPresenter;
 
 import java.lang.ref.WeakReference;
 
@@ -55,6 +58,10 @@ public class Injector {
     private WeakReference<DownloadExcursionJobComponent> downloadExcursionJobComponentWeakReference;
     @NonNull
     private WeakReference<SearchComponent> searchComponentWeakReference;
+    @NonNull
+    private WeakReference<LoginComponent> loginPresenterWeakReference;
+    @NonNull
+    private WeakReference<GuideComponent> guideComponentWeakReference;
 
     @UiThread
     private Injector(@NonNull Context context) {
@@ -66,7 +73,15 @@ public class Injector {
         mediaComponentWeakReference = new WeakReference<>(null);
         boughtExcursionsComponentWeakReference = new WeakReference<>(null);
         downloadExcursionJobComponentWeakReference = new WeakReference<>(null);
-        searchComponentWeakReference = new WeakReference<SearchComponent>(null);
+        searchComponentWeakReference = new WeakReference<>(null);
+        loginPresenterWeakReference = new WeakReference<>(null);
+        guideComponentWeakReference = new WeakReference<>(null);
+    }
+
+    @NonNull
+    @UiThread
+    public AppComponent getAppComponent() {
+        return appComponent;
     }
 
     @NonNull
@@ -118,8 +133,26 @@ public class Injector {
     @UiThread
     public SearchComponent getSearchComponent() {
         if (searchComponentWeakReference.get() == null) {
-            searchComponentWeakReference = new WeakReference<SearchComponent>(appComponent.plusSearchComponent());
+            searchComponentWeakReference = new WeakReference<>(appComponent.plusSearchComponent());
         }
         return searchComponentWeakReference.get();
+    }
+
+    @NonNull
+    @UiThread
+    public LoginComponent getLoginComponent() {
+        if (loginPresenterWeakReference.get() == null) {
+            loginPresenterWeakReference = new WeakReference<>(appComponent.plusLoginComponent());
+        }
+        return loginPresenterWeakReference.get();
+    }
+
+    @NonNull
+    @UiThread
+    public GuideComponent getGuideComponent() {
+        if (guideComponentWeakReference.get() == null) {
+            guideComponentWeakReference = new WeakReference<>(appComponent.plusGuideComponent());
+        }
+        return guideComponentWeakReference.get();
     }
 }

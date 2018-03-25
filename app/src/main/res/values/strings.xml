@@ -24,6 +24,7 @@
     <string name="media_upload_error_message">Unable to upload</string>
     <string name="empty_bought_excursions">All your bought excursions will be shown here</string>
     <string name="unhandled_error_message">Something gone wrong.</string>
+    <string name="server_login_error_message">Either login or password is incorrect.</string>
 
     <string name="loading_map">Loading map...</string>
     <string name="loading_json">Loading info...</string>
@@ -37,4 +38,13 @@
     <string name="search_excursions">Search request</string>
     <string name="type_search_excursions">Type your request to search for excursions</string>
     <string name="nothing_was_found">There were found nothing. Please, try to change your request</string>
+
+    <string name="username_hint">Username</string>
+    <string name="username_error">At least 1 character</string>
+    <string name="password_hint">Password</string>
+    <string name="password_error">At least 1 character</string>
+    <string name="login_button">Log in</string>
+    <string name="welcome_back">Welcome back</string>
+
+    <string name="your_guide">Your guide</string>
 </resources>

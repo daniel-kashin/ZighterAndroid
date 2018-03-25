@@ -8,10 +8,10 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:elevation="8dp"
+        android:background="@android:color/white"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:focusableInTouchMode="true"
-        app:theme="@style/ToolbarColoredBackArrow">
+        android:focusableInTouchMode="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -22,7 +22,7 @@
                 android:maxLines="1"
                 android:singleLine="true"
                 android:textSize="20sp"
-                android:textColorHint="@color/hintText"
+                android:textColorHint="@color/secondaryText"
                 android:background="@android:color/transparent"
                 android:hint="@string/search_excursions"
                 android:textStyle="bold"

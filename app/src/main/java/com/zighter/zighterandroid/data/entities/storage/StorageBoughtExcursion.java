@@ -38,7 +38,6 @@ public class StorageBoughtExcursion {
     String owner;
 
     @StorIOSQLiteColumn(name = COLUMN_IMAGE_URL)
-    @Nullable
     String imageUrl;
 
     @StorIOSQLiteColumn(name = COLUMN_IS_GUIDE_AVAILABLE)
@@ -66,7 +65,7 @@ public class StorageBoughtExcursion {
                                   @NonNull String name,
                                   @NonNull String location,
                                   @NonNull String owner,
-                                  @Nullable String imageUrl,
+                                  @NonNull String imageUrl,
                                   boolean isGuideAvailable,
                                   boolean isMediaAvailable,
                                   boolean isRouteAvailable,
@@ -101,7 +100,7 @@ public class StorageBoughtExcursion {
         return location;
     }
 
-    @Nullable
+    @NonNull
     public String getImageUrl() {
         return imageUrl;
     }

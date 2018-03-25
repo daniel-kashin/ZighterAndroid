@@ -12,14 +12,17 @@ import com.pushtorefresh.storio3.sqlite.queries.DeleteQuery;
 import com.pushtorefresh.storio3.sqlite.queries.Query;
 import com.zighter.zighterandroid.data.database.StorageBoughtExcursionContract;
 import com.zighter.zighterandroid.data.database.StorageExcursionContract;
+import com.zighter.zighterandroid.data.database.StorageGuideContract;
 import com.zighter.zighterandroid.data.database.StorageMediaContract;
 import com.zighter.zighterandroid.data.database.StoragePathContract;
 import com.zighter.zighterandroid.data.database.StoragePointContract;
 import com.zighter.zighterandroid.data.database.StorageSightContract;
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
+import com.zighter.zighterandroid.data.entities.presentation.Guide;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageExcursion;
+import com.zighter.zighterandroid.data.entities.storage.StorageGuide;
 import com.zighter.zighterandroid.data.entities.storage.StoragePath;
 import com.zighter.zighterandroid.data.entities.storage.StoragePoint;
 import com.zighter.zighterandroid.data.entities.storage.StorageMedia;
@@ -39,6 +42,33 @@ public class ExcursionStorage extends BaseStorage {
     }
 
     @NonNull
+    Single<Optional<StorageGuide>> getGuide(@NonNull String excursionUuid) {
+        return Single.fromCallable(() -> {
+            StorageGuide storageGuide = getSqLite().get()
+                    .object(StorageGuide.class)
+                    .withQuery(Query.builder()
+                    .table(StorageGuideContract.TABLE_NAME)
+                    .where(StorageGuideContract.COLUMN_UUID + " = ?")
+                    .whereArgs(excursionUuid)
+                    .build())
+                    .prepare()
+                    .executeAsBlocking();
+
+            return Optional.Companion.of(storageGuide);
+        });
+    }
+
+    @NonNull
+    Single<PutResult> saveGuide(@NonNull StorageGuide storageGuide) {
+        return Single.fromCallable(() -> {
+            return getSqLite().put()
+                    .object(storageGuide)
+                    .prepare()
+                    .executeAsBlocking();
+        });
+    }
+
+    @NonNull
     Single<Optional<StorageExcursion>> getExcursion(@NonNull String excursionUuid) {
         return Single.fromCallable(() -> {
             StorageExcursion storageExcursion = getSqLite().get()
@@ -55,6 +85,7 @@ public class ExcursionStorage extends BaseStorage {
         });
     }
 
+    @NonNull
     Single<PutResult> saveExcursion(@NonNull StorageExcursion storageExcursion) {
         return Single.fromCallable(() -> {
             return getSqLite().put()

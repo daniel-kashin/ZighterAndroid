@@ -10,4 +10,8 @@ public class Image extends DrawableMedia {
                  @Nullable String description) {
         super(url, path, title, description);
     }
+
+    public Image(@NonNull String url) {
+        super(url, null, null, null);
+    }
 }

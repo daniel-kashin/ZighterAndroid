@@ -38,6 +38,7 @@ import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
 import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
+import com.zighter.zighterandroid.presentation.login.LoginActivity;
 import com.zighter.zighterandroid.util.media.IconHelper;
 import com.zighter.zighterandroid.util.media.IconHelperType;
 import com.zighter.zighterandroid.util.LocationSettingsHelper;
@@ -287,6 +288,15 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 });
             }
         }
+    }
+
+    @Override
+    public void showNotAuthorizedException() {
+        if (getContext() == null) {
+            return;
+        }
+
+        LoginActivity.start(getContext());
     }
 
     @Override

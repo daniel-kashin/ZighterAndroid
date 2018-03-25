@@ -11,4 +11,6 @@
 
     <color name="secondaryTextWhite">#8affffff</color>
     <color name="primaryTextWhite">#deffffff</color>
+
+    <color name="zighterPrimary">#2E8B57</color>
 </resources>

@@ -30,4 +30,7 @@ interface SearchView extends MvpView {
 
     @StateStrategyType(SingleStateStrategy.class)
     void showServerException();
+
+    @StateStrategyType(SingleStateStrategy.class)
+    void showNotAuthorizedException();
 }

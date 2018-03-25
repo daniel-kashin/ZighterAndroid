@@ -5,8 +5,10 @@ import android.support.annotation.Nullable;
 
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
 import com.zighter.zighterandroid.data.entities.presentation.Excursion;
+import com.zighter.zighterandroid.data.entities.presentation.Guide;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
+import com.zighter.zighterandroid.data.entities.service.ServiceGuide;
 import com.zighter.zighterandroid.data.entities.service.ServicePath;
 import com.zighter.zighterandroid.data.entities.service.ServiceSight;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
@@ -14,8 +16,8 @@ import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Media;
 import com.zighter.zighterandroid.data.entities.media.Video;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursion;
+import com.zighter.zighterandroid.data.entities.storage.StorageGuide;
 import com.zighter.zighterandroid.data.exception.ServerResponseValidationException;
-import com.zighter.zighterandroid.data.file.FileHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,9 +58,40 @@ public class ExcursionMapper {
     }
 
     @NonNull
-    public Excursion fromService(@NonNull ServiceExcursion serviceExcursion)
-            throws ServerResponseValidationException {
+    public Guide fromService(@NonNull ServiceGuide guide) throws ServerResponseValidationException {
+        guide = guide.tryGetValidOrThrowException();
 
+        // TODO: remove
+        return new Guide("",
+                         guide.getUsername(),
+                         "John",
+                         "Travolta",
+                         guide.getPhone(),
+                         guide.getEmail());
+    }
+
+    @NonNull
+    public Guide fromStorage(@NonNull StorageGuide guide) {
+        return new Guide(guide.getUuid(),
+                         guide.getUsername(),
+                         guide.getFirstName(),
+                         guide.getLastName(),
+                         guide.getPhone(),
+                         guide.getEmail());
+    }
+
+    @NonNull
+    public StorageGuide toStorage(@NonNull Guide guide) {
+        return new StorageGuide(guide.getUuid(),
+                                guide.getUsername(),
+                                guide.getFirstName(),
+                                guide.getLastName(),
+                                guide.getPhone(),
+                                guide.getEmail());
+    }
+
+    @NonNull
+    public Excursion fromService(@NonNull ServiceExcursion serviceExcursion) throws ServerResponseValidationException {
         serviceExcursion = serviceExcursion.tryGetValidOrThrowException();
 
         int sightSize = serviceExcursion.getSightSize();
@@ -97,8 +130,7 @@ public class ExcursionMapper {
 
     @NonNull
     public List<BoughtExcursion> fromServiceAndStorage(@NonNull List<ServiceBoughtExcursion> serviceBoughtExcursions,
-                                                       @Nullable List<StorageBoughtExcursion> storageBoughtExcursions,
-                                                       @NonNull FileHelper fileHelper) {
+                                                       @Nullable List<StorageBoughtExcursion> storageBoughtExcursions) {
         List<BoughtExcursion> result = new ArrayList<>();
 
         for (ServiceBoughtExcursion serviceBoughtExcursion : serviceBoughtExcursions) {
@@ -107,7 +139,7 @@ public class ExcursionMapper {
                 boolean isGuideSaved = isGuideSaved(boughtExcursionCopy, storageBoughtExcursions);
                 boolean isMediaSaved = isMediaSaved(boughtExcursionCopy, storageBoughtExcursions);
                 boolean isRouteSaved = isRouteSaved(boughtExcursionCopy, storageBoughtExcursions);
-                result.add(fromService(serviceBoughtExcursion, isGuideSaved, isMediaSaved, isRouteSaved, fileHelper));
+                result.add(fromService(serviceBoughtExcursion, isGuideSaved, isMediaSaved, isRouteSaved));
             }
         }
 
@@ -115,12 +147,11 @@ public class ExcursionMapper {
     }
 
     @NonNull
-    public List<BoughtExcursion> fromStorage(@NonNull List<StorageBoughtExcursion> storageBoughtExcursions,
-                                             @NonNull FileHelper fileHelper) {
+    public List<BoughtExcursion> fromStorage(@NonNull List<StorageBoughtExcursion> storageBoughtExcursions) {
         List<BoughtExcursion> result = new ArrayList<>(storageBoughtExcursions.size());
 
         for (StorageBoughtExcursion storageBoughtExcursion : storageBoughtExcursions) {
-            result.add(fromStorage(storageBoughtExcursion, fileHelper));
+            result.add(fromStorage(storageBoughtExcursion));
         }
 
         return result;
@@ -139,15 +170,11 @@ public class ExcursionMapper {
 
     @NonNull
     private StorageBoughtExcursion toStorage(@NonNull BoughtExcursion boughtExcursion) {
-        String image = boughtExcursion.getImage() != null
-                ? boughtExcursion.getImage().getUrl()
-                : null;
-
         return new StorageBoughtExcursion(boughtExcursion.getUuid(),
                                           boughtExcursion.getName(),
                                           boughtExcursion.getLocation(),
                                           boughtExcursion.getOwner(),
-                                          image,
+                                          boughtExcursion.getImage().getUrl(),
                                           boughtExcursion.isGuideAvailable(),
                                           boughtExcursion.isMediaAvailable(),
                                           boughtExcursion.isRouteAvailable(),
@@ -157,13 +184,12 @@ public class ExcursionMapper {
     }
 
     @NonNull
-    public BoughtExcursion fromStorage(@NonNull StorageBoughtExcursion storageBoughtExcursion,
-                                       @NonNull FileHelper fileHelper) {
+    public BoughtExcursion fromStorage(@NonNull StorageBoughtExcursion storageBoughtExcursion) {
         return new BoughtExcursion(storageBoughtExcursion.getUuid(),
                                    storageBoughtExcursion.getName(),
                                    storageBoughtExcursion.getOwner(),
                                    storageBoughtExcursion.getLocation(),
-                                   fileHelper.getImage(storageBoughtExcursion.getImageUrl()),
+                                   new Image(storageBoughtExcursion.getImageUrl()),
                                    storageBoughtExcursion.isGuideAvailable(),
                                    storageBoughtExcursion.isMediaAvailable(),
                                    storageBoughtExcursion.isRouteAvailable(),
@@ -176,13 +202,12 @@ public class ExcursionMapper {
     private BoughtExcursion fromService(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
                                         boolean isGuideSaved,
                                         boolean isMediaSaved,
-                                        boolean isRouteSaved,
-                                        @NonNull FileHelper fileHelper) {
+                                        boolean isRouteSaved) {
         return new BoughtExcursion(serviceBoughtExcursion.getUuid(),
                                    serviceBoughtExcursion.getName(),
                                    serviceBoughtExcursion.getOwner(),
                                    serviceBoughtExcursion.getLocation(),
-                                   fileHelper.getImage(serviceBoughtExcursion.getImageUrl()),
+                                   new Image(serviceBoughtExcursion.getImageUrl()),
                                    serviceBoughtExcursion.isGuideAvailable(),
                                    serviceBoughtExcursion.isMediaAvailable(),
                                    serviceBoughtExcursion.isRouteAvailable(),

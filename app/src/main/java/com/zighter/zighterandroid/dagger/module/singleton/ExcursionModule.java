@@ -4,11 +4,11 @@ import android.content.Context;
 
 import com.pushtorefresh.storio3.sqlite.StorIOSQLite;
 import com.zighter.zighterandroid.data.entities.mapper.ExcursionMapper;
-import com.zighter.zighterandroid.data.file.FileHelper;
 import com.zighter.zighterandroid.data.job_manager.JobManagerWrapper;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionService;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionStorage;
+import com.zighter.zighterandroid.data.repositories.token.TokenStorage;
 
 import javax.inject.Singleton;
 
@@ -43,12 +43,12 @@ public class ExcursionModule {
                                                    ExcursionStorage excursionStorage,
                                                    ExcursionMapper excursionMapper,
                                                    JobManagerWrapper jobManager,
-                                                   FileHelper fileHelper) {
+                                                   TokenStorage tokenStorage) {
         return new ExcursionRepository(context,
                                        excursionService,
                                        excursionStorage,
                                        excursionMapper,
                                        jobManager,
-                                       fileHelper);
+                                       tokenStorage);
     }
 }

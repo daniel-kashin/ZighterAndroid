@@ -1,7 +1,9 @@
 package com.zighter.zighterandroid.presentation.bottom_navigation;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -25,6 +27,11 @@ import io.reactivex.schedulers.Schedulers;
 import static com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationContract.ACTION_OPEN_ACTIVITY;
 
 public class BottomNavigationActivity extends BaseSupportActivity {
+    public static void start(@NonNull Context context) {
+        Intent intent = new Intent(context, BottomNavigationActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        context.startActivity(intent);
+    }
 
     @BindView(R.id.bottom_navigation)
     BottomNavigationView bottomNavigationView;

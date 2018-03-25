@@ -11,19 +11,19 @@ import static com.zighter.zighterandroid.util.BooleanHelper.toBoolean;
 
 @SuppressWarnings("WeakerAccess")
 public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
-    @SerializedName("excursion__id")
+    @SerializedName("excursion_id")
     @Nullable
     String uuid;
-    @SerializedName("excursion__name")
+    @SerializedName("excursion_name")
     @Nullable
     String name;
-    @SerializedName("user__username")
+    @SerializedName("provider_username")
     @Nullable
     String owner;
-    @SerializedName("excursion__location")
+    @SerializedName("excursion_location")
     @Nullable
     String location;
-    @SerializedName("excursion__image_url")
+    @SerializedName("excursion_image_url")
     @Nullable
     String imageUrl;
     @SerializedName("has_route")
@@ -119,7 +119,9 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
                                               owner,
                                               location,
                                               imageUrl,
-                                              isRouteAvailable(), isMediaAvailable(), isGuideAvailable());
+                                              isRouteAvailable(),
+                                              isMediaAvailable(),
+                                              isGuideAvailable());
         }
 
         return this;

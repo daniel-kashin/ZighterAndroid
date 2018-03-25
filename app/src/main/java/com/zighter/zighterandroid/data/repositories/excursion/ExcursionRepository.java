@@ -2,11 +2,9 @@ package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 
-import com.bumptech.glide.signature.ObjectKey;
 import com.pushtorefresh.storio3.sqlite.operations.delete.DeleteResult;
 import com.pushtorefresh.storio3.sqlite.operations.put.PutResult;
 import com.pushtorefresh.storio3.sqlite.operations.put.PutResults;
@@ -14,16 +12,20 @@ import com.zighter.zighterandroid.data.entities.media.Audio;
 import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Media;
 import com.zighter.zighterandroid.data.entities.media.Video;
+import com.zighter.zighterandroid.data.entities.presentation.Guide;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServicePath;
 import com.zighter.zighterandroid.data.entities.service.ServicePoint;
+import com.zighter.zighterandroid.data.entities.service.ServiceToken;
 import com.zighter.zighterandroid.data.entities.storage.StorageExcursion;
+import com.zighter.zighterandroid.data.entities.storage.StorageGuide;
 import com.zighter.zighterandroid.data.entities.storage.StoragePath;
 import com.zighter.zighterandroid.data.entities.storage.StoragePoint;
 import com.zighter.zighterandroid.data.entities.storage.StorageMedia;
 import com.zighter.zighterandroid.data.entities.storage.StorageSight;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
+import com.zighter.zighterandroid.data.exception.ServerNotAuthorizedException;
 import com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionJob;
 import com.zighter.zighterandroid.data.job_manager.download_excursion.DownloadExcursionNotificationContract;
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
@@ -31,15 +33,13 @@ import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWith
 import com.zighter.zighterandroid.data.entities.mapper.ExcursionMapper;
 import com.zighter.zighterandroid.data.entities.presentation.Excursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursion;
-import com.zighter.zighterandroid.data.file.FileHelper;
 import com.zighter.zighterandroid.data.job_manager.JobManagerWrapper;
 import com.zighter.zighterandroid.data.mapbox.MapboxHelper;
+import com.zighter.zighterandroid.data.repositories.token.TokenStorage;
 import com.zighter.zighterandroid.util.Optional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.Executor;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -59,7 +59,7 @@ public class ExcursionRepository {
     @NonNull
     private final JobManagerWrapper jobManagerWrapper;
     @NonNull
-    private final FileHelper fileHelper;
+    private final TokenStorage tokenStorage;
     @NonNull
     private final Context applicationContext;
 
@@ -68,21 +68,34 @@ public class ExcursionRepository {
                                @NonNull ExcursionStorage excursionStorage,
                                @NonNull ExcursionMapper excursionMapper,
                                @NonNull JobManagerWrapper jobManagerWrapper,
-                               @NonNull FileHelper fileHelper) {
+                               @NonNull TokenStorage tokenStorage) {
         this.applicationContext = applicationContext;
         this.excursionService = excursionService;
         this.excursionStorage = excursionStorage;
         this.excursionMapper = excursionMapper;
         this.jobManagerWrapper = jobManagerWrapper;
-        this.fileHelper = fileHelper;
+        this.tokenStorage = tokenStorage;
+    }
+
+    @NonNull
+    public Single<String> login(@NonNull String username, @NonNull String password) {
+        return excursionService.login(username, password)
+                .map(ServiceToken::getToken)
+                .doOnSuccess(token -> tokenStorage.saveToken(token))
+                .doOnError(error -> tokenStorage.saveToken(null));
     }
 
     @NonNull
     public Single<Excursion> getExcursion(@NonNull String excursionUuid) {
-        return excursionService.getExcursion(excursionUuid)
+        return tokenStorage.getTokenSingle()
+                .flatMap(token -> excursionService.getExcursion(excursionUuid, token))
                 .map(excursionMapper::fromService)
                 .doOnSuccess(excursion -> saveExcursionToStorage(excursion).blockingAwait())
                 .onErrorResumeNext(throwable -> {
+                    if (throwable instanceof ServerNotAuthorizedException) {
+                        return Single.error(throwable);
+                    }
+
                     return getExcursionFromStorage(excursionUuid)
                             .flatMap(fromStorageOptional -> {
                                 Excursion fromStorage = fromStorageOptional.get();
@@ -96,32 +109,52 @@ public class ExcursionRepository {
     }
 
     @NonNull
+    public Single<Guide> getGuide(@NonNull String excursionUuid) {
+        return tokenStorage.getTokenSingle()
+                .flatMap(token -> excursionService.getGuide(excursionUuid, token))
+                .map(excursionMapper::fromService)
+                .doOnSuccess(guide -> excursionStorage.saveGuide(excursionMapper.toStorage(guide)).blockingGet())
+                .onErrorResumeNext(throwable -> {
+                   if (throwable instanceof ServerNotAuthorizedException) {
+                       return Single.error(throwable);
+                   }
+
+                   return excursionStorage.getGuide(excursionUuid)
+                           .flatMap(fromStorageOptional -> {
+                               StorageGuide guide = fromStorageOptional.get();
+                               if (guide != null) {
+                                   return Single.just(excursionMapper.fromStorage(guide));
+                               }
+
+                               return Single.error(throwable);
+                           });
+                });
+    }
+
+    @NonNull
     public Single<List<BoughtExcursionWithStatus>> getBoughtExcursions() {
         return Single.zip(
-                excursionService.getBoughtExcursionsOrException(),
+                tokenStorage.getTokenSingle().flatMap(excursionService::getBoughtExcursionsOrException),
+
                 excursionStorage.getBoughtExcursions(),
 
-                (pair, listFromStorageOptional) -> {
-                    List<ServiceBoughtExcursion> listFromService = pair.first;
+                (listFromServiceOrException, listFromStorageOptional) -> {
+                    List<ServiceBoughtExcursion> listFromService = listFromServiceOrException.first;
                     List<StorageBoughtExcursion> listFromStorage = listFromStorageOptional.get();
 
                     if (listFromService == null) {
                         if (listFromStorage == null || listFromStorage.isEmpty()) {
-                            throw pair.second;
+                            throw listFromServiceOrException.second;
                         } else {
-                            return excursionMapper.fromStorage(listFromStorage, fileHelper);
+                            return excursionMapper.fromStorage(listFromStorage);
                         }
                     }
 
-                    List<BoughtExcursion> boughtExcursions = excursionMapper
-                            .fromServiceAndStorage(listFromService, listFromStorage, fileHelper);
+                    List<BoughtExcursion> boughtExcursions =
+                            excursionMapper.fromServiceAndStorage(listFromService, listFromStorage);
 
-                    DeleteResult deleteResult = excursionStorage
-                            .deleteBoughtExcursions()
-                            .blockingGet();
-                    PutResults<StorageBoughtExcursion> results = excursionStorage
-                            .saveBoughtExcursions(excursionMapper.toStorage(boughtExcursions))
-                            .blockingGet();
+                    excursionStorage.deleteBoughtExcursions().blockingGet();
+                    excursionStorage.saveBoughtExcursions(excursionMapper.toStorage(boughtExcursions)).blockingGet();
 
                     return boughtExcursions;
                 })
@@ -171,19 +204,23 @@ public class ExcursionRepository {
                     return;
                 }
 
-                StorageBoughtExcursion fromStorage = excursionStorage
+                StorageBoughtExcursion boughtExcursion = excursionStorage
                         .getBoughtExcursion(excursionUuid)
                         .blockingGet()
                         .get();
 
-                if (fromStorage == null) {
+                if (boughtExcursion == null) {
                     source.onError(new IllegalStateException());
                     return;
                 }
 
-                // TODO: download guide
+                if (boughtExcursion.isGuideAvailable() && !boughtExcursion.isGuideSaved()) {
+                    Guide guide = getGuide(excursionUuid).blockingGet();
+                    boughtExcursion.setGuideSaved(true);
+                    excursionStorage.saveBoughtExcursion(boughtExcursion).blockingGet();
+                }
 
-                if (fromStorage.isRouteAvailable() && !fromStorage.isRouteSaved()) {
+                if (boughtExcursion.isRouteAvailable() && !boughtExcursion.isRouteSaved()) {
                     Excursion excursion = getExcursion(excursionUuid).blockingGet();
 
                     // download map
@@ -215,12 +252,10 @@ public class ExcursionRepository {
                         public void onComplete() {
                             synchronized (lock) {
                                 Log.d(TAG, "onComplete");
-                                // TODO: download media
-
                                 source.onNext(new DownloadProgress(DownloadProgress.Type.JSON));
 
-                                fromStorage.setRouteSaved(true);
-                                excursionStorage.saveBoughtExcursion(fromStorage).blockingGet();
+                                boughtExcursion.setRouteSaved(true);
+                                excursionStorage.saveBoughtExcursion(boughtExcursion).blockingGet();
 
                                 source.onComplete();
                             }
@@ -324,7 +359,7 @@ public class ExcursionRepository {
     private Completable saveExcursionToStorage(@NonNull Excursion excursion) {
         return Completable.fromAction(() -> {
             // save paths
-            DeleteResult deleteResult = excursionStorage.deletePaths(excursion.getUuid()).blockingGet();
+            excursionStorage.deletePaths(excursion.getUuid()).blockingGet();
             for (int i = 0; i < excursion.getPathSize(); ++i) {
                 ServicePath path = excursion.getPathAt(i);
                 List<StoragePoint> storagePoints = new ArrayList<>(path.getPointSize());
@@ -333,14 +368,13 @@ public class ExcursionRepository {
                     storagePoints.add(new StoragePoint(path.getUuid(), excursion.getUuid(), point.getLongitude(), point.getLatitude()));
                 }
 
-                deleteResult = excursionStorage.deletePoints(path.getUuid(), excursion.getUuid()).blockingGet();
-                PutResults<StoragePoint> putResults = excursionStorage.savePoints(storagePoints).blockingGet();
-                PutResult putResult = excursionStorage.savePath(new StoragePath(path.getUuid(), excursion.getUuid())).blockingGet();
+                excursionStorage.deletePoints(path.getUuid(), excursion.getUuid()).blockingGet();
+                excursionStorage.savePoints(storagePoints).blockingGet();
+                excursionStorage.savePath(new StoragePath(path.getUuid(), excursion.getUuid())).blockingGet();
             }
 
             // save sights
-            deleteResult = excursionStorage.deleteSights(excursion.getUuid()).blockingGet();
-            PutResult sightPutResult = null;
+            excursionStorage.deleteSights(excursion.getUuid()).blockingGet();
             for (int i = 0; i < excursion.getSightSize(); ++i) {
                 Sight sight = excursion.getSightAt(i);
 
@@ -366,9 +400,9 @@ public class ExcursionRepository {
                     }
                 }
 
-                deleteResult = excursionStorage.deleteMedias(sight.getUuid(), excursion.getUuid()).blockingGet();
-                PutResults<StorageMedia> putResults = excursionStorage.saveMedias(storageMedia).blockingGet();
-                sightPutResult = excursionStorage.saveSight(new StorageSight(sight.getUuid(),
+                excursionStorage.deleteMedias(sight.getUuid(), excursion.getUuid()).blockingGet();
+                excursionStorage.saveMedias(storageMedia).blockingGet();
+                excursionStorage.saveSight(new StorageSight(sight.getUuid(),
                                                                              excursion.getUuid(),
                                                                              sight.getName(),
                                                                              sight.getType(),
@@ -390,8 +424,7 @@ public class ExcursionRepository {
                                                                      excursion.getEastSouthMapBound().getLatitude(),
                                                                      excursion.getMinMapZoom(),
                                                                      excursion.getMaxMapZoom());
-            PutResult putResult = excursionStorage.saveExcursion(storageExcursion).blockingGet();
-
+            excursionStorage.saveExcursion(storageExcursion).blockingGet();
         });
     }
 }

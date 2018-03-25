@@ -36,4 +36,7 @@ interface ExcursionMapView extends MvpView {
 
     @StateStrategyType(SkipStrategy.class)
     void updateLocationAvailability(boolean isPermissionGranted, boolean isLocationProviderEnabled);
+
+    @StateStrategyType(SingleStateStrategy.class)
+    void showNotAuthorizedException();
 }
