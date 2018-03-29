@@ -21,7 +21,7 @@
                 android:id="@+id/toolbar_search"
                 android:maxLines="1"
                 android:singleLine="true"
-                android:textSize="20sp"
+                android:textSize="18sp"
                 android:textColorHint="@color/secondaryText"
                 android:background="@android:color/transparent"
                 android:hint="@string/search_excursions"

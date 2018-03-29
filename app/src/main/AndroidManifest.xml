@@ -26,13 +26,6 @@
         <activity android:name=".presentation.login.LoginActivity"
             android:enabled="true"
             android:label="Login">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-            <intent-filter>
-                <action android:name="ACTION_OPEN_ACTIVITY" />
-            </intent-filter>
         </activity>
 
         <activity android:name=".presentation.splash.SplashActivity"

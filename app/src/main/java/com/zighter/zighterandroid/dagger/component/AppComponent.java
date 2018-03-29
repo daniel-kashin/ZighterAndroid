@@ -44,5 +44,7 @@ public interface AppComponent {
 
     GuideComponent plusGuideComponent();
 
+    AccountComponent plusAccountComponent();
+
     void inject(SplashActivity splashActivity);
 }

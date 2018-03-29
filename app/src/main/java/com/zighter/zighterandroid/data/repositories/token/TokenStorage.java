@@ -14,6 +14,7 @@ import io.reactivex.Single;
 public class TokenStorage {
     private static final String TOKEN_PREFERENCES = "TOKEN_PREFERENCES";
     private static final String KEY_TOKEN = "KEY_TOKEN";
+    private static final String KEY_LOGIN = "KEY_LOGIN";
 
     @NonNull
     private final SharedPreferences sharedPreferences;
@@ -29,20 +30,11 @@ public class TokenStorage {
                 .commit();
     }
 
-    @Nullable
-    public String getToken() {
-        return sharedPreferences.getString(KEY_TOKEN, null);
-    }
-
-    @NonNull
-    public String getTokenOrThrowException() throws ServerNotAuthorizedException {
-        String token = getToken();
-
-        if (token == null) {
-            throw new ServerNotAuthorizedException(null);
-        }
-
-        return token;
+    @SuppressLint("ApplySharedPref")
+    public void saveLogin(@Nullable String login) {
+        sharedPreferences.edit()
+                .putString(KEY_LOGIN, login)
+                .commit();
     }
 
     @NonNull
@@ -50,7 +42,44 @@ public class TokenStorage {
         return Single.fromCallable(this::getTokenOrThrowException);
     }
 
+    @NonNull
+    public Single<String> getLoginSingle() {
+        return Single.fromCallable(this::getLoginOrThrowException);
+    }
+
     public boolean isTokenPresent() {
         return getToken() != null;
+    }
+
+    @Nullable
+    private String getToken() {
+        return sharedPreferences.getString(KEY_TOKEN, null);
+    }
+
+    @Nullable
+    private String getLogin() {
+        return sharedPreferences.getString(KEY_LOGIN, null);
+    }
+
+    @NonNull
+    private String getLoginOrThrowException() throws ServerNotAuthorizedException {
+        String login = getLogin();
+
+        if (login == null) {
+            throw new ServerNotAuthorizedException(null);
+        }
+
+        return login;
+    }
+
+    @NonNull
+    private String getTokenOrThrowException() throws ServerNotAuthorizedException {
+        String token = getToken();
+
+        if (token == null) {
+            throw new ServerNotAuthorizedException(null);
+        }
+
+        return token;
     }
 }

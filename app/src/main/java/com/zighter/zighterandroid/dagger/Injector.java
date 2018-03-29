@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.UiThread;
 
+import com.zighter.zighterandroid.dagger.component.AccountComponent;
 import com.zighter.zighterandroid.dagger.component.AppComponent;
 import com.zighter.zighterandroid.dagger.component.BoughtExcursionsComponent;
 import com.zighter.zighterandroid.dagger.component.DaggerAppComponent;
@@ -62,6 +63,8 @@ public class Injector {
     private WeakReference<LoginComponent> loginPresenterWeakReference;
     @NonNull
     private WeakReference<GuideComponent> guideComponentWeakReference;
+    @NonNull
+    private WeakReference<AccountComponent> accountComponentWeakReference;
 
     @UiThread
     private Injector(@NonNull Context context) {
@@ -76,6 +79,7 @@ public class Injector {
         searchComponentWeakReference = new WeakReference<>(null);
         loginPresenterWeakReference = new WeakReference<>(null);
         guideComponentWeakReference = new WeakReference<>(null);
+        accountComponentWeakReference = new WeakReference<>(null);
     }
 
     @NonNull
@@ -154,5 +158,14 @@ public class Injector {
             guideComponentWeakReference = new WeakReference<>(appComponent.plusGuideComponent());
         }
         return guideComponentWeakReference.get();
+    }
+
+    @NonNull
+    @UiThread
+    public AccountComponent getAccountComponent() {
+        if (accountComponentWeakReference.get() == null) {
+            accountComponentWeakReference = new WeakReference<>(appComponent.plusAccountComponent());
+        }
+        return accountComponentWeakReference.get();
     }
 }

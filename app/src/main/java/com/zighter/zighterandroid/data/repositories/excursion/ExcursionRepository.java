@@ -2,6 +2,7 @@ package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 
@@ -81,8 +82,30 @@ public class ExcursionRepository {
     public Single<String> login(@NonNull String username, @NonNull String password) {
         return excursionService.login(username, password)
                 .map(ServiceToken::getToken)
-                .doOnSuccess(token -> tokenStorage.saveToken(token))
-                .doOnError(error -> tokenStorage.saveToken(null));
+                .doOnSuccess(token -> {
+                    excursionStorage.deleteAllData();
+                    tokenStorage.saveToken(token);
+                    tokenStorage.saveLogin(username);
+                })
+                .doOnError(error -> {
+                    excursionStorage.deleteAllData();
+                    tokenStorage.saveToken(null);
+                    tokenStorage.saveLogin(null);
+                });
+    }
+
+    @NonNull
+    public Single<String> getLogin() {
+        return tokenStorage.getLoginSingle();
+    }
+
+    @NonNull
+    public Completable logOut() {
+        return excursionStorage.deleteAllData()
+                .doOnComplete(() -> {
+                    tokenStorage.saveToken(null);
+                    tokenStorage.saveLogin(null);
+                });
     }
 
     @NonNull

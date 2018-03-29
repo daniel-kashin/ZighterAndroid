@@ -33,15 +33,15 @@
                     android:gravity="center_vertical"
                     android:maxLines="1"
                     android:singleLine="true"
-                    android:textColor="@android:color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold"
+                    android:textColor="@color/primaryText"
+                    android:textSize="18sp"
                     tools:text="Title" />
 
                 <ImageView
                     android:id="@+id/icon_guide"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
+                    android:alpha="0.7"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
                     android:layout_marginEnd="15dp"

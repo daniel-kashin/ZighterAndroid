@@ -369,7 +369,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 mapboxMap.addPolyline(new PolylineOptions()
                                               .addAll(points)
                                               .color(ContextCompat.getColor(getContext(), R.color.navigationBlue))
-                                              .alpha(0.7f)
+                                              .alpha(0.85f)
                                               .width(3f));
             }
 

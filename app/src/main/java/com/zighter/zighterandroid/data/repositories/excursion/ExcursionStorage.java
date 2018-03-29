@@ -1,11 +1,9 @@
 package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
 import com.pushtorefresh.storio3.sqlite.StorIOSQLite;
 import com.pushtorefresh.storio3.sqlite.operations.delete.DeleteResult;
-import com.pushtorefresh.storio3.sqlite.operations.delete.DeleteResults;
 import com.pushtorefresh.storio3.sqlite.operations.put.PutResult;
 import com.pushtorefresh.storio3.sqlite.operations.put.PutResults;
 import com.pushtorefresh.storio3.sqlite.queries.DeleteQuery;
@@ -17,9 +15,6 @@ import com.zighter.zighterandroid.data.database.StorageMediaContract;
 import com.zighter.zighterandroid.data.database.StoragePathContract;
 import com.zighter.zighterandroid.data.database.StoragePointContract;
 import com.zighter.zighterandroid.data.database.StorageSightContract;
-import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
-import com.zighter.zighterandroid.data.entities.presentation.Guide;
-import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageGuide;
@@ -32,6 +27,7 @@ import com.zighter.zighterandroid.util.Optional;
 
 import java.util.List;
 
+import io.reactivex.Completable;
 import io.reactivex.Single;
 
 @SuppressWarnings("UnusedReturnValue")
@@ -39,6 +35,28 @@ public class ExcursionStorage extends BaseStorage {
 
     public ExcursionStorage(@NonNull StorIOSQLite storIOSQLite) {
         super(storIOSQLite);
+    }
+
+    @NonNull
+    Completable deleteAllData() {
+        return Completable.fromAction(() -> {
+            deleteTableData(StorageBoughtExcursionContract.TABLE_NAME);
+            deleteTableData(StorageExcursionContract.TABLE_NAME);
+            deleteTableData(StorageGuideContract.TABLE_NAME);
+            deleteTableData(StorageMediaContract.TABLE_NAME);
+            deleteTableData(StoragePathContract.TABLE_NAME);
+            deleteTableData(StoragePointContract.TABLE_NAME);
+            deleteTableData(StorageSightContract.TABLE_NAME);
+        });
+    }
+
+    private void deleteTableData(@NonNull String tableName) {
+        getSqLite().delete()
+                .byQuery(DeleteQuery.builder()
+                                 .table(tableName)
+                                 .build())
+                .prepare()
+                .executeAsBlocking();
     }
 
     @NonNull
