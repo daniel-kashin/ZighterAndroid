@@ -1,15 +1,13 @@
 package com.zighter.zighterandroid.presentation.excursion.map;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -22,12 +20,12 @@ import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.annotations.PolylineOptions;
 import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.constants.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.storage.FileSource;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.presentation.Excursion;
@@ -103,6 +101,10 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
     ProgressBar progressBar;
     @BindView(R.id.location_image_view)
     ImageView locationImageView;
+    @BindView(R.id.zoom_in)
+    ImageView zoomIn;
+    @BindView(R.id.zoom_out)
+    ImageView zoomOut;
     @BindView(R.id.try_again)
     TextView tryAgain;
     @BindView(R.id.error_message)
@@ -166,6 +168,8 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
         locationImageView.setVisibility(View.INVISIBLE);
         tryAgain.setVisibility(View.INVISIBLE);
         errorMessage.setVisibility(View.INVISIBLE);
+        zoomIn.setVisibility(View.INVISIBLE);
+        zoomOut.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -336,7 +340,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 Sight sight = excursion.getSightAt(i);
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(new LatLng(sight.getLatitude(), sight.getLongitude()))
-                        .icon(IconFactory.getInstance(getContext()).defaultMarker())
+                        .icon(IconHelper.getIcon(getContext(), IconHelperType.SIGHT))
                         .title(sight.getName());
                 Marker marker = mapboxMap.addMarker(markerOptions);
                 markersToSights.put(marker, sight);
@@ -346,12 +350,15 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
             for (int i = 0; i < excursion.getPathSize(); ++i) {
                 ServicePath path = excursion.getPathAt(i);
 
-                ServicePoint firstEndpoint = path.getFirstEndpoint();
-                mapboxMap.addMarker(new MarkerOptions().position(new LatLng(firstEndpoint.getLatitude(),
-                                                                            firstEndpoint.getLongitude())));
-                ServicePoint secondEndpoint = path.getSecondEndpoint();
-                mapboxMap.addMarker(new MarkerOptions().position(new LatLng(secondEndpoint.getLatitude(),
-                                                                            secondEndpoint.getLongitude())));
+                ServicePoint first = path.getFirstEndpoint();
+                mapboxMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(first.getLatitude(), first.getLongitude()))
+                                            .icon(IconHelper.getIcon(getContext(), IconHelperType.ENDPOINT_START)));
+
+                ServicePoint second = path.getSecondEndpoint();
+                mapboxMap.addMarker(new MarkerOptions()
+                                            .position(new LatLng(second.getLatitude(), second.getLongitude()))
+                                            .icon(IconHelper.getIcon(getContext(), IconHelperType.ENDPOINT_END)));
 
                 List<LatLng> points = new ArrayList<>();
                 for (int j = 0; j < path.getPointSize(); ++j) {
@@ -361,26 +368,18 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
                 mapboxMap.addPolyline(new PolylineOptions()
                                               .addAll(points)
-                                              .color(Color.parseColor("#222222"))
-                                              .alpha(0.9f)
+                                              .color(ContextCompat.getColor(getContext(), R.color.navigationBlue))
+                                              .alpha(0.7f)
                                               .width(3f));
             }
 
             mapboxMap.setMaxZoomPreference(excursion.getMaxMapZoom());
             mapboxMap.setMinZoomPreference(excursion.getMinMapZoom());
 
-            //if (excursion.getEastSouthMapBound() != null && excursion.getWestNorthMapBound() != null) {
-            //    LatLngBounds latLngBounds = LatLngBounds.from(excursion.getWestNorthMapBound().getLatitude(),
-            //                                                 excursion.getEastSouthMapBound().getLongitude(),
-            //                                                 excursion.getEastSouthMapBound().getLatitude(),
-            //                                                 excursion.getWestNorthMapBound().getLongitude());
-            //    mapboxMap.setLatLngBoundsForCameraTarget(latLngBounds);
-            //}
-
             if (cameraPositionFromSavedInstanceState != null) {
                 mapboxMap.setCameraPosition(cameraPositionFromSavedInstanceState);
             } else {
-                LatLng latLng;
+                LatLng latLng = null;
                 if (excursion.getSightSize() != 0) {
                     latLng = new LatLng(excursion.getSightAt(0).getLatitude(),
                                         excursion.getSightAt(0).getLongitude());
@@ -389,16 +388,13 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                     if (path.getPointSize() != 0) {
                         latLng = new LatLng(path.getPointAt(0).getLatitude(),
                                             path.getPointAt(0).getLongitude());
-                    } else {
-                        latLng = null;
                     }
-                } else {
-                    latLng = null;
                 }
 
                 if (latLng != null) {
+                    final LatLng ll = latLng;
                     mapboxMap.moveCamera(mapboxMapInner -> new CameraPosition.Builder()
-                            .target(latLng)
+                            .target(ll)
                             .zoom(13)
                             .build());
                 }
@@ -414,11 +410,38 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                 return true;
             });
 
+            zoomIn.setOnClickListener(view -> {
+                mapboxMap.animateCamera(it -> {
+                    CameraPosition current = it.getCameraPosition();
+                    return new CameraPosition.Builder()
+                            .target(current.target)
+                            .zoom(current.zoom + 1)
+                            .tilt(current.tilt)
+                            .bearing(current.bearing)
+                            .build();
+                });
+            });
+
+            zoomOut.setOnClickListener(view -> {
+                mapboxMap.animateCamera(it -> {
+                    CameraPosition current = it.getCameraPosition();
+                    return new CameraPosition.Builder()
+                            .target(current.target)
+                            .zoom(current.zoom - 1)
+                            .tilt(current.tilt)
+                            .bearing(current.bearing)
+                            .build();
+                });
+            });
+
+
             hideLoading();
             tryAgain.setVisibility(View.INVISIBLE);
             errorMessage.setVisibility(View.INVISIBLE);
             map.setVisibility(View.VISIBLE);
             locationImageView.setVisibility(View.VISIBLE);
+            zoomOut.setVisibility(View.VISIBLE);
+            zoomIn.setVisibility(View.VISIBLE);
 
             logAllSightMarkers(mapboxMap);
         });
@@ -483,7 +506,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
             Marker previous = selectedMarker;
             if (previous != null) {
-                previous.setIcon(IconFactory.getInstance(getContext()).defaultMarker());
+                previous.setIcon(IconHelper.getIcon(getContext(), IconHelperType.SIGHT));
                 mapboxMap.updateMarker(previous);
             }
 

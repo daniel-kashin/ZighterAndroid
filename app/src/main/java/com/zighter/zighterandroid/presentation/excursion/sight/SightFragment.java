@@ -223,7 +223,7 @@ public class SightFragment extends BaseSupportFragment implements SightView,
             timetableSeparator.setVisibility(View.GONE);
         } else {
             sightTimetable.setVisibility(View.VISIBLE);
-            sightTimetable.setText(timetable);
+            sightTimetable.setText(fixTimetable(timetable));
             timetableSeparator.setVisibility(View.VISIBLE);
         }
 
@@ -271,6 +271,15 @@ public class SightFragment extends BaseSupportFragment implements SightView,
                 }
             });
         }
+    }
+
+    @NonNull
+    private String fixTimetable(@NonNull String timetable) {
+        if (timetable.endsWith(";")) {
+            timetable = timetable.substring(0, timetable.length() - 1);
+        }
+
+        return timetable.replace(";", "\n");
     }
 
     @Override
