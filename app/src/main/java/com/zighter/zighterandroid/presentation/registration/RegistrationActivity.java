@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.presentation.login;
+package com.zighter.zighterandroid.presentation.registration;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -17,57 +16,65 @@ import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.presentation.bottom_navigation.BottomNavigationActivity;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
-import com.zighter.zighterandroid.presentation.registration.RegistrationActivity;
+import com.zighter.zighterandroid.presentation.login.LoginPresenter;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
 import butterknife.BindView;
 
-public class LoginActivity extends BaseSupportActivity implements LoginView {
+public class RegistrationActivity extends BaseSupportActivity implements RegistrationView {
     public static void start(@NonNull Context context) {
-        Intent intent = new Intent(context, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Intent intent = new Intent(context, RegistrationActivity.class);
         context.startActivity(intent);
     }
 
     @InjectPresenter
-    LoginPresenter presenter;
+    RegistrationPresenter presenter;
 
     @ProvidePresenter
-    public LoginPresenter providePresenter() {
+    public RegistrationPresenter providePresenter() {
         return presenterProvider.get();
     }
 
     @Inject
-    Provider<LoginPresenter> presenterProvider;
+    Provider<RegistrationPresenter> presenterProvider;
 
     @Override
     protected void onInjectDependencies() {
         Injector.getInstance()
-                .getLoginComponent()
+                .getRegistrationComponent()
                 .inject(this);
+    }
+
+    @Override
+    protected int getLayoutId() {
+        return R.layout.activity_registration;
     }
 
     @BindView(R.id.username_layout)
     TextInputLayout usernameLayout;
     @BindView(R.id.password_layout)
     TextInputLayout passwordLayout;
+    @BindView(R.id.email_layout)
+    TextInputLayout emailLayout;
+    @BindView(R.id.first_name_layout)
+    TextInputLayout firstNameLayout;
+    @BindView(R.id.second_name_layout)
+    TextInputLayout secondNameLayout;
     @BindView(R.id.username)
     TextInputEditText username;
     @BindView(R.id.password)
     TextInputEditText password;
+    @BindView(R.id.email)
+    TextInputEditText email;
+    @BindView(R.id.first_name)
+    TextInputEditText firstName;
+    @BindView(R.id.second_name)
+    TextInputEditText secondName;
     @BindView(R.id.login_button)
     Button loginButton;
-    @BindView(R.id.new_at_zighter)
-    TextView newAtZighter;
 
-    @Override
-    protected int getLayoutId() {
-        return R.layout.activity_login;
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initializeView();
@@ -89,14 +96,27 @@ public class LoginActivity extends BaseSupportActivity implements LoginView {
                 passwordLayout.setError(getString(R.string.password_error));
             }
 
-            if (success) {
-                presenter.onLogin(usernameText, passwordText);
+            String emailText = email.getText().toString();
+            if (emailText.length() < 5) {
+                success = false;
+                emailLayout.setError(getString(R.string.email_error));
             }
-        });
 
-        newAtZighter.setPaintFlags(newAtZighter.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-        newAtZighter.setOnClickListener(view -> {
-            RegistrationActivity.start(this);
+            String firstNameText = firstName.getText().toString();
+            if (firstNameText.length() < 1) {
+                success = false;
+                firstNameLayout.setError(getString(R.string.first_name_error));
+            }
+
+            String secondNameText = secondName.getText().toString();
+            if (secondNameText.length() < 1) {
+                success = false;
+                secondNameLayout.setError(getString(R.string.first_name_error));
+            }
+
+            if (success) {
+                presenter.onRegister(emailText, firstNameText, secondNameText, passwordText, usernameText);
+            }
         });
     }
 

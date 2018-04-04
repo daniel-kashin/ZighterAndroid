@@ -6,6 +6,7 @@ import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus;
+import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursion;
 
 import java.util.List;
 
@@ -17,7 +18,7 @@ interface SearchView extends MvpView {
     void showEmptyExcursions();
 
     @StateStrategyType(SingleStateStrategy.class)
-    void showExcursions(@NonNull List<BoughtExcursionWithStatus> excursions);
+    void showExcursions(@NonNull List<ServiceSearchExcursion> excursions);
 
     @StateStrategyType(SingleStateStrategy.class)
     void showLoading();

@@ -18,6 +18,7 @@ import static com.zighter.zighterandroid.data.database.StorageBoughtExcursionCon
 import static com.zighter.zighterandroid.data.database.StorageBoughtExcursionContract.COLUMN_LOCATION;
 import static com.zighter.zighterandroid.data.database.StorageBoughtExcursionContract.COLUMN_NAME;
 import static com.zighter.zighterandroid.data.database.StorageBoughtExcursionContract.COLUMN_OWNER;
+import static com.zighter.zighterandroid.data.database.StorageBoughtExcursionContract.COLUMN_OWNER_UUID;
 import static com.zighter.zighterandroid.data.database.StorageBoughtExcursionContract.COLUMN_UUID;
 
 @StorIOSQLiteType(table = StorageBoughtExcursionContract.TABLE_NAME)
@@ -36,6 +37,9 @@ public class StorageBoughtExcursion {
 
     @StorIOSQLiteColumn(name = COLUMN_OWNER)
     String owner;
+
+    @StorIOSQLiteColumn(name = COLUMN_OWNER_UUID)
+    String ownerUuid;
 
     @StorIOSQLiteColumn(name = COLUMN_IMAGE_URL)
     String imageUrl;
@@ -65,6 +69,7 @@ public class StorageBoughtExcursion {
                                   @NonNull String name,
                                   @NonNull String location,
                                   @NonNull String owner,
+                                  @NonNull String ownerUuid,
                                   @NonNull String imageUrl,
                                   boolean isGuideAvailable,
                                   boolean isMediaAvailable,
@@ -83,6 +88,7 @@ public class StorageBoughtExcursion {
         this.isGuideSaved = isGuideSaved;
         this.isMediaSaved = isMediaSaved;
         this.owner = owner;
+        this.ownerUuid = ownerUuid;
     }
 
     @NonNull
@@ -108,6 +114,11 @@ public class StorageBoughtExcursion {
     @NonNull
     public String getOwner() {
         return owner;
+    }
+
+    @NonNull
+    public String getOwnerUuid() {
+        return ownerUuid;
     }
 
     public boolean isGuideAvailable() {

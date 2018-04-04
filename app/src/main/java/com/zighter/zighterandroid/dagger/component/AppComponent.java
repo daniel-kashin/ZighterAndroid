@@ -46,5 +46,7 @@ public interface AppComponent {
 
     AccountComponent plusAccountComponent();
 
+    RegistrationComponent plusRegistrationComponent();
+
     void inject(SplashActivity splashActivity);
 }

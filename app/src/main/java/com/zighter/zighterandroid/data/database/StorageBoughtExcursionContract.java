@@ -8,6 +8,7 @@ public class StorageBoughtExcursionContract {
     public static final String COLUMN_NAME = "name";
     public static final String COLUMN_LOCATION = "location";
     public static final String COLUMN_OWNER = "owner";
+    public static final String COLUMN_OWNER_UUID = "owner_uuid";
     public static final String COLUMN_IMAGE_URL = "image_url";
     public static final String COLUMN_IS_GUIDE_AVAILABLE = "is_guide_available";
     public static final String COLUMN_IS_MEDIA_AVAILABLE = "is_media_available";
@@ -22,6 +23,7 @@ public class StorageBoughtExcursionContract {
             + COLUMN_NAME + " TEXT NON NULL, "
             + COLUMN_LOCATION + " TEXT NON NULL, "
             + COLUMN_OWNER + " TEXT NON NULL, "
+            + COLUMN_OWNER_UUID + " TEXT NON NULL, "
             + COLUMN_IMAGE_URL + " TEXT NON NULL, "
             + COLUMN_IS_GUIDE_AVAILABLE + " INTEGER NON NULL, "
             + COLUMN_IS_MEDIA_AVAILABLE + " INTEGER NON NULL, "

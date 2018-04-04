@@ -18,7 +18,6 @@ import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import com.zighter.zighterandroid.R
 
-
 const val LOCATION_PERMISSION = Manifest.permission.ACCESS_FINE_LOCATION
 const val LOCATION_PERMISSION_REQUEST_CODE = 1223
 const val LOCATION_PROVIDER_REQUEST_CODE = 1224
@@ -91,28 +90,10 @@ fun getLastKnownLocation(locationManager: LocationManager, defaultLocation: Loca
     return location
 }
 
-fun shouldHandleLocation(locationManager: LocationManager, provider: String): Boolean {
-    var result = false
-    when (provider) {
-        GPS_PROVIDER -> result = true
-        NETWORK_PROVIDER -> if (!locationManager.isProviderEnabled(GPS_PROVIDER)) {
-            result = true
-        }
-    }
-    return result
-}
-
 fun isGpsLocationEnabled(locationManager: LocationManager): Boolean {
     return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 }
 
 fun isNetworkLocationEnabled(locationManager: LocationManager): Boolean {
     return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-}
-
-fun ensureGpsEnabled(activity: Activity) {
-    if (!isGpsLocationEnabled(activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager)) {
-        // TODO
-        requestOpenGpsSettings(activity)
-    }
 }

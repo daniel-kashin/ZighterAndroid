@@ -28,6 +28,8 @@
             android:label="Login">
         </activity>
 
+        <activity android:name=".presentation.registration.RegistrationActivity"/>
+
         <activity android:name=".presentation.splash.SplashActivity"
             android:enabled="true"
             android:label="Zighter">

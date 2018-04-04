@@ -3,8 +3,8 @@ package com.zighter.zighterandroid.presentation.search;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,27 +15,26 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
-import com.pushtorefresh.storio3.sqlite.operations.internal.RxJavaUtils;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus;
-import com.zighter.zighterandroid.presentation.bought_excursions.BoughtExcursionsAdapter;
+import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursion;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.login.LoginActivity;
+import com.zighter.zighterandroid.util.recyclerview.SimpleDividerItemDecoration;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import butterknife.BindView;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.ObservableTransformer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.functions.Function;
+import static com.zighter.zighterandroid.presentation.search.SearchExcursionsAdapter.OnSearchExcursionClickListener;
 
-public class SearchFragment extends BaseSupportFragment implements SearchView {
+public class SearchFragment extends BaseSupportFragment
+        implements SearchView, OnSearchExcursionClickListener {
     private static final String TAG = "SearchFragment";
 
     @NonNull
@@ -48,11 +47,11 @@ public class SearchFragment extends BaseSupportFragment implements SearchView {
 
     @ProvidePresenter
     public SearchPresenter providePresenter() {
-        return searchPresenter;
+        return searchPresenterProvider.get();
     }
 
     @Inject
-    SearchPresenter searchPresenter;
+    Provider<SearchPresenter> searchPresenterProvider;
 
     @Override
     protected void onInjectDependencies() {
@@ -86,10 +85,20 @@ public class SearchFragment extends BaseSupportFragment implements SearchView {
     }
 
     private void initializeView() {
+        if (getContext() == null) {
+            return;
+        }
+
         tryAgain.setVisibility(View.INVISIBLE);
         progressBar.setVisibility(View.INVISIBLE);
         errorMessage.setVisibility(View.INVISIBLE);
         recyclerView.setVisibility(View.INVISIBLE);
+
+        recyclerView.setAdapter(new SearchExcursionsAdapter(this));
+        recyclerView.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(),
+                                                              LinearLayoutManager.VERTICAL,
+                                                              false));
 
         RxTextView.textChanges(toolbarSearch)
                 .map(editable -> editable.toString().trim())
@@ -108,6 +117,11 @@ public class SearchFragment extends BaseSupportFragment implements SearchView {
 
         RxView.clicks(iconClear)
                 .subscribe(it -> toolbarSearch.setText(null));
+    }
+
+    @Override
+    public void onSearchExcursionClicked(@NonNull ServiceSearchExcursion excursion) {
+        // TODO
     }
 
     @Override
@@ -145,8 +159,10 @@ public class SearchFragment extends BaseSupportFragment implements SearchView {
     }
 
     @Override
-    public void showExcursions(@NonNull List<BoughtExcursionWithStatus> excursions) {
-        // TODO
+    public void showExcursions(@NonNull List<ServiceSearchExcursion> excursions) {
+        SearchExcursionsAdapter adapter = (SearchExcursionsAdapter) recyclerView.getAdapter();
+        adapter.setExcursions(excursions);
+        adapter.notifyDataSetChanged();
 
         progressBar.setVisibility(View.INVISIBLE);
         tryAgain.setVisibility(View.INVISIBLE);

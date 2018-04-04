@@ -2,13 +2,9 @@ package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 import android.util.Pair;
 
-import com.pushtorefresh.storio3.sqlite.operations.delete.DeleteResult;
-import com.pushtorefresh.storio3.sqlite.operations.put.PutResult;
-import com.pushtorefresh.storio3.sqlite.operations.put.PutResults;
 import com.zighter.zighterandroid.data.entities.media.Audio;
 import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Media;
@@ -18,6 +14,8 @@ import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServicePath;
 import com.zighter.zighterandroid.data.entities.service.ServicePoint;
+import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursion;
+import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursions;
 import com.zighter.zighterandroid.data.entities.service.ServiceToken;
 import com.zighter.zighterandroid.data.entities.storage.StorageExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageGuide;
@@ -45,6 +43,7 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.functions.Function;
 
 import static com.zighter.zighterandroid.data.job_manager.JobManagerEventsBroadcastReceiver.Event;
 
@@ -95,6 +94,26 @@ public class ExcursionRepository {
     }
 
     @NonNull
+    public Single<String> register(@NonNull String email,
+                                   @NonNull String firstName,
+                                   @NonNull String lastName,
+                                   @NonNull String password,
+                                   @NonNull String username) {
+        return excursionService.register(email, firstName, lastName, password, username)
+                .map(ServiceToken::getToken)
+                .doOnSuccess(token -> {
+                    excursionStorage.deleteAllData();
+                    tokenStorage.saveToken(token);
+                    tokenStorage.saveLogin(username);
+                })
+                .doOnError(error -> {
+                    excursionStorage.deleteAllData();
+                    tokenStorage.saveToken(null);
+                    tokenStorage.saveLogin(null);
+                });
+    }
+
+    @NonNull
     public Single<String> getLogin() {
         return tokenStorage.getLoginSingle();
     }
@@ -106,6 +125,12 @@ public class ExcursionRepository {
                     tokenStorage.saveToken(null);
                     tokenStorage.saveLogin(null);
                 });
+    }
+
+    @NonNull
+    public Single<List<ServiceSearchExcursion>> searchExcursions(@NonNull String request) {
+        return excursionService.searchExcursions(request)
+                .map(excursions -> excursions.tryGetValidOrThrowException().getExcursions());
     }
 
     @NonNull
@@ -132,9 +157,9 @@ public class ExcursionRepository {
     }
 
     @NonNull
-    public Single<Guide> getGuide(@NonNull String excursionUuid) {
+    public Single<Guide> getGuide(@NonNull String ownerUuid) {
         return tokenStorage.getTokenSingle()
-                .flatMap(token -> excursionService.getGuide(excursionUuid, token))
+                .flatMap(token -> excursionService.getGuide(ownerUuid, token))
                 .map(excursionMapper::fromService)
                 .doOnSuccess(guide -> excursionStorage.saveGuide(excursionMapper.toStorage(guide)).blockingGet())
                 .onErrorResumeNext(throwable -> {
@@ -142,7 +167,7 @@ public class ExcursionRepository {
                        return Single.error(throwable);
                    }
 
-                   return excursionStorage.getGuide(excursionUuid)
+                   return excursionStorage.getGuide(ownerUuid)
                            .flatMap(fromStorageOptional -> {
                                StorageGuide guide = fromStorageOptional.get();
                                if (guide != null) {
@@ -196,11 +221,6 @@ public class ExcursionRepository {
                     }
                     return result;
                 });
-    }
-
-    @NonNull
-    public Single<List<Object>> searchExcursions(@NonNull String searchRequest) {
-        return Single.just(new ArrayList<>());
     }
 
     @NonNull

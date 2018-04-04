@@ -9,7 +9,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,26 +17,23 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
-import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus;
 import com.zighter.zighterandroid.data.entities.presentation.Guide;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.login.LoginActivity;
 
-import java.util.List;
-
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import butterknife.BindView;
 
 import static com.zighter.zighterandroid.presentation.guide.GuidePresenter.GuidePresenterBuilder;
 
 public class GuideActivity extends BaseSupportActivity implements GuideView {
-    private static final String EXTRA_UUID = "EXTRA_UUID";
+    private static final String EXTRA_OWNER_UUID = "EXTRA_OWNER_UUID";
 
-    public static void start(@NonNull Context context,
-                             @NonNull String uuid) {
+    public static void start(@NonNull Context context, @NonNull String ownerUuid) {
         Intent intent = new Intent(context, GuideActivity.class);
-        intent.putExtra(EXTRA_UUID, uuid);
+        intent.putExtra(EXTRA_OWNER_UUID, ownerUuid);
         context.startActivity(intent);
     }
 
@@ -46,15 +42,15 @@ public class GuideActivity extends BaseSupportActivity implements GuideView {
 
     @ProvidePresenter
     public GuidePresenter providePresenter() {
-        if (uuid == null) {
+        if (ownerUuid == null) {
             throw new IllegalStateException();
         }
 
-        return guidePresenterBuilder.excursionUuid(uuid).build();
+        return guidePresenterBuilderProvider.get().ownerUuid(ownerUuid).build();
     }
 
     @Inject
-    GuidePresenterBuilder guidePresenterBuilder;
+    Provider<GuidePresenterBuilder> guidePresenterBuilderProvider;
 
     @Override
     protected void onInjectDependencies() {
@@ -85,7 +81,7 @@ public class GuideActivity extends BaseSupportActivity implements GuideView {
     TextView errorMessage;
 
     @Nullable
-    private String uuid;
+    private String ownerUuid;
 
     @Override
     protected int getLayoutId() {
@@ -97,7 +93,7 @@ public class GuideActivity extends BaseSupportActivity implements GuideView {
         if (getIntent() == null) {
             throw new IllegalStateException();
         }
-        uuid = getIntent().getStringExtra(EXTRA_UUID);
+        ownerUuid = getIntent().getStringExtra(EXTRA_OWNER_UUID);
 
         super.onCreate(savedInstanceState);
 

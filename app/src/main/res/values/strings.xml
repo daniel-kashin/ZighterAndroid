@@ -25,6 +25,7 @@
     <string name="empty_bought_excursions">All your bought excursions will be shown here</string>
     <string name="unhandled_error_message">Something gone wrong.</string>
     <string name="server_login_error_message">Either login or password is incorrect.</string>
+    <string name="server_registration_error_message">The data you typed is invalid.</string>
 
     <string name="loading_map">Loading map...</string>
     <string name="loading_json">Loading info...</string>
@@ -43,11 +44,25 @@
     <string name="username_error">At least 1 character</string>
     <string name="password_hint">Password</string>
     <string name="password_error">At least 1 character</string>
+    <string name="email_hint">Email</string>
+    <string name="email_error">At least 5 characters</string>
+    <string name="first_name_hint">First name</string>
+    <string name="first_name_error">At least 1 character</string>
+    <string name="second_name_hint">Last name</string>
     <string name="login_button">Log in</string>
     <string name="log_out_button">Log out</string>
     <string name="welcome_back">Welcome back</string>
+    <string name="enjoy_zighter">Enjoy Zighter!</string>
+    <string name="new_at_zighter">New at Zighter?</string>
 
     <string name="your_guide">Your guide</string>
 
     <string name="you_logged_in_as">You logged in as:</string>
+
+    <string name="rouble">\u20BD</string>
+    <string name="free">FREE</string>
+
+    <string name="map">Map</string>
+    <string name="map_and_media">Map + Media</string>
+    <string name="guide">Guide</string>
 </resources>

@@ -2,11 +2,11 @@ package com.zighter.zighterandroid.data.entities.service;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.annotations.SerializedName;
 
 public class ServiceGuide extends Validable<ServiceGuide> {
-
     @SerializedName("id")
     String uuid;
 
@@ -25,12 +25,13 @@ public class ServiceGuide extends Validable<ServiceGuide> {
     @SerializedName("email")
     String email;
 
-    private ServiceGuide(@NonNull String uuid,
-                         @NonNull String username,
-                         @NonNull String firstName,
-                         @Nullable String lastName,
-                         @NonNull String phone,
-                         @NonNull String email) {
+    @VisibleForTesting
+    public ServiceGuide(@NonNull String uuid,
+                 @NonNull String username,
+                 @NonNull String firstName,
+                 @Nullable String lastName,
+                 @NonNull String phone,
+                 @NonNull String email) {
         this.uuid = uuid;
         this.username = username;
         this.firstName = firstName;
@@ -41,7 +42,8 @@ public class ServiceGuide extends Validable<ServiceGuide> {
 
     @NonNull
     public String getUuid() {
-        return uuid;
+        // TODO
+        return "";
     }
 
     @NonNull

@@ -5,7 +5,7 @@ public interface ZighterEndpoints {
 
     String ROUTES = "/routes";
 
-    String JSON_LIST = "/json-list";
+    String EXCURSIONS = "/excursions";
 
     String CLIENT_COLLECTION = "/client-collection";
 
@@ -18,4 +18,6 @@ public interface ZighterEndpoints {
     String TOKEN_AUTH = "/token-auth";
 
     String SLASH = "/";
+
+    String REGISTER = "/register";
 }

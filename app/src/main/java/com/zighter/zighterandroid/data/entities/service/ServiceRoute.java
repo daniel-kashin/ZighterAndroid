@@ -50,10 +50,6 @@ public class ServiceRoute extends Validable<ServiceRoute> {
             }
         }
 
-        if (!copy) {
-            return this;
-        }
-
         return new ServiceRoute(pathsCopy, sightsCopy);
     }
 

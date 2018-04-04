@@ -6,13 +6,15 @@ import android.content.SharedPreferences;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import com.zighter.zighterandroid.data.exception.ServerNotAuthorizedException;
 
 import io.reactivex.Single;
 
 public class TokenStorage {
-    private static final String TOKEN_PREFERENCES = "TOKEN_PREFERENCES";
+    @VisibleForTesting
+    static final String TOKEN_PREFERENCES = "TOKEN_PREFERENCES";
     private static final String KEY_TOKEN = "KEY_TOKEN";
     private static final String KEY_LOGIN = "KEY_LOGIN";
 

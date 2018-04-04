@@ -32,6 +32,7 @@ public class ExcursionMapper {
             + "\n"
             + "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)";
 
+    // TODO
     static {
         DUMMY_MEDIAS.add(new Image("https://mfiles.alphacoders.com/680/680627.jpg", null, "Title", DUMMY_DESCRIPTION));
         DUMMY_MEDIAS.add(new Image("https://livewallpaperhd.com/wp-content/uploads/2017/05/Barcelona-Wallpaper-Iphone-Hd.jpg", null, "Title", DUMMY_DESCRIPTION));
@@ -61,11 +62,10 @@ public class ExcursionMapper {
     public Guide fromService(@NonNull ServiceGuide guide) throws ServerResponseValidationException {
         guide = guide.tryGetValidOrThrowException();
 
-        // TODO: remove
-        return new Guide("",
+        return new Guide(guide.getUuid(),
                          guide.getUsername(),
-                         "John",
-                         "Travolta",
+                         guide.getFirstName(),
+                         guide.getLastName(),
                          guide.getPhone(),
                          guide.getEmail());
     }
@@ -174,6 +174,7 @@ public class ExcursionMapper {
                                           boughtExcursion.getName(),
                                           boughtExcursion.getLocation(),
                                           boughtExcursion.getOwner(),
+                                          boughtExcursion.getOwnerUuid(),
                                           boughtExcursion.getImage().getUrl(),
                                           boughtExcursion.isGuideAvailable(),
                                           boughtExcursion.isMediaAvailable(),
@@ -188,6 +189,7 @@ public class ExcursionMapper {
         return new BoughtExcursion(storageBoughtExcursion.getUuid(),
                                    storageBoughtExcursion.getName(),
                                    storageBoughtExcursion.getOwner(),
+                                   storageBoughtExcursion.getOwnerUuid(),
                                    storageBoughtExcursion.getLocation(),
                                    new Image(storageBoughtExcursion.getImageUrl()),
                                    storageBoughtExcursion.isGuideAvailable(),
@@ -206,6 +208,7 @@ public class ExcursionMapper {
         return new BoughtExcursion(serviceBoughtExcursion.getUuid(),
                                    serviceBoughtExcursion.getName(),
                                    serviceBoughtExcursion.getOwner(),
+                                   serviceBoughtExcursion.getOwnerUuid(),
                                    serviceBoughtExcursion.getLocation(),
                                    new Image(serviceBoughtExcursion.getImageUrl()),
                                    serviceBoughtExcursion.isGuideAvailable(),

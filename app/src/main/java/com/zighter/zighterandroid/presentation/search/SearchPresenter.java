@@ -55,10 +55,10 @@ public class SearchPresenter extends BasePresenter<SearchView> {
                     .compose(applySchedulersSingle())
                     .doOnSubscribe(disposable -> getViewState().showLoading())
                     .subscribe(excursions -> {
-                        if (excursions.size() == 0) {
-                            getViewState().showEmptyExcursions();
+                        if (!excursions.isEmpty()) {
+                            getViewState().showExcursions(excursions);
                         } else {
-                            getViewState().showExcursions(new ArrayList<>());
+                            getViewState().showEmptyExcursions();
                         }
                     }, throwable -> {
                         if (throwable instanceof BaseException) {

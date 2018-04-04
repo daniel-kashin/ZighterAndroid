@@ -106,7 +106,7 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
         if (boughtExcursion.isGuideAvailable()) {
             iconGuide.setVisibility(View.VISIBLE);
             iconGuide.setOnClickListener(view -> {
-                GuideActivity.start(ExcursionHolderActivity.this, boughtExcursion.getUuid());
+                GuideActivity.start(ExcursionHolderActivity.this, boughtExcursion.getOwnerUuid());
             });
         } else {
             iconGuide.setVisibility(View.GONE);
@@ -120,9 +120,7 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
 
         BoughtExcursion boughtExcursion = (BoughtExcursion) getIntent().getSerializableExtra(KEY_BOUGHT_EXCURSION);
         if (boughtExcursion == null) {
-            // TODO
-            //throw new IllegalStateException();
-            boughtExcursion = new BoughtExcursion("1", "Экскурсия", "", "", new Image("https://mfiles.alphacoders.com/680/680627.jpg", null, null, null), true, true, true, true, true, true);
+            throw new IllegalStateException();
         }
 
         this.boughtExcursion = boughtExcursion;

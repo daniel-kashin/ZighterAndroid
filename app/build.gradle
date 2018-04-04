@@ -84,7 +84,16 @@ dependencies {
     compile(libraries.mapbox) {
         transitive=true
     }
+
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    testCompile libraries.junit
+    testCompile libraries.robolectric
+    testCompile libraries.powermock
+    testCompile libraries.powermockJunit
+    testCompile libraries.powermockApi
+    testCompile libraries.powermockRule
+    testCompile libraries.powermockClassloader
 }
 
 apply plugin: 'com.google.gms.google-services'

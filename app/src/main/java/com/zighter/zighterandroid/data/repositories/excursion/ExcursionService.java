@@ -1,12 +1,14 @@
 package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Pair;
 
-import com.zighter.zighterandroid.data.entities.service.ServiceAuthorizationData;
+import com.google.gson.annotations.SerializedName;
+import com.zighter.zighterandroid.data.entities.service.ServiceLoginData;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceGuide;
+import com.zighter.zighterandroid.data.entities.service.ServiceRegistrationData;
+import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursions;
 import com.zighter.zighterandroid.data.entities.service.ServiceToken;
 import com.zighter.zighterandroid.data.exception.ServerLoginException;
 import com.zighter.zighterandroid.data.exception.ServerNoAccessException;
@@ -41,19 +43,45 @@ public class ExcursionService extends BaseService<ServiceExcursionContract> {
 
     @NonNull
     Single<ServiceToken> login(@NonNull String username, @NonNull String password) {
-        return getService().login(new ServiceAuthorizationData(username, password))
+        return getService()
+                .login(new ServiceLoginData(username, password))
                 .onErrorResumeNext(this::convertRetrofitThrowable);
     }
 
     @NonNull
-    Single<ServiceGuide> getGuide(@NonNull String uuid, @NonNull String token) {
-        return getService().getGuide(uuid, addTokenPrefix(token))
+    Single<ServiceToken> register(@NonNull String email,
+                                  @NonNull String firstName,
+                                  @NonNull String lastName,
+                                  @NonNull String password,
+                                  @NonNull String username) {
+        return getService()
+                .register(new ServiceRegistrationData(email, firstName, lastName, password, username))
+                .onErrorResumeNext(this::convertRetrofitThrowable)
+                .doOnSuccess(serviceToken -> {
+                    if (!serviceToken.isValid()) {
+                        throw new ServerLoginException(null);
+                    }
+                });
+    }
+
+    @NonNull
+    Single<ServiceSearchExcursions> searchExcursions(@NonNull String request) {
+        return getService()
+                .searchExcursions(request, false)
+                .onErrorResumeNext(this::convertRetrofitThrowable);
+    }
+
+    @NonNull
+    Single<ServiceGuide> getGuide(@NonNull String ownerUuid, @NonNull String token) {
+        return getService()
+                .getGuide(ownerUuid, addTokenPrefix(token))
                 .onErrorResumeNext(this::convertRetrofitThrowable);
     }
 
     @NonNull
     Single<ServiceExcursion> getExcursion(@NonNull String uuid, @NonNull String token) {
-        return getService().getExcursion(uuid, addTokenPrefix(token))
+        return getService()
+                .getExcursion(uuid, addTokenPrefix(token))
                 .onErrorResumeNext(this::convertRetrofitThrowable);
     }
 
@@ -72,7 +100,8 @@ public class ExcursionService extends BaseService<ServiceExcursionContract> {
 
     @NonNull
     private Single<List<ServiceBoughtExcursion>> getBoughtExcursions(@NonNull String token) {
-        return getService().getBoughtExcursions(addTokenPrefix(token))
+        return getService()
+                .getBoughtExcursions(addTokenPrefix(token))
                 .onErrorResumeNext(this::convertRetrofitThrowable);
     }
 
@@ -100,31 +129,6 @@ public class ExcursionService extends BaseService<ServiceExcursionContract> {
         }
 
         return Single.error(error);
-    }
-
-    @NonNull
-    private Throwable convertRetrofitThrowableInner(@NonNull Throwable error) {
-        Throwable result = error;
-
-        if (error instanceof HttpException) {
-            int code = ((HttpException) error).code();
-            if (code == 400) {
-                result = new ServerLoginException(error);
-            } else  if (code == 401) {
-                result = new ServerNotAuthorizedException(error);
-            } else if (code == 403) {
-                result = new ServerNoAccessException(error);
-            } else {
-                result = new ServerException(error);
-            }
-
-        }
-
-        if (error instanceof IOException) {
-            result = new NetworkUnavailableException(error);
-        }
-
-        return result;
     }
 
     @NonNull

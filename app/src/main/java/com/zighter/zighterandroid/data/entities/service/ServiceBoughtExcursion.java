@@ -20,6 +20,9 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
     @SerializedName("provider_username")
     @Nullable
     String owner;
+    @SerializedName("provider_id")
+    @Nullable
+    String ownerUuid;
     @SerializedName("excursion_location")
     @Nullable
     String location;
@@ -39,6 +42,7 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
     public ServiceBoughtExcursion(@NonNull String uuid,
                                   @NonNull String name,
                                   @NonNull String owner,
+                                  @NonNull String ownerUuid,
                                   @NonNull String location,
                                   @Nullable String imageUrl,
                                   boolean isRouteAvailable,
@@ -47,6 +51,7 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
         this.uuid = uuid;
         this.name = name;
         this.owner = owner;
+        this.ownerUuid = ownerUuid;
         this.location = location;
         this.imageUrl = imageUrl;
         this.isRouteAvailable = BooleanHelper.toString(isRouteAvailable);
@@ -79,14 +84,18 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
     }
 
     @NonNull
+    public String getOwnerUuid() {
+        if (ownerUuid == null) throw new IllegalStateException();
+        return ownerUuid;
+    }
+
+    @NonNull
     public String getImageUrl() {
         return ZighterEndpoints.BASE_URL + imageUrl;
     }
 
     public boolean isRouteAvailable() {
-       // TODO: wait for server logic
-        return true;
-        //return isRouteAvailable != null && toBoolean(isRouteAvailable);
+        return isRouteAvailable != null && toBoolean(isRouteAvailable);
     }
 
     public boolean isMediaAvailable() {
@@ -94,16 +103,13 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
     }
 
     public boolean isGuideAvailable() {
-        // TODO: wait for server logic
-        return true;
-        //return isGuideAvailable != null && toBoolean(isGuideAvailable);
+        return isGuideAvailable != null && toBoolean(isGuideAvailable);
     }
 
     @Override
     public boolean isValid() {
-        // TODO: uncomment
-        return //(isRouteAvailable() || isGuideAvailable() || isMediaAvailable()) &&
-                uuid != null && name != null && location != null && owner != null && imageUrl != null;
+        return (isRouteAvailable() || isGuideAvailable() || isMediaAvailable()) &&
+                uuid != null && name != null && location != null && owner != null && ownerUuid != null && imageUrl != null;
     }
 
     @Nullable
@@ -117,6 +123,7 @@ public class ServiceBoughtExcursion extends Validable<ServiceBoughtExcursion> {
             return new ServiceBoughtExcursion(uuid,
                                               name,
                                               owner,
+                                              ownerUuid,
                                               location,
                                               imageUrl,
                                               isRouteAvailable(),

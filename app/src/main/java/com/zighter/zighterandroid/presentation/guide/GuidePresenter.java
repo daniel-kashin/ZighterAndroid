@@ -11,8 +11,6 @@ import com.zighter.zighterandroid.data.exception.ServerNotAuthorizedException;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.presentation.common.BasePresenter;
 
-import javax.inject.Inject;
-
 import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 
@@ -23,7 +21,7 @@ public class GuidePresenter extends BasePresenter<GuideView> {
     @NonNull
     private final ExcursionRepository excursionRepository;
     @NonNull
-    private final String excursionUuid;
+    private final String ownerUuid;
 
     @Nullable
     private Disposable loadGuideDisposable;
@@ -31,10 +29,10 @@ public class GuidePresenter extends BasePresenter<GuideView> {
     GuidePresenter(@NonNull Scheduler worker,
                    @NonNull Scheduler ui,
                    @NonNull ExcursionRepository excursionRepository,
-                   @NonNull String excursionUuid) {
+                   @NonNull String ownerUuid) {
         super(worker, ui);
         this.excursionRepository = excursionRepository;
-        this.excursionUuid = excursionUuid;
+        this.ownerUuid = ownerUuid;
     }
 
     @Override
@@ -58,7 +56,7 @@ public class GuidePresenter extends BasePresenter<GuideView> {
             loadGuideDisposable = null;
         }
 
-        loadGuideDisposable = excursionRepository.getGuide(excursionUuid)
+        loadGuideDisposable = excursionRepository.getGuide(ownerUuid)
                 .compose(applySchedulersSingle())
                 .doOnSubscribe(disposable -> getViewState().showLoading())
                 .subscribe(guide -> {
@@ -90,7 +88,7 @@ public class GuidePresenter extends BasePresenter<GuideView> {
         @NonNull
         private final ExcursionRepository excursionRepository;
 
-        private String excursionUuid;
+        private String ownerUuid;
 
         public GuidePresenterBuilder(@NonNull Scheduler worker,
                                      @NonNull Scheduler ui,
@@ -101,18 +99,18 @@ public class GuidePresenter extends BasePresenter<GuideView> {
         }
 
         @NonNull
-        public GuidePresenterBuilder excursionUuid(@NonNull String excursionUuid) {
-            this.excursionUuid = excursionUuid;
+        public GuidePresenterBuilder ownerUuid(@NonNull String ownerUuid) {
+            this.ownerUuid = ownerUuid;
             return this;
         }
 
         @NonNull
         public GuidePresenter build() {
-            if (excursionUuid == null) {
+            if (ownerUuid == null) {
                 throw new IllegalStateException();
             }
 
-            return new GuidePresenter(worker, ui, excursionRepository, excursionUuid);
+            return new GuidePresenter(worker, ui, excursionRepository, ownerUuid);
         }
     }
 }

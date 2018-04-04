@@ -17,6 +17,8 @@ public class BoughtExcursion implements Serializable {
     @NonNull
     private String owner;
     @NonNull
+    private String ownerUuid;
+    @NonNull
     private String location;
     @NonNull
     private Image image;
@@ -30,6 +32,7 @@ public class BoughtExcursion implements Serializable {
     public BoughtExcursion(@NonNull String uuid,
                            @NonNull String name,
                            @NonNull String owner,
+                           @NonNull String ownerUuid,
                            @NonNull String location,
                            @NonNull Image image,
                            boolean isGuideAvailable,
@@ -41,6 +44,7 @@ public class BoughtExcursion implements Serializable {
         this.uuid = uuid;
         this.name = name;
         this.owner = owner;
+        this.ownerUuid = ownerUuid;
         this.location = location;
         this.image = image;
         this.isGuideAvailable = isGuideAvailable;
@@ -69,6 +73,11 @@ public class BoughtExcursion implements Serializable {
     @NonNull
     public String getOwner() {
         return owner;
+    }
+
+    @NonNull
+    public String getOwnerUuid() {
+        return ownerUuid;
     }
 
     @NonNull

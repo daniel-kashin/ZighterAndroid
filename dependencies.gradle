@@ -31,7 +31,16 @@ ext.versions = [
 
         storio                 : '3.0.0',
 
-        mapbox                 : '5.2.0@aar'
+        mapbox                 : '5.2.0@aar',
+
+        junit                  : '4.12',
+        mockito                : '2.1.0',
+        robolectric            : '3.3.2',
+        powermock              : '1.6.6',
+
+        espresso               : '2.2.2',
+        uiAutomator            : '2.1.1',
+        robotium               : '5.6.1'
 ]
 
 ext.gradlePlugins = [
@@ -75,5 +84,16 @@ ext.libraries = [
         storioAnnotations        : "com.pushtorefresh.storio3:sqlite-annotations:$versions.storio",
         storioAnnotationProcessor: "com.pushtorefresh.storio3:sqlite-annotations-processor:$versions.storio",
 
-        mapbox                   : "com.mapbox.mapboxsdk:mapbox-android-sdk:$versions.mapbox"
+        mapbox                   : "com.mapbox.mapboxsdk:mapbox-android-sdk:$versions.mapbox",
+
+        junit                    : "junit:junit:$versions.junit",
+        supportTestRunner        : "com.android.support.test:runner:$versions.supportTestRunner",
+        supportTestRules         : "com.android.support.test:rules:$versions.supportTestRunner",
+        mockito                  : "org.mockito:mockito-core:$versions.mockito",
+        robolectric              : "org.robolectric:robolectric:$versions.robolectric",
+        powermock                : "org.powermock:powermock:$versions.powermock",
+        powermockJunit           : "org.powermock:powermock-module-junit4:$versions.powermock",
+        powermockApi             : "org.powermock:powermock-api-mockito:$versions.powermock",
+        powermockRule            : "org.powermock:powermock-module-junit4-rule:$versions.powermock",
+        powermockClassloader     : "org.powermock:powermock-classloading-xstream:$versions.powermock"
 ]

@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.presentation.login;
+package com.zighter.zighterandroid.presentation.registration;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,7 +15,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.disposables.Disposable;
 
 @InjectViewState
-public class LoginPresenter extends BasePresenter<LoginView> {
+public class RegistrationPresenter extends BasePresenter<RegistrationView> {
     private static final String TAG = "LoginPresenter";
 
     @NonNull
@@ -24,9 +24,9 @@ public class LoginPresenter extends BasePresenter<LoginView> {
     @Nullable
     private Disposable loginDisposable;
 
-    public LoginPresenter(@NonNull Scheduler worker,
-                          @NonNull Scheduler ui,
-                          @NonNull ExcursionRepository excursionRepository) {
+    public RegistrationPresenter(@NonNull Scheduler worker,
+                                 @NonNull Scheduler ui,
+                                 @NonNull ExcursionRepository excursionRepository) {
         super(worker, ui);
         this.excursionRepository = excursionRepository;
     }
@@ -40,13 +40,17 @@ public class LoginPresenter extends BasePresenter<LoginView> {
         super.onDestroy();
     }
 
-    void onLogin(@NonNull String username, @NonNull String password) {
+    void onRegister(@NonNull String email,
+                    @NonNull String firstName,
+                    @NonNull String lastName,
+                    @NonNull String password,
+                    @NonNull String username) {
         if (loginDisposable != null) {
             loginDisposable.dispose();
             loginDisposable = null;
         }
 
-        loginDisposable = excursionRepository.login(username, password)
+        loginDisposable = excursionRepository.register(email, firstName, lastName, password, username)
                 .compose(applySchedulersSingle())
                 .subscribe(token -> {
                     getViewState().openBottomNavigation();

@@ -14,6 +14,7 @@ import com.zighter.zighterandroid.dagger.component.ExcursionMapComponent;
 import com.zighter.zighterandroid.dagger.component.GuideComponent;
 import com.zighter.zighterandroid.dagger.component.LoginComponent;
 import com.zighter.zighterandroid.dagger.component.MediaComponent;
+import com.zighter.zighterandroid.dagger.component.RegistrationComponent;
 import com.zighter.zighterandroid.dagger.component.SearchComponent;
 import com.zighter.zighterandroid.dagger.component.SightComponent;
 import com.zighter.zighterandroid.dagger.module.singleton.AppModule;
@@ -65,6 +66,8 @@ public class Injector {
     private WeakReference<GuideComponent> guideComponentWeakReference;
     @NonNull
     private WeakReference<AccountComponent> accountComponentWeakReference;
+    @NonNull
+    private WeakReference<RegistrationComponent> registrationComponentWeakReference;
 
     @UiThread
     private Injector(@NonNull Context context) {
@@ -80,6 +83,7 @@ public class Injector {
         loginPresenterWeakReference = new WeakReference<>(null);
         guideComponentWeakReference = new WeakReference<>(null);
         accountComponentWeakReference = new WeakReference<>(null);
+        registrationComponentWeakReference = new WeakReference<>(null);
     }
 
     @NonNull
@@ -167,5 +171,14 @@ public class Injector {
             accountComponentWeakReference = new WeakReference<>(appComponent.plusAccountComponent());
         }
         return accountComponentWeakReference.get();
+    }
+
+    @NonNull
+    @UiThread
+    public RegistrationComponent getRegistrationComponent() {
+        if (registrationComponentWeakReference.get() == null) {
+            registrationComponentWeakReference = new WeakReference<>(appComponent.plusRegistrationComponent());
+        }
+        return registrationComponentWeakReference.get();
     }
 }
