@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.util.media;
+package com.zighter.zighterandroid.view.media;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;

@@ -169,7 +169,7 @@ public class ExcursionMapper {
     }
 
     @NonNull
-    private StorageBoughtExcursion toStorage(@NonNull BoughtExcursion boughtExcursion) {
+    public StorageBoughtExcursion toStorage(@NonNull BoughtExcursion boughtExcursion) {
         return new StorageBoughtExcursion(boughtExcursion.getUuid(),
                                           boughtExcursion.getName(),
                                           boughtExcursion.getLocation(),
@@ -201,7 +201,7 @@ public class ExcursionMapper {
     }
 
     @NonNull
-    private BoughtExcursion fromService(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
+    public BoughtExcursion fromService(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
                                         boolean isGuideSaved,
                                         boolean isMediaSaved,
                                         boolean isRouteSaved) {

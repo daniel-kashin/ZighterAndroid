@@ -2,6 +2,7 @@ package com.zighter.zighterandroid.data.entities.service;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -29,23 +30,13 @@ public class ServiceExcursion extends Validable<ServiceExcursion> {
     @SerializedName("map_zoom")
     private List<Integer> mapZoomList;
 
-    private ServiceExcursion(@NonNull String uuid,
+    @VisibleForTesting
+    public ServiceExcursion(@NonNull String uuid,
                              @NonNull String name,
-                             //@Nullable String lastUpdateDatetime,
-                             //@Nullable String createDatetime,
-                             //int pubStatus,
-                             //double price,
-                             //@Nullable String currency,
                              @NonNull ServiceRoute route,
                              @NonNull ServicePoint westNorthMapBound,
                              @NonNull ServicePoint eastSouthMapBound,
                              @Nullable List<Integer> mapZoomList) {
-        //this.lastUpdateDatetime = lastUpdateDatetime;
-        //this.createDatetime = createDatetime;
-        //this.pubStatus = pubStatus;
-        //this.price = price;
-        //this.currency = currency;
-
         this.uuid = uuid;
         this.name = name;
         this.route = route;

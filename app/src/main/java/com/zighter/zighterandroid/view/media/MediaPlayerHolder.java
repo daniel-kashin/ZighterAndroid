@@ -1,9 +1,8 @@
-package com.zighter.zighterandroid.util.media;
+package com.zighter.zighterandroid.view.media;
 
 import android.media.MediaPlayer;
 import android.support.annotation.NonNull;
 import android.widget.CustomMediaController;
-import android.widget.MediaController;
 
 public class MediaPlayerHolder
         implements

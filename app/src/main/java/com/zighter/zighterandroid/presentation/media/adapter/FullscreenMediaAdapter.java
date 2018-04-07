@@ -30,8 +30,8 @@ import com.zighter.zighterandroid.data.entities.media.Video;
 
 import android.widget.CustomMediaController;
 
-import com.zighter.zighterandroid.util.media.MediaPlayerHolder;
-import com.zighter.zighterandroid.util.media.TextureViewHelper;
+import com.zighter.zighterandroid.view.media.MediaPlayerHolder;
+import com.zighter.zighterandroid.view.media.TextureViewHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;

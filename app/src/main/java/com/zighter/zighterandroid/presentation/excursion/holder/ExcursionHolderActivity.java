@@ -18,25 +18,23 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zighter.zighterandroid.R;
-import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
-import com.zighter.zighterandroid.data.entities.presentation.Excursion;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.excursion.map.ExcursionMapFragment;
 import com.zighter.zighterandroid.presentation.excursion.sight.SightFragment;
 import com.zighter.zighterandroid.presentation.guide.GuideActivity;
-import com.zighter.zighterandroid.util.AnchorBottomSheetBehavior;
+import com.zighter.zighterandroid.view.AnchorBottomSheetBehavior;
 import com.zighter.zighterandroid.util.LocationSettingsHelper;
 
 import java.io.Serializable;
 
 import butterknife.BindView;
 
-import static com.zighter.zighterandroid.util.AnchorBottomSheetBehavior.STATE_COLLAPSED;
-import static com.zighter.zighterandroid.util.AnchorBottomSheetBehavior.STATE_DRAGGING;
-import static com.zighter.zighterandroid.util.AnchorBottomSheetBehavior.STATE_HIDDEN;
-import static com.zighter.zighterandroid.util.AnchorBottomSheetBehavior.STATE_SETTLING;
+import static com.zighter.zighterandroid.view.AnchorBottomSheetBehavior.STATE_COLLAPSED;
+import static com.zighter.zighterandroid.view.AnchorBottomSheetBehavior.STATE_DRAGGING;
+import static com.zighter.zighterandroid.view.AnchorBottomSheetBehavior.STATE_HIDDEN;
+import static com.zighter.zighterandroid.view.AnchorBottomSheetBehavior.STATE_SETTLING;
 
 public class ExcursionHolderActivity extends BaseSupportActivity {
     private static final String TAG = "ExcursionHolderActivity";

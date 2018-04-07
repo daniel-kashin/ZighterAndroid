@@ -17,11 +17,10 @@ import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
-import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus;
 import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursion;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.login.LoginActivity;
-import com.zighter.zighterandroid.util.recyclerview.SimpleDividerItemDecoration;
+import com.zighter.zighterandroid.view.recyclerview.SimpleDividerItemDecoration;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

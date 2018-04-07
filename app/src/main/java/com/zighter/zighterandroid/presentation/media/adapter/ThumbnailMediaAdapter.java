@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.zighter.zighterandroid.presentation.media.adapter.ThumbnailMediaAdapter.ThumbnailViewHolder;
-import static com.zighter.zighterandroid.util.recyclerview.UnitConverter.dpToPx;
+import static com.zighter.zighterandroid.view.recyclerview.UnitConverter.dpToPx;
 
 public class ThumbnailMediaAdapter extends MediaAdapter<ThumbnailViewHolder> {
     private static final String TAG = "ThumbnailMediaAdapter";

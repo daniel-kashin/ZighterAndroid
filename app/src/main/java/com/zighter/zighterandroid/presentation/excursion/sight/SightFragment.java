@@ -1,6 +1,5 @@
 package com.zighter.zighterandroid.presentation.excursion.sight;
 
-import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
@@ -27,7 +26,7 @@ import com.zighter.zighterandroid.data.location.LocationListenerHolder;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.LocationPermissionListener;
 import com.zighter.zighterandroid.presentation.media.MediaActivity;
-import com.zighter.zighterandroid.util.media.ImageViewLoader;
+import com.zighter.zighterandroid.view.media.ImageViewLoader;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

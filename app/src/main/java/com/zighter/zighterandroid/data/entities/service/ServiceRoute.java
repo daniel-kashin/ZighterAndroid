@@ -1,6 +1,7 @@
 package com.zighter.zighterandroid.data.entities.service;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -14,7 +15,8 @@ public class ServiceRoute extends Validable<ServiceRoute> {
     @SerializedName("sights")
     private List<ServiceSight> sights;
 
-    private ServiceRoute(@NonNull List<ServicePath> paths, @NonNull List<ServiceSight> sights) {
+    @VisibleForTesting
+    public ServiceRoute(@NonNull List<ServicePath> paths, @NonNull List<ServiceSight> sights) {
         this.paths = paths;
         this.sights = sights;
     }

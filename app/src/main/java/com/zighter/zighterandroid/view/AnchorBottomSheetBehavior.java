@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.util;
+package com.zighter.zighterandroid.view;
 
 /*
  * Copyright (C) 2015 The Android Open Source Project
@@ -41,7 +41,6 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.VelocityTracker;
-import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewParent;

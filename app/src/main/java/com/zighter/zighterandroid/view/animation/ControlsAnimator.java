@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.util.animation;
+package com.zighter.zighterandroid.view.animation;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;

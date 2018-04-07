@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.util.recyclerview;
+package com.zighter.zighterandroid.view.recyclerview;
 
 import android.content.Context;
 import android.content.res.Resources;

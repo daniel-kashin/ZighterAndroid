@@ -1,10 +1,9 @@
-package com.zighter.zighterandroid.util.recyclerview;
+package com.zighter.zighterandroid.view.recyclerview;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.MediaController;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 

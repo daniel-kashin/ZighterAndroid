@@ -1,6 +1,5 @@
 package com.zighter.zighterandroid.presentation.bought_excursions;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,7 +18,7 @@ import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWith
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.excursion.holder.ExcursionHolderActivity;
 import com.zighter.zighterandroid.presentation.login.LoginActivity;
-import com.zighter.zighterandroid.util.recyclerview.SimpleDividerItemDecoration;
+import com.zighter.zighterandroid.view.recyclerview.SimpleDividerItemDecoration;
 
 import java.util.List;
 

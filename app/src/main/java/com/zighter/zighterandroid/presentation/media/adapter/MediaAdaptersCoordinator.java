@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
-import com.zighter.zighterandroid.util.recyclerview.FullscreenScrollListener;
-import com.zighter.zighterandroid.util.recyclerview.ThumbnailItemDecoration;
+import com.zighter.zighterandroid.view.recyclerview.FullscreenScrollListener;
+import com.zighter.zighterandroid.view.recyclerview.ThumbnailItemDecoration;
 
 import java.util.List;
 

@@ -8,7 +8,7 @@ import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
-import com.zighter.zighterandroid.util.media.ImageViewLoader;
+import com.zighter.zighterandroid.view.media.ImageViewLoader;
 
 public interface SightView extends MvpView {
     @StateStrategyType(SingleStateStrategy.class)

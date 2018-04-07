@@ -1,4 +1,4 @@
-package com.zighter.zighterandroid.util.animation;
+package com.zighter.zighterandroid.view.animation;
 
 import android.animation.ValueAnimator;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;

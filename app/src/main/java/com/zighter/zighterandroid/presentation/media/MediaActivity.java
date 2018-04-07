@@ -28,7 +28,7 @@ import com.zighter.zighterandroid.data.entities.media.DrawableMedia;
 import com.zighter.zighterandroid.presentation.common.BaseSupportActivity;
 import com.zighter.zighterandroid.presentation.media.adapter.FullscreenMediaAdapter;
 import com.zighter.zighterandroid.presentation.media.adapter.MediaAdaptersCoordinator;
-import com.zighter.zighterandroid.util.animation.ControlsAnimator;
+import com.zighter.zighterandroid.view.animation.ControlsAnimator;
 
 import java.util.List;
 

@@ -10,7 +10,7 @@ import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Video;
 import com.zighter.zighterandroid.presentation.common.BasePresenter;
 import com.zighter.zighterandroid.util.DistanceHelper;
-import com.zighter.zighterandroid.util.media.ImageViewLoader;
+import com.zighter.zighterandroid.view.media.ImageViewLoader;
 
 import io.reactivex.Scheduler;
 

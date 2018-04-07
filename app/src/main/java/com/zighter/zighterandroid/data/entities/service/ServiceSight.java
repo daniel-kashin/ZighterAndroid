@@ -2,6 +2,7 @@ package com.zighter.zighterandroid.data.entities.service;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -44,7 +45,8 @@ public class ServiceSight extends Validable<ServiceSight> {
     @SerializedName("webSite")
     private String website;
 
-    private ServiceSight(@NonNull String uuid,
+    @VisibleForTesting
+    public ServiceSight(@NonNull String uuid,
                          @NonNull ServicePoint point,
                          @NonNull String name,
                          @NonNull String type,

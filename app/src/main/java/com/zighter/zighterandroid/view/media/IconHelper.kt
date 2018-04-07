@@ -1,11 +1,10 @@
 @file:JvmName("IconHelper")
 
-package com.zighter.zighterandroid.util.media
+package com.zighter.zighterandroid.view.media
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import com.google.firebase.FirebaseOptions.fromResource
 
 import com.mapbox.mapboxsdk.annotations.Icon
 import com.mapbox.mapboxsdk.annotations.IconFactory

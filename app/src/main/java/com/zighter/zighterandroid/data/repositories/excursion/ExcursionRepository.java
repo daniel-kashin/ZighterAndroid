@@ -2,6 +2,7 @@ package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 import android.util.Pair;
 
@@ -324,7 +325,8 @@ public class ExcursionRepository {
     }
 
     @NonNull
-    private Single<Optional<Excursion>> getExcursionFromStorage(@NonNull String excursionUuid) {
+    @VisibleForTesting
+    public Single<Optional<Excursion>> getExcursionFromStorage(@NonNull String excursionUuid) {
         return Single.fromCallable(() -> {
             Excursion result = null;
 
@@ -399,7 +401,8 @@ public class ExcursionRepository {
     }
 
     @NonNull
-    private Completable saveExcursionToStorage(@NonNull Excursion excursion) {
+    @VisibleForTesting
+    public Completable saveExcursionToStorage(@NonNull Excursion excursion) {
         return Completable.fromAction(() -> {
             // save paths
             excursionStorage.deletePaths(excursion.getUuid()).blockingGet();
