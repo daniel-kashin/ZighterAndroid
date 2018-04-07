@@ -9,6 +9,7 @@ import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceGuide;
 import com.zighter.zighterandroid.data.entities.service.ServiceRegistrationData;
 import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursions;
+import com.zighter.zighterandroid.data.entities.service.ServiceSearchSort;
 import com.zighter.zighterandroid.data.entities.service.ServiceToken;
 import com.zighter.zighterandroid.data.exception.ServerLoginException;
 import com.zighter.zighterandroid.data.exception.ServerNoAccessException;
@@ -28,6 +29,9 @@ import io.reactivex.SingleSource;
 import okhttp3.OkHttpClient;
 import retrofit2.HttpException;
 import retrofit2.Retrofit;
+
+import static com.zighter.zighterandroid.data.entities.service.ServiceSearchSort.SortOrder.ASC;
+import static com.zighter.zighterandroid.data.entities.service.ServiceSearchSort.SortType.DATE;
 
 public class ExcursionService extends BaseService<ServiceExcursionContract> {
     private static final String TOKEN_PREFIX = "Token ";
@@ -65,10 +69,21 @@ public class ExcursionService extends BaseService<ServiceExcursionContract> {
     }
 
     @NonNull
-    Single<ServiceSearchExcursions> searchExcursions(@NonNull String request) {
-        return getService()
-                .searchExcursions(request, false)
-                .onErrorResumeNext(this::convertRetrofitThrowable);
+    Single<ServiceSearchExcursions> searchExcursions(@NonNull String request,
+                                                     @NonNull ServiceSearchSort sort) {
+        if (sort.getSortOrder() == null || sort.getSortType() == null) {
+            return getService()
+                    .searchExcursions(request, false)
+                    .onErrorResumeNext(this::convertRetrofitThrowable);
+        } else {
+            return getService()
+                    .searchExcursionsWithSort(request,
+                                              false,
+                                              true,
+                                              sort.getSortType() == DATE ? "dataTime" : "routePrice",
+                                              sort.getSortOrder() == ASC ? "asc" : "desc")
+                    .onErrorResumeNext(this::convertRetrofitThrowable);
+        }
     }
 
     @NonNull

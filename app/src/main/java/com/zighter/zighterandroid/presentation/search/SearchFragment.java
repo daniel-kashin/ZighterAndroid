@@ -1,15 +1,20 @@
 package com.zighter.zighterandroid.presentation.search;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.ProvidePresenter;
@@ -18,6 +23,7 @@ import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursion;
+import com.zighter.zighterandroid.data.entities.service.ServiceSearchSort;
 import com.zighter.zighterandroid.presentation.common.BaseSupportFragment;
 import com.zighter.zighterandroid.presentation.login.LoginActivity;
 import com.zighter.zighterandroid.view.recyclerview.SimpleDividerItemDecoration;
@@ -29,7 +35,13 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 import butterknife.BindView;
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+
+import static com.zighter.zighterandroid.data.entities.service.ServiceSearchSort.SortOrder.ASC;
+import static com.zighter.zighterandroid.data.entities.service.ServiceSearchSort.SortOrder.DESC;
+import static com.zighter.zighterandroid.data.entities.service.ServiceSearchSort.SortType.DATE;
+import static com.zighter.zighterandroid.data.entities.service.ServiceSearchSort.SortType.PRICE;
 import static com.zighter.zighterandroid.presentation.search.SearchExcursionsAdapter.OnSearchExcursionClickListener;
 
 public class SearchFragment extends BaseSupportFragment
@@ -71,6 +83,8 @@ public class SearchFragment extends BaseSupportFragment
     TextView errorMessage;
     @BindView(R.id.recycler_view)
     RecyclerView recyclerView;
+    @BindView(R.id.sort_type)
+    TextView sortType;
 
     @Override
     protected int getLayoutId() {
@@ -103,19 +117,58 @@ public class SearchFragment extends BaseSupportFragment
                 .map(editable -> editable.toString().trim())
                 .doOnNext(string -> {
                     if (string.isEmpty()) {
-                        presenter.onSearchTyped(string);
+                        presenter.onSearchTyped(string, new ServiceSearchSort(null, null));
                     }
                 })
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(string -> {
                     if (!string.isEmpty()) {
-                        presenter.onSearchTyped(string);
+                        if (getContext() == null) {
+                            return;
+                        }
+                        ServiceSearchSort currentSearchType = getCurrentSearchSort(getContext());
+                        presenter.onSearchTyped(string, currentSearchType);
                     }
                 });
 
         RxView.clicks(iconClear)
                 .subscribe(it -> toolbarSearch.setText(null));
+
+        RxView.clicks(sortType)
+                .subscribe(it -> {
+                    PopupMenu popup = new PopupMenu(getContext(), sortType);
+                    popup.getMenuInflater().inflate(R.menu.search_sort, popup.getMenu());
+                    popup.setOnMenuItemClickListener(item -> {
+                        sortType.setText(item.getTitle());
+                        presenter.onSearchTyped(toolbarSearch.getText().toString(),
+                                                getCurrentSearchSort(getContext()));
+                        return true;
+                    });
+                    popup.show();
+                });
+    }
+
+    @NonNull
+    private ServiceSearchSort getCurrentSearchSort(@NonNull Context context) {
+        String sortTypeText = sortType.getText().toString();
+
+        ServiceSearchSort serviceSearchSort = null;
+        if (sortTypeText.equals(context.getString(R.string.cheapest_sort))) {
+            serviceSearchSort = new ServiceSearchSort(PRICE, ASC);
+        } else if (sortTypeText.equals(context.getString(R.string.expensive_sort))) {
+            serviceSearchSort = new ServiceSearchSort(PRICE, DESC);
+        } else if (sortTypeText.equals(context.getString(R.string.newest_sort))) {
+            serviceSearchSort = new ServiceSearchSort(DATE, DESC);
+        } else if (sortTypeText.equals(context.getString(R.string.oldest_sort))) {
+            serviceSearchSort = new ServiceSearchSort(DATE, ASC);
+        }
+
+        if (serviceSearchSort == null) {
+            serviceSearchSort = new ServiceSearchSort(null, null);
+        }
+
+        return serviceSearchSort;
     }
 
     @Override
@@ -149,7 +202,8 @@ public class SearchFragment extends BaseSupportFragment
         }
 
         errorMessage.setText(getContext().getString(R.string.nothing_was_found));
-        tryAgain.setOnClickListener(view -> presenter.onSearchTyped(toolbarSearch.getText().toString()));
+        tryAgain.setOnClickListener(view -> presenter.onSearchTyped(toolbarSearch.getText().toString(),
+                                                                    getCurrentSearchSort(getContext())));
 
         progressBar.setVisibility(View.INVISIBLE);
         tryAgain.setVisibility(View.INVISIBLE);
@@ -184,8 +238,8 @@ public class SearchFragment extends BaseSupportFragment
         }
 
         errorMessage.setText(getContext().getString(R.string.unhandled_error_message));
-        tryAgain.setOnClickListener(view -> presenter.onSearchTyped(toolbarSearch.getText().toString()));
-
+        tryAgain.setOnClickListener(view -> presenter.onSearchTyped(toolbarSearch.getText().toString(),
+                                                                    getCurrentSearchSort(getContext())));
         progressBar.setVisibility(View.INVISIBLE);
         tryAgain.setVisibility(View.VISIBLE);
         errorMessage.setVisibility(View.VISIBLE);
@@ -199,8 +253,8 @@ public class SearchFragment extends BaseSupportFragment
         }
 
         errorMessage.setText(getContext().getString(R.string.network_error_message));
-        tryAgain.setOnClickListener(view -> presenter.onSearchTyped(toolbarSearch.getText().toString()));
-
+        tryAgain.setOnClickListener(view -> presenter.onSearchTyped(toolbarSearch.getText().toString(),
+                                                                    getCurrentSearchSort(getContext())));
         progressBar.setVisibility(View.INVISIBLE);
         tryAgain.setVisibility(View.VISIBLE);
         errorMessage.setVisibility(View.VISIBLE);
@@ -214,8 +268,8 @@ public class SearchFragment extends BaseSupportFragment
         }
 
         errorMessage.setText(getContext().getString(R.string.server_error_message));
-        tryAgain.setOnClickListener(view -> presenter.onSearchTyped(toolbarSearch.getText().toString()));
-
+        tryAgain.setOnClickListener(view -> presenter.onSearchTyped(toolbarSearch.getText().toString(),
+                                                                    getCurrentSearchSort(getContext())));
         progressBar.setVisibility(View.INVISIBLE);
         tryAgain.setVisibility(View.VISIBLE);
         errorMessage.setVisibility(View.VISIBLE);

@@ -61,4 +61,11 @@ public interface ServiceExcursionContract {
     @GET(API + V1 + EXCURSIONS + SLASH)
     Single<ServiceSearchExcursions> searchExcursions(@NonNull @Query("q") String request,
                                                      @Query("location") boolean isLocation);
+
+    @GET(API + V1 + EXCURSIONS + SLASH)
+    Single<ServiceSearchExcursions> searchExcursionsWithSort(@NonNull @Query("q") String request,
+                                                             @Query("location") boolean isLocation,
+                                                             @Query("hasSort") boolean hasSort,
+                                                             @Query("sortType") String sortType,
+                                                             @Query("sortOrder") String sortOrder);
 }

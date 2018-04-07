@@ -3,6 +3,7 @@ package com.zighter.zighterandroid.presentation.search;
 import android.support.annotation.NonNull;
 
 import com.arellomobile.mvp.InjectViewState;
+import com.zighter.zighterandroid.data.entities.service.ServiceSearchSort;
 import com.zighter.zighterandroid.data.exception.BaseException;
 import com.zighter.zighterandroid.data.exception.NetworkUnavailableException;
 import com.zighter.zighterandroid.data.exception.ServerException;
@@ -42,7 +43,7 @@ public class SearchPresenter extends BasePresenter<SearchView> {
         super.onDestroy();
     }
 
-    void onSearchTyped(@NonNull String text) {
+    void onSearchTyped(@NonNull String text, @NonNull ServiceSearchSort serviceSearchSort) {
         if (getExcursionsDisposable != null) {
             getExcursionsDisposable.dispose();
         }
@@ -51,7 +52,7 @@ public class SearchPresenter extends BasePresenter<SearchView> {
             getViewState().showEmptySearch();
         } else {
             getExcursionsDisposable = excursionRepository
-                    .searchExcursions(text)
+                    .searchExcursions(text, serviceSearchSort)
                     .compose(applySchedulersSingle())
                     .doOnSubscribe(disposable -> getViewState().showLoading())
                     .subscribe(excursions -> {

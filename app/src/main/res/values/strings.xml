@@ -10,7 +10,7 @@
     <string name="meters">m</string>
 
     <string name="open_permission_settings_request_title">Open permission settings?</string>
-    <string name="open_permission_settings_request_message">Please, enable Location permission to be able to see your location on the map.</string>
+    <string name="open_permission_settings_request_message">Please, enable location permission to be able to see your location on the map.</string>
 
     <string name="open_gps_settings_request_title">Open GPS settings?</string>
     <string name="open_gps_settings_request_message">Please, turn on GPS to be able to see your location on the map.</string>
@@ -19,10 +19,9 @@
     <string name="no">NO</string>
 
     <string name="try_again">Try again</string>
-    <string name="network_error_message">An error occurred while trying to download data. Please, check your network connection.</string>
-    <string name="server_error_message">An error occurred on the server side. Please, try again later.</string>
+    <string name="server_error_message">An error on the server side. Please, try again later.</string>
     <string name="media_upload_error_message">Unable to upload</string>
-    <string name="empty_bought_excursions">All your bought excursions will be shown here</string>
+    <string name="empty_bought_excursions">Bought excursions will be shown here</string>
     <string name="unhandled_error_message">Something gone wrong.</string>
     <string name="server_login_error_message">Either login or password is incorrect.</string>
     <string name="server_registration_error_message">The data you typed is invalid.</string>
@@ -37,8 +36,8 @@
     <string name="download_excursion">Download excursion</string>
 
     <string name="search_excursions">Search request</string>
-    <string name="type_search_excursions">Type your request to search for excursions</string>
-    <string name="nothing_was_found">There were found nothing. Please, try to change your request</string>
+    <string name="type_search_excursions">Find excursions by address or key phrase</string>
+    <string name="nothing_was_found">There were found nothing. Please, try to change your request.</string>
 
     <string name="username_hint">Username</string>
     <string name="username_error">At least 1 character</string>
@@ -59,10 +58,19 @@
 
     <string name="you_logged_in_as">You logged in as:</string>
 
-    <string name="rouble">\u20BD</string>
-    <string name="free">FREE</string>
+    <string name="rouble" translatable="false">\u20BD</string>
+    <string name="free" translatable="false">FREE</string>
 
     <string name="map">Map</string>
     <string name="map_and_media">Map + Media</string>
     <string name="guide">Guide</string>
+    <string name="network_error_message">An error while trying to download data. Please, check your connection.</string>
+    <string name="personal_recommendation">Your personal recommendation</string>
+    <string name="default_sort">Default</string>
+    <string name="cheapest_sort">From cheapest</string>
+    <string name="expensive_sort">From most expensive</string>
+    <string name="oldest_sort">From oldest</string>
+    <string name="newest_sort">From newest</string>
+
+
 </resources>

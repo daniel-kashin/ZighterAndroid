@@ -77,7 +77,7 @@
         app:behavior_anchorOffset="205dp"
         app:behavior_hideable="true"
         app:behavior_peekHeight="92dp"
-        app:layout_behavior="com.zighter.zighterandroid.util.AnchorBottomSheetBehavior">
+        app:layout_behavior="com.zighter.zighterandroid.view.AnchorBottomSheetBehavior">
 
         <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:id="@+id/bottom_sheet_fragment_container"

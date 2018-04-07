@@ -1,6 +1,7 @@
 package com.zighter.zighterandroid.presentation.search;
 
 import android.annotation.SuppressLint;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 
 import android.support.annotation.NonNull;
@@ -58,7 +59,7 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
     public void onBindViewHolder(SearchExcursionViewHolder holder, int position) {
         if (excursions == null) throw new IllegalStateException();
 
-        holder.bind(excursions.get(position));
+        holder.bind(excursions.get(position), position == 0);
 
         holder.setOnClickListener(view -> {
             if (excursions == null) throw new IllegalStateException();
@@ -100,6 +101,8 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
         TextView priceMap;
         @BindView(R.id.price_media)
         TextView priceMedia;
+        @BindView(R.id.personal_recommendation)
+        TextView personalRecommendation;
 
         SearchExcursionViewHolder(@NonNull View view) {
             super(view);
@@ -107,17 +110,23 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
             ButterKnife.bind(this, rootView);
         }
 
-        void bind(@NonNull ServiceSearchExcursion excursion) {
+        void bind(@NonNull ServiceSearchExcursion excursion, boolean isRecommendation) {
             name.setText(excursion.getName());
             location.setText(excursion.getLocation());
             owner.setText(excursion.getProviderUsername());
 
+            if (isRecommendation) {
+                personalRecommendation.setVisibility(View.VISIBLE);
+            } else {
+                personalRecommendation.setVisibility(View.GONE);
+            }
+
             String rouble = " " + rootView.getContext().getString(R.string.rouble);
             String free = rootView.getContext().getString(R.string.free);
 
-            showPrice(free, rouble, excursion.getRoutePrice(), layoutMap, priceMap);
-            showPrice(free, rouble, excursion.getRoutePrice(), layoutMedia, priceMedia);
-            showPrice(free, rouble, excursion.getRoutePrice(), layoutGuide, priceGuide);
+            showPrice(free, rouble, excursion.getRoutePrice(), layoutMap, priceMap, isRecommendation);
+            showPrice(free, rouble, excursion.getRoutePrice(), layoutMedia, priceMedia, isRecommendation);
+            showPrice(free, rouble, excursion.getRoutePrice(), layoutGuide, priceGuide, isRecommendation);
 
             Glide.with(imageView.getContext())
                     .load(excursion.getImageUrl())
@@ -132,7 +141,11 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
                                       @NonNull String rouble,
                                       @Nullable Double price,
                                       @NonNull RelativeLayout layout,
-                                      @NonNull TextView priceText) {
+                                      @NonNull TextView priceText,
+                                      boolean isRecommendation) {
+            int priceTextColor = isRecommendation ? R.color.zighterPrimary : R.color.secondaryText;
+            priceText.setTextColor(ContextCompat.getColor(priceText.getContext(), priceTextColor));
+
             if (price != null) {
                 if (price == 0.0) {
                     priceText.setText(free);

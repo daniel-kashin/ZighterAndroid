@@ -101,7 +101,9 @@ public class ExcursionHolderActivity extends BaseSupportActivity {
 
         toolbarTitle.setText(boughtExcursion.getName());
 
-        if (boughtExcursion.isGuideAvailable()) {
+        // TODO: remove
+        //if (boughtExcursion.isGuideAvailable()) {
+        if (true) {
             iconGuide.setVisibility(View.VISIBLE);
             iconGuide.setOnClickListener(view -> {
                 GuideActivity.start(ExcursionHolderActivity.this, boughtExcursion.getOwnerUuid());

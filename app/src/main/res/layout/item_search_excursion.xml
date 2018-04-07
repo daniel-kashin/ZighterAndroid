@@ -23,8 +23,8 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginStart="27dp"
+            android:layout_marginTop="27dp"
             android:background="@drawable/ic_landscape_white" />
 
         <ImageView
@@ -94,6 +94,18 @@
         android:background="@color/lightHintText"
         android:layout_width="match_parent"
         android:layout_height="1dp"/>
+
+    <TextView
+        android:id="@+id/personal_recommendation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="italic"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="5dp"
+        android:textColor="@color/zighterPrimary"
+        android:text="@string/personal_recommendation"/>
 
     <LinearLayout
         android:orientation="horizontal"

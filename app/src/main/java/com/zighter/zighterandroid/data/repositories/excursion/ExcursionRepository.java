@@ -17,6 +17,7 @@ import com.zighter.zighterandroid.data.entities.service.ServicePath;
 import com.zighter.zighterandroid.data.entities.service.ServicePoint;
 import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursions;
+import com.zighter.zighterandroid.data.entities.service.ServiceSearchSort;
 import com.zighter.zighterandroid.data.entities.service.ServiceToken;
 import com.zighter.zighterandroid.data.entities.storage.StorageExcursion;
 import com.zighter.zighterandroid.data.entities.storage.StorageGuide;
@@ -129,8 +130,9 @@ public class ExcursionRepository {
     }
 
     @NonNull
-    public Single<List<ServiceSearchExcursion>> searchExcursions(@NonNull String request) {
-        return excursionService.searchExcursions(request)
+    public Single<List<ServiceSearchExcursion>> searchExcursions(@NonNull String request,
+                                                                 @NonNull ServiceSearchSort sort) {
+        return excursionService.searchExcursions(request, sort)
                 .map(excursions -> excursions.tryGetValidOrThrowException().getExcursions());
     }
 
