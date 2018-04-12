@@ -11,6 +11,8 @@ import com.zighter.zighterandroid.data.entities.media.Image;
 import com.zighter.zighterandroid.data.entities.media.Media;
 import com.zighter.zighterandroid.data.entities.media.Video;
 import com.zighter.zighterandroid.data.entities.presentation.Guide;
+import com.zighter.zighterandroid.data.entities.presentation.Path;
+import com.zighter.zighterandroid.data.entities.presentation.Point;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursionBindResponse;
@@ -399,20 +401,20 @@ public class ExcursionRepository {
                 }
 
                 // get paths
-                List<ServicePath> paths = new ArrayList<>();
+                List<Path> paths = new ArrayList<>();
                 List<StoragePath> storagePaths = excursionStorage.getPaths(excursion.getUuid()).blockingGet().get();
                 if (storagePaths != null) {
                     for (StoragePath storagePath : storagePaths) {
                         // get points
-                        List<ServicePoint> points = new ArrayList<>();
+                        List<Point> points = new ArrayList<>();
                         List<StoragePoint> storagePoints = excursionStorage.getPoints(storagePath.getUuid(), excursionUuid).blockingGet().get();
                         if (storagePoints != null) {
                             for (StoragePoint storagePoint : storagePoints) {
-                                points.add(new ServicePoint(storagePoint.getLongitude(), storagePoint.getLatitude()));
+                                points.add(new Point(storagePoint.getLongitude(), storagePoint.getLatitude()));
                             }
                         }
 
-                        paths.add(new ServicePath(storagePath.getUuid(), points));
+                        paths.add(new Path(storagePath.getUuid(), points));
                     }
                 }
 
@@ -420,8 +422,8 @@ public class ExcursionRepository {
                                        excursion.getName(),
                                        sights,
                                        paths,
-                                       new ServicePoint(excursion.getWestBound(), excursion.getNorthBound()),
-                                       new ServicePoint(excursion.getEastBound(), excursion.getSouthBound()),
+                                       new Point(excursion.getWestBound(), excursion.getNorthBound()),
+                                       new Point(excursion.getEastBound(), excursion.getSouthBound()),
                                        excursion.getMaxZoom(),
                                        excursion.getMinZoom());
             }
@@ -437,10 +439,10 @@ public class ExcursionRepository {
             // save paths
             excursionStorage.deletePaths(excursion.getUuid()).blockingGet();
             for (int i = 0; i < excursion.getPathSize(); ++i) {
-                ServicePath path = excursion.getPathAt(i);
+                Path path = excursion.getPathAt(i);
                 List<StoragePoint> storagePoints = new ArrayList<>(path.getPointSize());
                 for (int j = 0; j < path.getPointSize(); ++j) {
-                    ServicePoint point = path.getPointAt(j);
+                    Point point = path.getPointAt(j);
                     storagePoints.add(new StoragePoint(path.getUuid(), excursion.getUuid(), point.getLongitude(), point.getLatitude()));
                 }
 

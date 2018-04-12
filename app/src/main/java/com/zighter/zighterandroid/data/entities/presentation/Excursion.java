@@ -20,12 +20,12 @@ public class Excursion implements Serializable {
     private List<Sight> sights;
 
     @NonNull
-    private List<ServicePath> paths;
+    private List<Path> paths;
 
     @NonNull
-    private ServicePoint westNorthMapBound;
+    private Point westNorthMapBound;
     @NonNull
-    private ServicePoint eastSouthMapBound;
+    private Point eastSouthMapBound;
 
     private int maxMapZoom;
     private int minMapZoom;
@@ -33,9 +33,9 @@ public class Excursion implements Serializable {
     public Excursion(@NonNull String uuid,
                      @NonNull String name,
                      @NonNull List<Sight> sights,
-                     @NonNull List<ServicePath> paths,
-                     @NonNull ServicePoint westNorthMapBound,
-                     @NonNull ServicePoint eastSouthMapBound,
+                     @NonNull List<Path> paths,
+                     @NonNull Point westNorthMapBound,
+                     @NonNull Point eastSouthMapBound,
                      int maxMapZoom,
                      int minMapZoom) {
         this.uuid = uuid;
@@ -67,7 +67,7 @@ public class Excursion implements Serializable {
     }
 
     @NonNull
-    public ServicePath getPathAt(int index) {
+    public Path getPathAt(int index) {
         return paths.get(index);
     }
 
@@ -77,12 +77,12 @@ public class Excursion implements Serializable {
     }
 
     @NonNull
-    public ServicePoint getWestNorthMapBound() {
+    public Point getWestNorthMapBound() {
         return westNorthMapBound;
     }
 
     @NonNull
-    public ServicePoint getEastSouthMapBound() {
+    public Point getEastSouthMapBound() {
         return eastSouthMapBound;
     }
 

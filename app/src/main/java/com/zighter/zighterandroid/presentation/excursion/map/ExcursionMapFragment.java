@@ -27,6 +27,8 @@ import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.zighter.zighterandroid.R;
 import com.zighter.zighterandroid.dagger.Injector;
 import com.zighter.zighterandroid.data.entities.presentation.Excursion;
+import com.zighter.zighterandroid.data.entities.presentation.Path;
+import com.zighter.zighterandroid.data.entities.presentation.Point;
 import com.zighter.zighterandroid.data.entities.service.ServicePoint;
 import com.zighter.zighterandroid.data.entities.service.ServicePath;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
@@ -346,21 +348,21 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
 
             // add paths
             for (int i = 0; i < excursion.getPathSize(); ++i) {
-                ServicePath path = excursion.getPathAt(i);
+                Path path = excursion.getPathAt(i);
 
-                ServicePoint first = path.getFirstEndpoint();
+                Point first = path.getFirstEndpoint();
                 mapboxMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(first.getLatitude(), first.getLongitude()))
                                             .icon(IconHelper.getIcon(getContext(), IconHelperType.ENDPOINT_START)));
 
-                ServicePoint second = path.getSecondEndpoint();
+                Point second = path.getSecondEndpoint();
                 mapboxMap.addMarker(new MarkerOptions()
                                             .position(new LatLng(second.getLatitude(), second.getLongitude()))
                                             .icon(IconHelper.getIcon(getContext(), IconHelperType.ENDPOINT_END)));
 
                 List<LatLng> points = new ArrayList<>();
                 for (int j = 0; j < path.getPointSize(); ++j) {
-                    ServicePoint point = path.getPointAt(j);
+                    Point point = path.getPointAt(j);
                     points.add(new LatLng(point.getLatitude(), point.getLongitude()));
                 }
 
@@ -382,7 +384,7 @@ public class ExcursionMapFragment extends BaseSupportFragment implements Excursi
                     latLng = new LatLng(excursion.getSightAt(0).getLatitude(),
                                         excursion.getSightAt(0).getLongitude());
                 } else if (excursion.getPathSize() != 0) {
-                    ServicePath path = excursion.getPathAt(0);
+                    Path path = excursion.getPathAt(0);
                     if (path.getPointSize() != 0) {
                         latLng = new LatLng(path.getPointAt(0).getLatitude(),
                                             path.getPointAt(0).getLongitude());

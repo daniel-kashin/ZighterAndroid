@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
 import com.zighter.zighterandroid.data.entities.presentation.Excursion;
 import com.zighter.zighterandroid.data.entities.presentation.Guide;
+import com.zighter.zighterandroid.data.entities.presentation.Path;
+import com.zighter.zighterandroid.data.entities.presentation.Point;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceGuide;
@@ -26,7 +28,7 @@ import java.util.List;
 public class ExcursionMapper {
     @NonNull
     private static List<Media> getDummyMediaForSight(@NonNull String excursionUuid,
-                                                         @NonNull String sightUuid) {
+                                                     @NonNull String sightUuid) {
         List<Media> result = new ArrayList<>();
 
         if (excursionUuid.equals("7") && sightUuid.equals("0")) {
@@ -110,17 +112,25 @@ public class ExcursionMapper {
         }
 
         int pathSize = serviceExcursion.getPathSize();
-        List<ServicePath> paths = new ArrayList<>(pathSize);
+        List<Path> paths = new ArrayList<>(pathSize);
         for (int i = 0; i < pathSize; ++i) {
-            paths.add(serviceExcursion.getPathAt(i));
+            ServicePath servicePath = serviceExcursion.getPathAt(i);
+            List<Point> points = new ArrayList<>(servicePath.getPointSize());
+            for (int j = 0; j < servicePath.getPointSize(); ++j) {
+                points.add(new Point(servicePath.getPointAt(j).getLongitude(),
+                                     servicePath.getPointAt(j).getLatitude()));
+            }
+            paths.add(new Path(servicePath.getUuid(), points));
         }
 
         return new Excursion(serviceExcursion.getUuid(),
                              serviceExcursion.getName(),
                              sights,
                              paths,
-                             serviceExcursion.getWestNorthMapBound(),
-                             serviceExcursion.getEastSouthMapBound(),
+                             new Point(serviceExcursion.getWestNorthMapBound().getLongitude(),
+                                       serviceExcursion.getWestNorthMapBound().getLatitude()),
+                             new Point(serviceExcursion.getEastSouthMapBound().getLongitude(),
+                                       serviceExcursion.getEastSouthMapBound().getLatitude()),
                              serviceExcursion.getMaxMapZoom(),
                              serviceExcursion.getMinMapZoom());
     }
