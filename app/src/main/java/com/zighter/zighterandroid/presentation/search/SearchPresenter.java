@@ -11,8 +11,6 @@ import com.zighter.zighterandroid.data.exception.ServerNotAuthorizedException;
 import com.zighter.zighterandroid.data.repositories.excursion.ExcursionRepository;
 import com.zighter.zighterandroid.presentation.common.BasePresenter;
 
-import java.util.ArrayList;
-
 import javax.annotation.Nullable;
 
 import io.reactivex.Scheduler;
@@ -26,6 +24,8 @@ public class SearchPresenter extends BasePresenter<SearchView> {
     private final ExcursionRepository excursionRepository;
     @Nullable
     private Disposable getExcursionsDisposable;
+    @Nullable
+    private Disposable bindRouteDisposable;
 
     public SearchPresenter(@NonNull ExcursionRepository excursionRepository,
                            @NonNull Scheduler worker,
@@ -41,6 +41,41 @@ public class SearchPresenter extends BasePresenter<SearchView> {
             getExcursionsDisposable = null;
         }
         super.onDestroy();
+    }
+
+    void onBindCancelled() {
+        if (bindRouteDisposable != null) {
+            bindRouteDisposable.dispose();
+            bindRouteDisposable = null;
+        }
+    }
+
+    void onBindRoute(@NonNull String excursionUuid) {
+        if (bindRouteDisposable != null) {
+            bindRouteDisposable.dispose();
+            bindRouteDisposable = null;
+        }
+        bindRouteDisposable = excursionRepository.bindExcursionRoute(excursionUuid)
+                .compose(applySchedulersSingle())
+                .doOnSubscribe(disposable -> getViewState().showExcursionBuyingLoading())
+                .subscribe(response -> {
+                    getViewState().showExcursionBought();
+                }, throwable -> {
+                    if (throwable instanceof BaseException) {
+                        if (throwable instanceof NetworkUnavailableException) {
+                            getViewState().showAddingNetworkUnavailable();
+                        } else if (throwable instanceof ServerException) {
+                            if (throwable instanceof ServerNotAuthorizedException) {
+                                getViewState().showNotAuthorizedException();
+                            } else {
+                                getViewState().showServerAddingException();
+                            }
+                        }
+                    } else {
+                        handleThrowable(throwable, TAG);
+                        getViewState().showServerAddingException();
+                    }
+                });
     }
 
     void onSearchTyped(@NonNull String text, @NonNull ServiceSearchSort serviceSearchSort) {

@@ -22,6 +22,15 @@ public class ServiceSearchExcursion extends Validable<ServiceSearchExcursion> {
     @SerializedName("provider_username")
     String providerUsername;
 
+    @SerializedName("has_route")
+    boolean hasRoute;
+
+    @SerializedName("has_media")
+    boolean hasMedia;
+
+    @SerializedName("has_guide")
+    boolean hasGuide;
+
     @SerializedName("route_price")
     Double routePrice;
 
@@ -47,6 +56,9 @@ public class ServiceSearchExcursion extends Validable<ServiceSearchExcursion> {
         this.routePrice = routePrice;
         this.mediaPrice = mediaPrice;
         this.guidePrice = guidePrice;
+        this.hasGuide = true;
+        this.hasRoute = true;
+        this.hasMedia = true;
     }
 
     @Override
@@ -100,16 +112,28 @@ public class ServiceSearchExcursion extends Validable<ServiceSearchExcursion> {
 
     @Nullable
     public Double getRoutePrice() {
+        if (!hasRoute) {
+            return null;
+        }
+
         return routePrice;
     }
 
     @Nullable
     public Double getMediaPrice() {
+        if (!hasMedia) {
+            return null;
+        }
+
         return mediaPrice;
     }
 
     @Nullable
     public Double getGuidePrice() {
+        if (!hasGuide) {
+            return null;
+        }
+
         return guidePrice;
     }
 }

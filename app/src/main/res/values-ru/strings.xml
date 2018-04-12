@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="map">Карта</string>
-    <string name="map_and_media">Карта + Медиа</string>
+    <string name="map">Маршрут</string>
+    <string name="map_and_media">Медиа</string>
     <string name="guide">Гид</string>
     <string name="your_guide">Ваш гид</string>
     <string name="btn_interesting">Интересное</string>
@@ -44,7 +44,7 @@
     <string name="login_button">Войти</string>
     <string name="log_out_button">"Выйти "</string>
     <string name="welcome_back">Рады Вас видеть</string>
-    <string name="enjoy_zighter">Введите данные</string>
+    <string name="enjoy_zighter">Добро пожаловать</string>
     <string name="new_at_zighter">Впервые у нас?</string>
     <string name="you_logged_in_as">Вы вошли как:</string>
     <string name="personal_recommendation">Рекомендация для Вас</string>
@@ -53,4 +53,10 @@
     <string name="expensive_sort">Начиная с дорогих</string>
     <string name="oldest_sort">Начиная со старых</string>
     <string name="newest_sort">Начиная с новых</string>
+    <string name="only_route_supported">При добавлении Маршрута, Медиа и Гид будут добавлены автоматически. Спасибо, что используете Zighter.</string>
+    <string name="money_not_supported">Перевод денег пока не поддерживается. Спасибо, что используете Zighter.</string>
+    <string name="route_added">Маршрут был добавлен в список купленных экскурсий.</string>
+    <string name="adding_route">Маршрут добавляется...</string>
+    <string name="adding_exception">Невозможно добавить маршрут. Пожалуйста, выберите другой маршрут и попробуйте заново.</string>
+    <string name="register">Зарегистрироваться</string>
 </resources>

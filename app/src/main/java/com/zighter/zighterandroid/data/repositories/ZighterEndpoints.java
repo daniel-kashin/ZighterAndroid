@@ -7,6 +7,10 @@ public interface ZighterEndpoints {
 
     String EXCURSIONS = "/excursions";
 
+    String BIND = "/bind";
+
+    String ROUTE = "/route";
+
     String CLIENT_COLLECTION = "/client-collection";
 
     String API = "/api";

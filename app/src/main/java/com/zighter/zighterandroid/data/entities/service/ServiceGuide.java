@@ -27,11 +27,11 @@ public class ServiceGuide extends Validable<ServiceGuide> {
 
     @VisibleForTesting
     public ServiceGuide(@NonNull String uuid,
-                 @NonNull String username,
-                 @NonNull String firstName,
-                 @Nullable String lastName,
-                 @NonNull String phone,
-                 @NonNull String email) {
+                        @NonNull String username,
+                        @NonNull String firstName,
+                        @Nullable String lastName,
+                        @NonNull String phone,
+                        @NonNull String email) {
         this.uuid = uuid;
         this.username = username;
         this.firstName = firstName;
@@ -42,8 +42,11 @@ public class ServiceGuide extends Validable<ServiceGuide> {
 
     @NonNull
     public String getUuid() {
-        // TODO
-        return "";
+        return uuid;
+    }
+
+    public void setUuid(@NonNull String uuid) {
+        this.uuid = uuid;
     }
 
     @NonNull
@@ -73,9 +76,7 @@ public class ServiceGuide extends Validable<ServiceGuide> {
 
     @Override
     public boolean isValid() {
-        // TODO: uncomment
-        return // uuid != null &&
-                username != null && firstName != null && phone != null && email != null;
+        return  uuid != null && username != null && firstName != null && phone != null && email != null;
     }
 
     @Nullable

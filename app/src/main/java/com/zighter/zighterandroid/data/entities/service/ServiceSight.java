@@ -128,4 +128,9 @@ public class ServiceSight extends Validable<ServiceSight> {
     public String getWebsite() {
         return website;
     }
+
+    @Nullable
+    public List<ServiceImage> getImages() {
+        return images;
+    }
 }

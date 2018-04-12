@@ -3,7 +3,7 @@
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@android:color/black</item>
         <item name="colorPrimaryDark">@android:color/black</item>
-        <item name="colorAccent">@color/lightHintText</item>
+        <item name="colorAccent">@color/zighterPrimary</item>
         <item name="android:navigationBarColor">@color/hintText</item>
         <item name="android:colorEdgeEffect">@color/lightLightHintText</item>
     </style>

@@ -17,6 +17,7 @@
 
     <string name="yes">YES</string>
     <string name="no">NO</string>
+    <string name="ok" translatable="false">OK</string>
 
     <string name="try_again">Try again</string>
     <string name="server_error_message">An error on the server side. Please, try again later.</string>
@@ -61,8 +62,8 @@
     <string name="rouble" translatable="false">\u20BD</string>
     <string name="free" translatable="false">FREE</string>
 
-    <string name="map">Map</string>
-    <string name="map_and_media">Map + Media</string>
+    <string name="map">Route</string>
+    <string name="map_and_media">Media</string>
     <string name="guide">Guide</string>
     <string name="network_error_message">An error while trying to download data. Please, check your connection.</string>
     <string name="personal_recommendation">Your personal recommendation</string>
@@ -72,5 +73,10 @@
     <string name="oldest_sort">From oldest</string>
     <string name="newest_sort">From newest</string>
 
-
+    <string name="only_route_supported">Media and Guide will be added automatically when adding Route. Thank you for using Zighter.</string>
+    <string name="money_not_supported">Money transfers not supported yet. Please, choose free excursions from the list. Thank you for using Zighter.</string>
+    <string name="route_added">Route has been added to the list of your excursions.</string>
+    <string name="adding_route">Adding route...</string>
+    <string name="adding_exception">Unable to add route. Please, choose another route and try again.</string>
+    <string name="register">Register</string>
 </resources>

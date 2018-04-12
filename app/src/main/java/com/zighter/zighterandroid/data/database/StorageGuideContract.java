@@ -1,7 +1,7 @@
 package com.zighter.zighterandroid.data.database;
 
 public class StorageGuideContract {
-    public static final String TABLE_NAME = "Guide";
+    public static final String TABLE_NAME = "Guides";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_UUID = "uuid";

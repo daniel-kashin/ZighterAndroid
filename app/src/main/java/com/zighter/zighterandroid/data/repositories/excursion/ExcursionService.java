@@ -1,9 +1,10 @@
 package com.zighter.zighterandroid.data.repositories.excursion;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
 import android.util.Pair;
 
-import com.google.gson.annotations.SerializedName;
+import com.zighter.zighterandroid.data.entities.service.ServiceExcursionBindResponse;
 import com.zighter.zighterandroid.data.entities.service.ServiceLoginData;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceGuide;
@@ -34,6 +35,7 @@ import static com.zighter.zighterandroid.data.entities.service.ServiceSearchSort
 import static com.zighter.zighterandroid.data.entities.service.ServiceSearchSort.SortType.DATE;
 
 public class ExcursionService extends BaseService<ServiceExcursionContract> {
+    private static final int SEARCH_EXCURSION_COUNT = 15;
     private static final String TOKEN_PREFIX = "Token ";
 
     public ExcursionService(OkHttpClient okHttpClient) {
@@ -69,11 +71,24 @@ public class ExcursionService extends BaseService<ServiceExcursionContract> {
     }
 
     @NonNull
+    Single<ServiceExcursionBindResponse> bindExcursionRoute(@NonNull String excursionUuid,
+                                                            @NonNull String token) {
+        return getService()
+                .bindExcursionRoute(excursionUuid, addTokenPrefix(token))
+                .onErrorResumeNext(this::convertRetrofitThrowable)
+                .doOnSuccess(serviceExcursionBindResponse -> {
+                    if (TextUtils.isEmpty(serviceExcursionBindResponse.getExcursionUuid())) {
+                        throw new ServerException(null);
+                    }
+                });
+    }
+
+    @NonNull
     Single<ServiceSearchExcursions> searchExcursions(@NonNull String request,
                                                      @NonNull ServiceSearchSort sort) {
         if (sort.getSortOrder() == null || sort.getSortType() == null) {
             return getService()
-                    .searchExcursions(request, false)
+                    .searchExcursions(request, false, SEARCH_EXCURSION_COUNT)
                     .onErrorResumeNext(this::convertRetrofitThrowable);
         } else {
             return getService()
@@ -81,7 +96,8 @@ public class ExcursionService extends BaseService<ServiceExcursionContract> {
                                               false,
                                               true,
                                               sort.getSortType() == DATE ? "dataTime" : "routePrice",
-                                              sort.getSortOrder() == ASC ? "asc" : "desc")
+                                              sort.getSortOrder() == ASC ? "asc" : "desc",
+                                              SEARCH_EXCURSION_COUNT)
                     .onErrorResumeNext(this::convertRetrofitThrowable);
         }
     }
@@ -90,6 +106,9 @@ public class ExcursionService extends BaseService<ServiceExcursionContract> {
     Single<ServiceGuide> getGuide(@NonNull String ownerUuid, @NonNull String token) {
         return getService()
                 .getGuide(ownerUuid, addTokenPrefix(token))
+                .doOnSuccess(guide -> {
+                    guide.setUuid(ownerUuid);
+                })
                 .onErrorResumeNext(this::convertRetrofitThrowable);
     }
 

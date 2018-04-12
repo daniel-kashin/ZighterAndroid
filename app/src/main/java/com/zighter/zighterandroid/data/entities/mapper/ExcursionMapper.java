@@ -9,6 +9,7 @@ import com.zighter.zighterandroid.data.entities.presentation.Guide;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceGuide;
+import com.zighter.zighterandroid.data.entities.service.ServiceImage;
 import com.zighter.zighterandroid.data.entities.service.ServicePath;
 import com.zighter.zighterandroid.data.entities.service.ServiceSight;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
@@ -23,39 +24,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ExcursionMapper {
-    private static final List<Media> DUMMY_MEDIAS = new ArrayList<>(20);
-    private static final String DUMMY_DESCRIPTION = "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of \"de Finibus Bonorum et Malorum\" (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, \"Lorem ipsum dolor sit amet..\", comes from a line in section 1.10.32.\n" +
-            "\n" +
-            "The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from \"de Finibus Bonorum et Malorum\" by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham."
-            + "\n"
-            + "There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc."
-            + "\n"
-            + "It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)";
+    @NonNull
+    private static List<Media> getDummyMediaForSight(@NonNull String excursionUuid,
+                                                         @NonNull String sightUuid) {
+        List<Media> result = new ArrayList<>();
 
-    // TODO
-    static {
-        DUMMY_MEDIAS.add(new Image("https://mfiles.alphacoders.com/680/680627.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("https://livewallpaperhd.com/wp-content/uploads/2017/05/Barcelona-Wallpaper-Iphone-Hd.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("https://mfiles.alphacoders.com/680/680627.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("https://mfiles.alphacoders.com/342/342156.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("https://livewallpaperhd.com/wp-content/uploads/2017/05/Barcelona-Wallpaper-Iphone-Hd.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("http://i.imgur.com/CNSEdYc.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("https://mfiles.alphacoders.com/680/680627.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("http://i.imgur.com/CNSEdYc.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("https://livewallpaperhd.com/wp-content/uploads/2017/05/Barcelona-Wallpaper-Iphone-Hd.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("http://freewallpapersworld.com/ui/images/2/WDF_1858745.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("http://madrid-direct.com/wp-content/uploads/2016/08/barca02-1024x576.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("http://spain-dream.ru/wp-content/uploads/2017/12/Otdyh-v-Barselone.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Image("https://livewallpaperhd.com/wp-content/uploads/2017/05/Barcelona-Wallpaper-Iphone-Hd.jpg", null, "Title", DUMMY_DESCRIPTION));
-        DUMMY_MEDIAS.add(new Video("https://ia800201.us.archive.org/22/items/ksnn_compilation_master_the_internet/ksnn_compilation_master_the_internet_512kb.mp4", null, "Title", DUMMY_DESCRIPTION));
+        if (excursionUuid.equals("7") && sightUuid.equals("0")) {
+            result.add(new Video("https://cf-e2.streamablevideo.com/video/mp4/9scrm.mp4?token=1523365759-pdH3aDJd8sgU4H3%2Fvv%2BEt%2FNXiNhTIXcjfCBmccEJW20%3D", null, "Welcome to Pompeu Fabra University – 2017", "UPF is a public, international and intensive-research university that, in just over twenty-five years, has earned a place for itself among the best European universities. Pompeu Fabra University is modern, urban and lives to the rhythm of the city of Barcelona. Discover it! It was designated as an “International Excellence Campus” by the Spanish Ministry of Education in 2010. The university is a modern institution based on the model of the high-powered American research university with controlled admissions and an emphasis on rigorous instruction and research.\n" +
+                    "\n" +
+                    "An internationally renowned institution, UPF has recently been rated as the top Spanish university by the (London) Times Higher Education Supplement, and it is firmly in the upper echelon of Spanish universities in other rating schemes. Academically, it is the only Spanish and Catalan university along with the Autonomous University of Barcelona among the top 150 best in the world according to Times Higher Education academic classification of universities (140th and 147th place respectively) and it is one of the 7 fastest-rising young universities in the world, according to the same ranking. It ranks first in the national ranking of scientific productivity since 2009.\n" +
+                    "\n" +
+                    "The university has begun to figure prominently in many international rankings. Its studies on the Economics field have been ranked among the top 50 worldwide, 23rd for Economics and Econometrics in the QS World University Rankings by Subject and 40th for Business & Economics in the Times Higher Education Rankings.\n" +
+                    "\n" +
+                    "The university's Faculty of Economic and Business Sciences is the first and only faculty in Spain (public or private and for any discipline) to be awarded the Certificate for Quality in Internationalization granted by a consortium of 14 European accreditation agencies.\n" +
+                    "\n" +
+                    "In 2010, the university was awarded as Campus of International Excellence."));
+        }
+
+        return result;
     }
 
     @NonNull
@@ -98,13 +84,24 @@ public class ExcursionMapper {
         List<Sight> sights = new ArrayList<>(sightSize);
         for (int i = 0; i < sightSize; ++i) {
             ServiceSight serviceSight = serviceExcursion.getSightAt(i);
+
+            List<Media> medias = new ArrayList<>();
+            if (serviceSight.getImages() != null) {
+                List<ServiceImage> images = serviceSight.getImages();
+                for (int j = 0; j < images.size(); ++j) {
+                    ServiceImage image = images.get(j);
+                    medias.add(new Image(image.getUrl(), null, image.getTitle(), image.getDescription()));
+                }
+            }
+            medias.addAll(getDummyMediaForSight(serviceExcursion.getUuid(), serviceSight.getUuid()));
+
             Sight sight = new Sight(serviceSight.getUuid(),
                                     serviceSight.getLongitude(),
                                     serviceSight.getLatitude(),
                                     serviceSight.getName(),
                                     serviceSight.getType(),
                                     serviceSight.getDescription(),
-                                    DUMMY_MEDIAS,
+                                    medias,
                                     serviceSight.getTimetable(),
                                     serviceSight.getPhone(),
                                     serviceSight.getAddress(),
@@ -202,9 +199,9 @@ public class ExcursionMapper {
 
     @NonNull
     public BoughtExcursion fromService(@NonNull ServiceBoughtExcursion serviceBoughtExcursion,
-                                        boolean isGuideSaved,
-                                        boolean isMediaSaved,
-                                        boolean isRouteSaved) {
+                                       boolean isGuideSaved,
+                                       boolean isMediaSaved,
+                                       boolean isRouteSaved) {
         return new BoughtExcursion(serviceBoughtExcursion.getUuid(),
                                    serviceBoughtExcursion.getName(),
                                    serviceBoughtExcursion.getOwner(),

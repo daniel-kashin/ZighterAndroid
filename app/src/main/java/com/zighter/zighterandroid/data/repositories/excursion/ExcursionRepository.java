@@ -13,6 +13,7 @@ import com.zighter.zighterandroid.data.entities.media.Video;
 import com.zighter.zighterandroid.data.entities.presentation.Guide;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
+import com.zighter.zighterandroid.data.entities.service.ServiceExcursionBindResponse;
 import com.zighter.zighterandroid.data.entities.service.ServicePath;
 import com.zighter.zighterandroid.data.entities.service.ServicePoint;
 import com.zighter.zighterandroid.data.entities.service.ServiceSearchExcursion;
@@ -124,8 +125,22 @@ public class ExcursionRepository {
     public Completable logOut() {
         return excursionStorage.deleteAllData()
                 .doOnComplete(() -> {
+                    excursionStorage.deleteAllData();
                     tokenStorage.saveToken(null);
                     tokenStorage.saveLogin(null);
+                });
+    }
+
+    @NonNull
+    public Single<ServiceExcursionBindResponse> bindExcursionRoute(@NonNull String excursionUuid) {
+        return tokenStorage.getTokenSingle()
+                .flatMap(token -> excursionService.bindExcursionRoute(excursionUuid, token))
+                .doOnError(error -> {
+                    if (error instanceof ServerNotAuthorizedException) {
+                        excursionStorage.deleteAllData();
+                        tokenStorage.saveToken(null);
+                        tokenStorage.saveLogin(null);
+                    }
                 });
     }
 
@@ -144,6 +159,9 @@ public class ExcursionRepository {
                 .doOnSuccess(excursion -> saveExcursionToStorage(excursion).blockingAwait())
                 .onErrorResumeNext(throwable -> {
                     if (throwable instanceof ServerNotAuthorizedException) {
+                        excursionStorage.deleteAllData();
+                        tokenStorage.saveToken(null);
+                        tokenStorage.saveLogin(null);
                         return Single.error(throwable);
                     }
 
@@ -166,19 +184,22 @@ public class ExcursionRepository {
                 .map(excursionMapper::fromService)
                 .doOnSuccess(guide -> excursionStorage.saveGuide(excursionMapper.toStorage(guide)).blockingGet())
                 .onErrorResumeNext(throwable -> {
-                   if (throwable instanceof ServerNotAuthorizedException) {
-                       return Single.error(throwable);
-                   }
+                    if (throwable instanceof ServerNotAuthorizedException) {
+                        excursionStorage.deleteAllData();
+                        tokenStorage.saveToken(null);
+                        tokenStorage.saveLogin(null);
+                        return Single.error(throwable);
+                    }
 
-                   return excursionStorage.getGuide(ownerUuid)
-                           .flatMap(fromStorageOptional -> {
-                               StorageGuide guide = fromStorageOptional.get();
-                               if (guide != null) {
-                                   return Single.just(excursionMapper.fromStorage(guide));
-                               }
+                    return excursionStorage.getGuide(ownerUuid)
+                            .flatMap(fromStorageOptional -> {
+                                StorageGuide guide = fromStorageOptional.get();
+                                if (guide != null) {
+                                    return Single.just(excursionMapper.fromStorage(guide));
+                                }
 
-                               return Single.error(throwable);
-                           });
+                                return Single.error(throwable);
+                            });
                 });
     }
 
@@ -194,6 +215,13 @@ public class ExcursionRepository {
                     List<StorageBoughtExcursion> listFromStorage = listFromStorageOptional.get();
 
                     if (listFromService == null) {
+                        if (listFromServiceOrException.second instanceof ServerNotAuthorizedException) {
+                            excursionStorage.deleteAllData();
+                            tokenStorage.saveToken(null);
+                            tokenStorage.saveLogin(null);
+                            throw listFromServiceOrException.second;
+                        }
+
                         if (listFromStorage == null || listFromStorage.isEmpty()) {
                             throw listFromServiceOrException.second;
                         } else {
@@ -451,16 +479,16 @@ public class ExcursionRepository {
                 excursionStorage.deleteMedias(sight.getUuid(), excursion.getUuid()).blockingGet();
                 excursionStorage.saveMedias(storageMedia).blockingGet();
                 excursionStorage.saveSight(new StorageSight(sight.getUuid(),
-                                                                             excursion.getUuid(),
-                                                                             sight.getName(),
-                                                                             sight.getType(),
-                                                                             sight.getDescription(),
-                                                                             sight.getLongitude(),
-                                                                             sight.getLatitude(),
-                                                                             sight.getTimetable(),
-                                                                             sight.getPhone(),
-                                                                             sight.getAddress(),
-                                                                             sight.getWebsite())).blockingGet();
+                                                            excursion.getUuid(),
+                                                            sight.getName(),
+                                                            sight.getType(),
+                                                            sight.getDescription(),
+                                                            sight.getLongitude(),
+                                                            sight.getLatitude(),
+                                                            sight.getTimetable(),
+                                                            sight.getPhone(),
+                                                            sight.getAddress(),
+                                                            sight.getWebsite())).blockingGet();
             }
 
             // save excursion

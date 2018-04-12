@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
+import com.zighter.zighterandroid.data.repositories.ZighterEndpoints;
 
 public class ServiceImage extends Validable<ServiceImage> {
     @SerializedName("description")
@@ -40,5 +41,20 @@ public class ServiceImage extends Validable<ServiceImage> {
         }
 
         return null;
+    }
+
+    @Nullable
+    public String getDescription() {
+        return description;
+    }
+
+    @Nullable
+    public String getTitle() {
+        return title;
+    }
+
+    @NonNull
+    public String getUrl() {
+        return ZighterEndpoints.BASE_URL + url;
     }
 }

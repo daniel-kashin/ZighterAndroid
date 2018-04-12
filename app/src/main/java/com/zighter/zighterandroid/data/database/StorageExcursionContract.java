@@ -1,7 +1,7 @@
 package com.zighter.zighterandroid.data.database;
 
 public class StorageExcursionContract {
-    public static final String TABLE_NAME = "Excursions";
+    public static final String TABLE_NAME = "Routes";
 
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_UUID = "uuid";

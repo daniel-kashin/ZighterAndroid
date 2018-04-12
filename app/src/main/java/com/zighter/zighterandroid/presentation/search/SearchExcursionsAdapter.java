@@ -28,6 +28,9 @@ import java.util.List;
 
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
 import static com.zighter.zighterandroid.data.entities.presentation.BoughtExcursionWithStatus.DownloadStatus;
+import static com.zighter.zighterandroid.presentation.search.SearchExcursionsAdapter.OnSearchExcursionClickListener.ItemType.GUIDE;
+import static com.zighter.zighterandroid.presentation.search.SearchExcursionsAdapter.OnSearchExcursionClickListener.ItemType.MEDIA;
+import static com.zighter.zighterandroid.presentation.search.SearchExcursionsAdapter.OnSearchExcursionClickListener.ItemType.ROUTE;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -52,7 +55,11 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_excursion,
                                                                      parent,
                                                                      false);
-        return new SearchExcursionViewHolder(view);
+
+        SearchExcursionViewHolder holder = new SearchExcursionViewHolder(view);
+        holder.setOnClickListener(onSearchExcursionClickListener);
+
+        return holder;
     }
 
     @Override
@@ -60,18 +67,12 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
         if (excursions == null) throw new IllegalStateException();
 
         holder.bind(excursions.get(position), position == 0);
+    }
 
-        holder.setOnClickListener(view -> {
-            if (excursions == null) throw new IllegalStateException();
-
-            if (onSearchExcursionClickListener != null) {
-                int adapterPosition = holder.getAdapterPosition();
-                if (adapterPosition != NO_POSITION) {
-                    ServiceSearchExcursion excursion = excursions.get(adapterPosition);
-                    onSearchExcursionClickListener.onSearchExcursionClicked(excursion);
-                }
-            }
-        });
+    @Override
+    public void onViewRecycled(SearchExcursionViewHolder holder) {
+        holder.unbind();
+        super.onViewRecycled(holder);
     }
 
     @Override
@@ -103,6 +104,8 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
         TextView priceMedia;
         @BindView(R.id.personal_recommendation)
         TextView personalRecommendation;
+        @Nullable
+        ServiceSearchExcursion excursion;
 
         SearchExcursionViewHolder(@NonNull View view) {
             super(view);
@@ -111,6 +114,8 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
         }
 
         void bind(@NonNull ServiceSearchExcursion excursion, boolean isRecommendation) {
+            this.excursion = excursion;
+
             name.setText(excursion.getName());
             location.setText(excursion.getLocation());
             owner.setText(excursion.getProviderUsername());
@@ -125,8 +130,8 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
             String free = rootView.getContext().getString(R.string.free);
 
             showPrice(free, rouble, excursion.getRoutePrice(), layoutMap, priceMap, isRecommendation);
-            showPrice(free, rouble, excursion.getRoutePrice(), layoutMedia, priceMedia, isRecommendation);
-            showPrice(free, rouble, excursion.getRoutePrice(), layoutGuide, priceGuide, isRecommendation);
+            showPrice(free, rouble, excursion.getMediaPrice(), layoutMedia, priceMedia, isRecommendation);
+            showPrice(free, rouble, excursion.getGuidePrice(), layoutGuide, priceGuide, isRecommendation);
 
             Glide.with(imageView.getContext())
                     .load(excursion.getImageUrl())
@@ -134,6 +139,10 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
                                    .circleCrop()
                                    .diskCacheStrategy(DiskCacheStrategy.DATA))
                     .into(imageView);
+        }
+
+        void unbind() {
+            this.excursion = null;
         }
 
         @SuppressLint("SetTextI18n")
@@ -152,18 +161,44 @@ public class SearchExcursionsAdapter extends RecyclerView.Adapter<SearchExcursio
                 } else {
                     priceText.setText(price.intValue() + rouble);
                 }
+                layout.setAlpha(1.0f);
             } else {
                 priceText.setText(null);
                 layout.setAlpha(0.4f);
             }
         }
 
-        void setOnClickListener(@NonNull View.OnClickListener listener) {
-            rootView.setOnClickListener(listener);
+        void setOnClickListener(@Nullable OnSearchExcursionClickListener listener) {
+            if (listener == null) {
+                priceMap.setOnClickListener(null);
+                priceGuide.setOnClickListener(null);
+                priceMedia.setOnClickListener(null);
+            } else {
+                priceMap.setOnClickListener(view -> {
+                    if (excursion == null) return;
+                    listener.onBuyExcursionClicked(ROUTE, excursion.getUuid(), excursion.getRoutePrice());
+                });
+                priceGuide.setOnClickListener(view -> {
+                    if (excursion == null) return;
+                    listener.onBuyExcursionClicked(GUIDE, excursion.getUuid(), excursion.getRoutePrice());
+                });
+                priceMedia.setOnClickListener(view -> {
+                    if (excursion == null) return;
+                    listener.onBuyExcursionClicked(MEDIA, excursion.getUuid(), excursion.getRoutePrice());
+                });
+            }
         }
     }
 
     public interface OnSearchExcursionClickListener {
-        void onSearchExcursionClicked(@NonNull ServiceSearchExcursion excursion);
+        void onBuyExcursionClicked(@NonNull ItemType itemType,
+                                   @NonNull String excursionUuid,
+                                   @Nullable Double price);
+
+        enum ItemType {
+            ROUTE,
+            MEDIA,
+            GUIDE
+        }
     }
 }

@@ -7,7 +7,7 @@ import android.support.annotation.NonNull;
 
 public class DatabaseOpenHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "ZIGHTER_DATABASE";
-    private static final int DATABASE_VERSION = 29;
+    private static final int DATABASE_VERSION = 30;
 
     DatabaseOpenHelper(@NonNull Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

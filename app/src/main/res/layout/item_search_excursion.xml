@@ -48,7 +48,7 @@
             android:maxLines="1"
             android:singleLine="true"
             android:textColor="@color/primaryText"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             tools:text="Прогулка c Дон Кихотом" />
 

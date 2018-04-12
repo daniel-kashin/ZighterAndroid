@@ -17,10 +17,6 @@ public class ZighterApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-        // leak canary
-        if (LeakCanary.isInAnalyzerProcess(this)) return;
-        LeakCanary.install(this);
-
         // mapbox
         Mapbox.getInstance(getApplicationContext(), BuildConfig.MAPBOX_API_KEY);
 

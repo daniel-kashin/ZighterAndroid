@@ -1,10 +1,13 @@
 package com.zighter.zighterandroid.presentation.search;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -85,6 +88,8 @@ public class SearchFragment extends BaseSupportFragment
     RecyclerView recyclerView;
     @BindView(R.id.sort_type)
     TextView sortType;
+    @Nullable
+    ProgressDialog excursionBindDialog;
 
     @Override
     protected int getLayoutId() {
@@ -172,8 +177,77 @@ public class SearchFragment extends BaseSupportFragment
     }
 
     @Override
-    public void onSearchExcursionClicked(@NonNull ServiceSearchExcursion excursion) {
-        // TODO
+    public void onBuyExcursionClicked(@NonNull ItemType itemType,
+                                      @NonNull String excursionUuid,
+                                      @Nullable Double price) {
+        if (itemType == ItemType.ROUTE) {
+            if (price == null || price == 0.0) {
+                presenter.onBindRoute(excursionUuid);
+            } else {
+                showDialogWithOkButton(R.string.money_not_supported);
+            }
+        } else {
+            showDialogWithOkButton(R.string.only_route_supported);
+        }
+    }
+
+    @Override
+    public void showAddingNetworkUnavailable() {
+        if (excursionBindDialog != null) {
+            excursionBindDialog.cancel();
+        }
+
+        showDialogWithOkButton(R.string.network_error_message);
+    }
+
+    @Override
+    public void showExcursionBuyingLoading() {
+        if (getContext() == null) {
+            return;
+        }
+
+        excursionBindDialog = new ProgressDialog(getContext());
+        excursionBindDialog.setMessage(getString(R.string.adding_route));
+        excursionBindDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        excursionBindDialog.setIndeterminate(true);
+        excursionBindDialog.setCancelable(true);
+        excursionBindDialog.setOnCancelListener(dialog -> {
+            presenter.onBindCancelled();
+        });
+        excursionBindDialog.setProgress(0);
+        excursionBindDialog.show();
+    }
+
+    @Override
+    public void showExcursionBought() {
+        if (excursionBindDialog != null) {
+            excursionBindDialog.cancel();
+        }
+
+        showDialogWithOkButton(R.string.route_added);
+    }
+
+    @Override
+    public void showServerAddingException() {
+        if (excursionBindDialog != null) {
+            excursionBindDialog.cancel();
+        }
+
+        showDialogWithOkButton(R.string.adding_exception);
+    }
+
+    private void showDialogWithOkButton(int messageResId) {
+        if (getContext() == null) {
+            return;
+        }
+
+        new AlertDialog.Builder(getContext())
+                .setMessage(messageResId)
+                .setPositiveButton(R.string.ok, (dialog, which) -> {
+                    // do nothing
+                })
+                .create()
+                .show();
     }
 
     @Override
@@ -190,6 +264,10 @@ public class SearchFragment extends BaseSupportFragment
     public void showNotAuthorizedException() {
         if (getContext() == null) {
             return;
+        }
+
+        if (excursionBindDialog != null) {
+            excursionBindDialog.cancel();
         }
 
         LoginActivity.start(getContext());
