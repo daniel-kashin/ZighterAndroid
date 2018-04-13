@@ -1,17 +1,20 @@
 package com.zighter.zighterandroid;
 
 import android.app.Application;
+import android.content.Intent;
+import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import com.facebook.stetho.InspectorModulesProvider;
 import com.facebook.stetho.Stetho;
-import com.facebook.stetho.inspector.protocol.ChromeDevtoolsDomain;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.crash.FirebaseCrash;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.squareup.leakcanary.LeakCanary;
 import com.zighter.zighterandroid.dagger.Injector;
 
 public class ZighterApplication extends Application {
+    private static final String TAG = "ZighterApplication";
 
     @Override
     public void onCreate() {
@@ -31,6 +34,26 @@ public class ZighterApplication extends Application {
                                   .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
                                   .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
                                   .build());
+
+        // catch all exceptions
+        Thread.setDefaultUncaughtExceptionHandler((thread, e) -> handleUncaughtException(e));
     }
 
+    public void handleUncaughtException(@Nullable Throwable throwable) {
+        if (throwable == null) {
+            return;
+        }
+
+        if (Looper.getMainLooper().getThread() == Thread.currentThread()) {
+            handleUncaughtExceptionInner(throwable);
+        } else {
+            new Handler(Looper.getMainLooper()).post(() -> handleUncaughtExceptionInner(throwable));
+        }
+    }
+
+    private void handleUncaughtExceptionInner(@NonNull Throwable throwable) {
+        FirebaseCrash.log(TAG);
+        FirebaseCrash.report(throwable);
+        System.exit(1);
+    }
 }
