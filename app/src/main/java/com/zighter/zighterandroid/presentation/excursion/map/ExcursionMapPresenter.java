@@ -15,6 +15,7 @@ import com.zighter.zighterandroid.presentation.common.BasePresenter;
 
 import io.reactivex.Scheduler;
 
+@SuppressWarnings("Convert2MethodRef")
 @InjectViewState
 public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
 
@@ -44,27 +45,31 @@ public class ExcursionMapPresenter extends BasePresenter<ExcursionMapView> {
     }
 
     void onReloadExcursionRequest() {
-        getViewState().showLoading();
         excursionRepository.getExcursion(excursionUuid)
                 .compose(applySchedulersSingle())
+                .doOnSubscribe(disposable -> getViewState().showLoading())
                 .subscribe(excursion -> {
                     getViewState().showExcursion(excursion);
                 }, throwable -> {
-                    if (throwable instanceof BaseException) {
-                        if (throwable instanceof NetworkUnavailableException) {
-                            getViewState().showNetworkUnavailable();
-                        } else if (throwable instanceof ServerException) {
-                            if (throwable instanceof ServerNotAuthorizedException) {
-                                getViewState().showNotAuthorizedException();
-                            } else {
-                                getViewState().showServerException();
-                            }
-                        }
-                    } else {
-                        getViewState().showUnhandledException();
-                        handleThrowable(throwable, TAG);
-                    }
+                    handleThrowable(throwable);
                 });
+    }
+
+    private void handleThrowable(Throwable throwable) {
+        if (throwable instanceof BaseException) {
+            if (throwable instanceof NetworkUnavailableException) {
+                getViewState().showNetworkUnavailable();
+            } else if (throwable instanceof ServerException) {
+                if (throwable instanceof ServerNotAuthorizedException) {
+                    getViewState().showNotAuthorizedException();
+                } else {
+                    getViewState().showServerException();
+                }
+            }
+        } else {
+            getViewState().showUnhandledException();
+            handleThrowable(throwable, TAG);
+        }
     }
 
 

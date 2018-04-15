@@ -39,7 +39,6 @@ public interface ServiceExcursionContract {
     Single<ServiceExcursion> getExcursion(@NonNull @Path("uuid") String uuid,
                                           @NonNull @Header("Authorization") String token);
 
-
     @GET(API + V1 + GUIDES + "/{uuid}")
     Single<ServiceGuide> getGuide(@NonNull @Path("uuid") String ownerUuid,
                                   @NonNull @Header("Authorization") String token);
@@ -47,7 +46,6 @@ public interface ServiceExcursionContract {
 
     @GET(API + V1 + CLIENT_COLLECTION)
     Single<List<ServiceBoughtExcursion>> getBoughtExcursions(@NonNull @Header("Authorization") String token);
-
 
     @Headers({
             "Accept: application/json",
@@ -59,7 +57,6 @@ public interface ServiceExcursionContract {
 
     @POST(API + V1 + REGISTER + SLASH)
     Single<ServiceToken> register(@NonNull @Body ServiceRegistrationData data);
-
 
     @GET(API + V1 + EXCURSIONS + SLASH)
     Single<ServiceSearchExcursions> searchExcursions(@NonNull @Query("q") String request,

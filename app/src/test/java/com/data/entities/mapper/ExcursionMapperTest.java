@@ -6,6 +6,7 @@ import com.zighter.zighterandroid.data.entities.mapper.ExcursionMapper;
 import com.zighter.zighterandroid.data.entities.presentation.BoughtExcursion;
 import com.zighter.zighterandroid.data.entities.presentation.Excursion;
 import com.zighter.zighterandroid.data.entities.presentation.Guide;
+import com.zighter.zighterandroid.data.entities.presentation.Path;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.service.ServiceBoughtExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
@@ -193,7 +194,7 @@ public class ExcursionMapperTest {
         assertEquals(serviceExcursion.getPathSize(), excursion.getPathSize());
         for (int i = 0; i > serviceExcursion.getPathSize(); ++i) {
             ServicePath servicePath = serviceExcursion.getPathAt(i);
-            ServicePath path = excursion.getPathAt(i);
+            Path path = excursion.getPathAt(i);
 
             assertEquals(servicePath.getUuid(), path.getUuid());
             assertEquals(servicePath.getPointSize(), path.getPointSize());

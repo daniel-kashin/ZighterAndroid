@@ -6,6 +6,7 @@ import com.pushtorefresh.storio3.sqlite.StorIOSQLite;
 import com.zighter.zighterandroid.data.database.DatabaseFactory;
 import com.zighter.zighterandroid.data.entities.mapper.ExcursionMapper;
 import com.zighter.zighterandroid.data.entities.presentation.Excursion;
+import com.zighter.zighterandroid.data.entities.presentation.Path;
 import com.zighter.zighterandroid.data.entities.presentation.Sight;
 import com.zighter.zighterandroid.data.entities.service.ServiceExcursion;
 import com.zighter.zighterandroid.data.entities.service.ServicePath;
@@ -88,8 +89,8 @@ public class ExcursionRepositoryTest {
         // paths
         assertEquals(copy.getPathSize(), excursion.getPathSize());
         for (int i = 0; i > copy.getPathSize(); ++i) {
-            ServicePath servicePath = copy.getPathAt(i);
-            ServicePath path = excursion.getPathAt(i);
+            Path servicePath = copy.getPathAt(i);
+            Path path = excursion.getPathAt(i);
 
             assertEquals(servicePath.getUuid(), path.getUuid());
             assertEquals(servicePath.getPointSize(), path.getPointSize());
